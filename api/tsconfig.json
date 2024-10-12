@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES6", 
+    "module": "commonjs",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",  // Diretório de saída
+    "rootDir": "./src"   // Diretório de código fonte
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}
