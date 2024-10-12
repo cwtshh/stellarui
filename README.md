@@ -1,50 +1,43 @@
-# React + TypeScript + Vite
+# Como rodar o projeto
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Adicione um aquivo .env com as seguintes variáveis:
 
-Currently, two official plugins are available:
+```
+VITE_BASE_API_URL=
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+API_PORT=
 
-## Expanding the ESLint configuration
+MONGO_INITDB_ROOT_USERNAME=
+MONGO_INITDB_ROOT_PASSWORD=
+MONGO_INITDB_DATABASE=stellar
+CONNECTION_STRING=mongodb://MONGO_INITDB_ROOT_USERNAME:MONGO_INITDB_ROOT_PASSWORD@stellar_db:27017/
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+SECRET_KEY=
 
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+ADMIN_NAME=
+ADMIN_EMAIL=
+ADMIN_PASSWORD=
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+Após isso, inicie o docker e digite o seguinte comando:
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
 ```
+$ docker compose up -d
+```
+
+Todos os containers irão subir automáticamente e estarão disponíveis em:
+
+* front: http://localhost:5173/login
+* backend: http://localhost:3001/  (Será substituida a porta do env)
+* mongodb: mongodb://MONGO_INITDB_ROOT_USERNAME:MONGO_INITDB_ROOT_PASSWORD@stellar_db:27017/ (substituia as variaveis do env aqui)
+
+Para acesso direto ao banco de dados, entre no terminal do respectivo container e digite:
+
+```
+$ mongosh admin -u MONGO_INITDB_ROOT_USERNAME -p MONGO_INITDB_ROOT_PASSWORD
+```
+
+Seja feliz!
+
+
+
