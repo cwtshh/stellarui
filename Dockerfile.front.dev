@@ -8,6 +8,10 @@ RUN npm install
 
 COPY . .
 
+RUN chmod +x ./register_base_admin.sh
+
+# RUN ./register_base_admin.sh
+
 EXPOSE 5173
 
 CMD ["npm", "run", "dev"]

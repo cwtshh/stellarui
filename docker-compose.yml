@@ -1,6 +1,7 @@
 name: StellarUI
 services:
   stellar_front:
+    container_name: stellar_front
     build:
       context: .
       dockerfile: Dockerfile.front.dev
@@ -11,6 +12,8 @@ services:
       - "5173:5173"
     restart: on-failure
     command: npm run dev
+    depends_on:
+      - stellar_api
   stellar_api:
     container_name: stellar_api
     build:
