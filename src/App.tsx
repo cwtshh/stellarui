@@ -1,5 +1,5 @@
 import './App.css'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import Home from './pages/Home/Home'
 import SideBar from './components/SideBar/SideBar'
 import Login from './pages/Login/Login'
@@ -15,7 +15,7 @@ function App() {
       <BrowserRouter>
       { user ? <SideBar /> : null }
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Navigate to={'/login'} />} />
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
           <Route path='/chat' element={<Chat />} />

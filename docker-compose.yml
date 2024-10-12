@@ -1,0 +1,49 @@
+name: StellarUI
+services:
+  stellar_front:
+    build:
+      context: .
+      dockerfile: Dockerfile.front.dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    restart: on-failure
+    command: npm run dev
+  stellar_api:
+    container_name: stellar_api
+    build:
+      context: ./api
+      dockerfile: Dockerfile.dev
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./api:/app
+      - /app/node_modules
+    ports:
+      - ${API_PORT}:${API_PORT}
+    command: npm run dev
+    depends_on:
+      - stellar_db
+
+  stellar_db:
+    container_name: stellar_db
+    image: mongo
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - 27017:27017
+    volumes:
+      - dbdata-volume:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+
+volumes:
+  dbdata-volume:
+
+      
