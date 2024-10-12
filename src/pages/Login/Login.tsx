@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext'
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
+import { BsStars } from 'react-icons/bs';
 
 const Login = () => {
     const [ email, setEmail ] = useState('');
@@ -37,7 +38,10 @@ const Login = () => {
             <div className="card bg-base-100 w-96 shadow-xl">
                 <div className="card-body">
                     <div className='flex flex-col gap-6'>
-                        <h1 className='font-bold text-2xl'>Stellar</h1>
+                        <div className='flex items-center gap-2'>
+                            <h1 className='font-bold text-2xl'>Stellar</h1>
+                            <BsStars className='text-3xl' />
+                        </div>
                         <label className="form-control w-full max-w-xs">
                             <div className="label">
                                 <span className="label-text">Email:</span>
