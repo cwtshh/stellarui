@@ -11,14 +11,17 @@ const Chat = () => {
   const [ message, setMessage ] = useState('');
   const chat_date = new Date(selectedChat?.created_at ?? '').toLocaleString('pt-br');
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef(null);
+
+  const handleIconClick = () => {
+      fileInputRef.current.click();
+  };
   
   const handleMessage = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim()) {
       send_message(message);
       setMessage('');
-      inputRef.current?.focus(); 
     }
   }
 
@@ -63,9 +66,26 @@ const Chat = () => {
           <BsSendFill />
         </label> */}
         <div className='flex items-center gap-2'>
-          <IoMdAttach className='text-2xl' role='input' type='file' />
+          <div>
+              <IoMdAttach 
+                  className='text-2xl cursor-pointer' 
+                  onClick={handleIconClick} // Chama a função ao clicar no ícone
+              />
+              <input 
+                  type='file' 
+                  ref={fileInputRef} // Define a referência ao input
+                  className='hidden' // Oculta o input de arquivo
+                  onChange={(e) => {
+                      // Manipulador para quando um arquivo for selecionado
+                      const file = e.target.files[0];
+                      if (file) {
+                          console.log('Arquivo selecionado:', file);
+                      }
+                  }} 
+              />
+          </div>
           <form className='flex w-full items-center' onSubmit={handleMessage}>
-            <input ref={inputRef} onChange={e => setMessage(e.target.value)} type="text" value={message} className="input input-bordered w-full" placeholder="Pergunte o que quiser..." />
+            <input onChange={e => setMessage(e.target.value)} type="text" value={message} className="input input-bordered w-full" placeholder="Pergunte o que quiser..." />
             <button className='btn ml-2 h-full'>
               <BsSendFill className='text-2xl' />
             </button>
