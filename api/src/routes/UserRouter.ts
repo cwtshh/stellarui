@@ -1,8 +1,9 @@
 import express from 'express';
-import { create_chat, get_all_user_chats, get_chat, login_user, logout_user, register_user, send_message } from '../controller/UserController';
+import { create_chat, delete_chat, get_all_user_chats, get_chat, login_user, logout_user, register_user, send_message } from '../controller/UserController';
 import UserCreateValidations from '../middlewares/UserCreateValidation';
 import HandleValidations from '../middlewares/HandleValidations';
 import UserLoginValidations from '../middlewares/UserLoginValidation';
+import User from '../model/User';
 
 
 const UserRouter = express();
@@ -18,5 +19,6 @@ UserRouter.post('/chat/create', create_chat);
 UserRouter.get('/chat/all/:id', get_all_user_chats);
 UserRouter.post('/chat/send', send_message);
 UserRouter.get('/chat/:chat_id', get_chat);
+UserRouter.delete('/chat/:chat_id', delete_chat);
 
 export default UserRouter;

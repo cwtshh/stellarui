@@ -11,6 +11,7 @@ interface ChatContextType {
     selectedChat: ChatType | null,
     select_chat: (chat_id: string) => void
     send_message: (message: string) => void
+    delete_chat: (chat_id: string) => void
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -63,6 +64,16 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         }).catch(err => {
             NotifyToast({ message: err.response.data.errors[0], type: 'error' });
         })
+    };
+
+    const delete_chat = async(chat_id: string) => {
+        await axios.delete(`${BASE_API_URL}/user/chat/${chat_id}`, { withCredentials: true }).then(() => {
+            fetch_user_chats();
+            setSelectedChat(null);
+            NotifyToast({ message: 'Chat deletado com sucesso.', type: 'success' });
+        }).catch(err => {
+            NotifyToast({ message: err.response.data.errors[0], type: 'error' });
+        })
     }
 
     useEffect(() => {
@@ -70,7 +81,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     }, [user])
 
     return (
-        <ChatContext.Provider value={{ chats, selectedChat, add_chat, select_chat, send_message }}>
+        <ChatContext.Provider value={{ chats, selectedChat, add_chat, select_chat, send_message, delete_chat }}>
             { children }
         </ChatContext.Provider>
     )

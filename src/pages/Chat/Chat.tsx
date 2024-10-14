@@ -38,22 +38,22 @@ const Chat = () => {
         </details>
         {selectedChat && (
           <p className='text-white'>{chat_date}</p>
-        )}
+        )}  
       </div>
 
-      <div className='overflow-y-scroll flex flex-col w-full h-full p-6'  style={{backgroundImage: `url(${chatbg})`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat",}}>
+      <div className='overflow-y-scroll flex flex-col w-full h-full p-6' style={{backgroundImage: `url(${chatbg})`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat"}}>
         
         {selectedChat ? selectedChat?.messages.map((message, index) => (
           message.sent_by === 'user' ? (
-            <UserChatBubble message={message} key={index} />
+        <UserChatBubble message={message} key={index} />
           ) : (
-            <></>
+        <></>
           )
         )) : (
           <div className='flex'>
-            <div>
-              <h1 className='text-2xl text-white'>Selecione um chat para começar a conversar</h1>
-            </div>
+        <div>
+          <h1 className='text-2xl text-white'>Selecione um chat para começar a conversar</h1>
+        </div>
           </div>
         )}
 

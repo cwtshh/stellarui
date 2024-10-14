@@ -1,4 +1,4 @@
-import { UserType } from '../utils/@types/UserType';
+import { MessageType, UserType } from '../utils/@types/UserType';
 import User from '../model/User';
 import bcrypt from 'bcryptjs';
 import { Request, Response } from 'express';
@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken';
 import Chat from '../model/Chat';
 import { query } from 'express-validator';
 import Message from '../model/Message';
+import send_message_to_ai from './MessageController';
 
 const SECRET = process.env.SECRET_KEY || 'secret';
 
@@ -105,9 +106,17 @@ const get_all_user_chats = async(req: Request, res: Response) => {
     res.status(200).json(chats);
 }
 
+interface MessageBody {
+    role: string,
+    content: string,
+}
+
 const send_message = async(req: Request, res: Response) => {
     const { chat_id, user_id, message } = req.body;
-    const chat = await Chat.findById(chat_id);
+    const chat = await Chat.findById(chat_id).populate({
+        path: 'messages',
+        model: 'Message'
+    });
     if(!chat) {
         res.status(400).json({ errors: ['Chat não encontrado.'] });
         return;
@@ -122,7 +131,58 @@ const send_message = async(req: Request, res: Response) => {
         res.status(400).json({ errors: ['Erro ao enviar mensagem.'] });
         return;
     }
+    
     chat.messages.push(new_message._id);
+    let chat_history: MessageBody[] = chat.messages.map((message: any) => {
+        if (message.sent_by === 'user') {
+            const message_conv: MessageBody = {
+                role: 'user',
+                content: message.content
+            }
+            return message_conv;
+        }
+        if(message.sent_by === 'assistant') {
+            const message_conv: MessageBody = {
+                role: 'assistant',
+                content: message.content
+            }
+            return message_conv;
+        }
+        return undefined;
+    }).filter((message): message is MessageBody => message !== undefined);
+
+    // messages.forEach((message: any) => {
+    //     if (message.sent_by === 'user') {
+    //         const message_conv: MessageBody = {
+    //             role: 'user',
+    //             content: message.content
+    //         }
+    //         chat_history.push(message_conv);
+    //     }
+    //     if(message.sent_by === 'assistant') {
+    //         const message_conv: MessageBody = {
+    //             role: 'assistant',
+    //             content: message.content
+    //         }
+    //         chat_history.push(message_conv);
+    //     }
+    // });
+    const ai_message = await send_message_to_ai('gemma2', chat_history, message);
+    if(!ai_message) {
+        res.status(400).json({ errors: ['Erro ao enviar mensagem.'] });
+        return;
+    }
+    const ai_response = await Message.create({
+        content: ai_message,
+        chat: chat_id,
+        sent_by: 'assistant',
+        user_id: user_id
+    });
+    if(!ai_response) {
+        res.status(400).json({ errors: ['Erro ao enviar mensagem.'] });
+        return;
+    }
+    chat.messages.push(ai_response._id);
     await chat.save();
     res.status(201).json({ message: 'Mensagem enviada com sucesso.' });
     return;
@@ -136,7 +196,17 @@ const get_chat = async(req: Request, res: Response) => {
         return;
     }
     res.status(200).json(chat);
+};
+
+const delete_chat = async(req: Request, res: Response) => {
+    const { chat_id } = req.params;
+    const chat = await Chat.findByIdAndDelete(chat_id);
+    if(!chat) {
+        res.status(400).json({ errors: ['Chat não encontrado.'] });
+        return;
+    }
+    res.status(200).json({ message: 'Chat deletado com sucesso.' });
 }
 
 
-export { register_user, login_user, logout_user, create_chat, get_all_user_chats, send_message, get_chat };
+export { register_user, login_user, logout_user, create_chat, get_all_user_chats, send_message, get_chat, delete_chat };

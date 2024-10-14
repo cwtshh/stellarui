@@ -4,7 +4,8 @@ import helmet from 'helmet';
 import connect_db from './config/db';
 import router from './routes/Router';
 import cookieParser from 'cookie-parser';
-
+import { configDotenv } from 'dotenv';
+configDotenv();
 
 const PORT = process.env.API_PORT || 3001;
 const app = express();
