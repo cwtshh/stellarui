@@ -5,6 +5,8 @@ import { NotifyToast } from '../../components/Toast/Toast';
 import axios from 'axios';
 import { BASE_API_URL } from '../../utils/constants';
 import { IoMdEye, IoMdEyeOff } from 'react-icons/io';
+import logo from '../../assets/DPDF_Branca 1.png';
+import { BsStars } from 'react-icons/bs';
 
 const Register = () => {
 
@@ -50,11 +52,15 @@ const Register = () => {
     }, [password, confirmPassword])
 
     return (
-        <div className='flex flex-col gap-5 justify-center items-center h-screen w-full'>
+        <div className='flex flex-col gap-5 justify-center items-center h-screen w-full bg-primary'>
+            <img className='w-56' src={logo} alt="" />
             <div className="card bg-base-100 w-96 shadow-xl">
                 <div className="card-body">
                     <div className='flex flex-col gap-5'>
-                        <h1 className='font-bold text-2xl'>Stellar</h1>
+                        <div className='flex items-center gap-2'>
+                            <h1 className='font-bold text-2xl'>Stellar</h1>
+                            <BsStars className='text-3xl' />
+                        </div>
 
                         <label className="form-control w-full max-w-xs">
                             <div className="label">
@@ -105,7 +111,7 @@ const Register = () => {
                 </div>
             </div>
 
-            <p>Já tem conta? <Link className='font-bold' to={'/login'}>Entrar!</Link></p>
+            <p className='text-white'>Já tem conta? <Link className='font-bold text-[#1384e3]' to={'/login'}>Entrar!</Link></p>
         </div>
     )
 }

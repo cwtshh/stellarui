@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { BsStars } from 'react-icons/bs';
+import logo from '../../assets/DPDF_Branca 1.png';
 
 const Login = () => {
     const [ email, setEmail ] = useState('');
@@ -34,7 +35,8 @@ const Login = () => {
         }
     })
     return (
-        <div className='flex flex-col gap-5 justify-center items-center h-screen w-full'>
+        <div className='flex flex-col gap-5 justify-center items-center h-screen w-full bg-primary'>
+            <img className='w-56' src={logo} alt="" />
             <div className="card bg-base-100 w-96 shadow-xl">
                 <div className="card-body">
                     <div className='flex flex-col gap-6'>
@@ -69,7 +71,7 @@ const Login = () => {
                 </div>
             </div>
 
-            <p>Não tem conta? <Link className='font-bold' to={'/register'}>Crie uma!</Link></p>
+            <p className='text-white'>Não tem conta? <Link className='font-bold text-[#1384e3]' to={'/register'}>Crie uma!</Link></p>
         </div>
     )
 }

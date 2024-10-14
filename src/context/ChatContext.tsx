@@ -24,7 +24,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         await axios.post(`${BASE_API_URL}/user/chat/create`, { user_id: user?._id }, { withCredentials: true }).then(async(res) => {
             NotifyToast({ message: res.data.message, type: 'success' });
             fetch_user_chats();
-            console.log(res.data);
             await axios.get(`${BASE_API_URL}/user/chat/${res.data.chat_id}`, { withCredentials: true }).then(res => {
                 setSelectedChat(res.data);
             });
@@ -39,7 +38,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             return;
         }
         await axios.get(`${BASE_API_URL}/user/chat/all/${user?._id}`, { withCredentials: true}).then( res => {
-            setChats(res.data);
+            setChats(res.data.reverse());
         }).catch(err => {
             NotifyToast({ message: err.response.data.errors[0], type: 'error' });
         })

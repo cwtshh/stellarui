@@ -20,11 +20,11 @@ const UserChatBubble = ( {message} : UserChatBubbleProps) => {
                     src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
                 </div>
             </div>
-            <div className="chat-header">
+            <div className="chat-header text-white">
                 {first_name}
             </div>
-            <div className="chat-bubble">{message.content}</div>
-            <div className="chat-footer opacity-50">{date}</div>
+            <div className="chat-bubble bg-secondary">{message.content}</div>
+            <div className="chat-footer text-white opacity-50">{date}</div>
         </div>
     )
 }
