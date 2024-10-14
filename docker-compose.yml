@@ -1,4 +1,4 @@
-name: StellarUI
+name: stellarui
 services:
   stellar_front:
     container_name: stellar_front
