@@ -3,7 +3,6 @@ import { create_chat, delete_chat, get_all_user_chats, get_chat, login_user, log
 import UserCreateValidations from '../middlewares/UserCreateValidation';
 import HandleValidations from '../middlewares/HandleValidations';
 import UserLoginValidations from '../middlewares/UserLoginValidation';
-import User from '../model/User';
 
 
 const UserRouter = express();
