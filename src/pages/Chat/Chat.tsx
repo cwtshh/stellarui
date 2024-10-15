@@ -67,19 +67,23 @@ const Chat = () => {
 
       <div className='overflow-y-scroll flex flex-col w-full h-full p-6' style={{backgroundImage: `url(${chatbg})`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat"}}>
         
-        {selectedChat ? [...selectedChat.messages, ...localMessages].map((message, index) => (
+      {selectedChat ? (
+        [...selectedChat.messages, ...localMessages.filter(localMessage =>
+          !selectedChat.messages.some(chatMessage => chatMessage.content === localMessage.content) // Comparando pelo conteúdo
+        )].map((message, index) => (
           message.sent_by === 'user' ? (
             <UserChatBubble message={message} key={index} />
           ) : (
             <AssistantChatBubble message={message} key={index} />
           )
-        )) : (
-          <div className='flex'>
-            <div>
-              <h1 className='text-2xl text-white'>Selecione um chat para começar a conversar</h1>
-            </div>
+        ))
+      ) : (
+        <div className='flex'>
+          <div>
+            <h1 className='text-2xl text-white'>Selecione um chat para começar a conversar</h1>
           </div>
-        )}
+        </div>
+      )}
 
         {/* Div invisível que marca o fim da lista de mensagens */}
         <div ref={messagesEndRef} /></div>

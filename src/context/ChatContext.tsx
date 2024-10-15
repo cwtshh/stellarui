@@ -97,6 +97,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         await axios.delete(`${BASE_API_URL}/user/chat/${chat_id}`, { withCredentials: true }).then(() => {
             fetch_user_chats();
             setSelectedChat(null);
+            setLocalMessages([]);
             NotifyToast({ message: 'Chat deletado com sucesso.', type: 'success' });
         }).catch(err => {
             NotifyToast({ message: err.response.data.errors[0], type: 'error' });
