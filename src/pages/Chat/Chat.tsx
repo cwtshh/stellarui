@@ -33,13 +33,20 @@ const Chat = () => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [selectedChat?.messages]);
+  }, [selectedChat?.messages, localMessages]);
 
   // Função para ajustar a altura do textarea dinamicamente
   const adjustTextareaHeight = () => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto'; // Reseta a altura
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // Ajusta a altura ao conteúdo
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault(); // Impede o comportamento padrão de nova linha
+      handleMessage(e); // Envia a mensagem
     }
   };
 
@@ -75,8 +82,7 @@ const Chat = () => {
         )}
 
         {/* Div invisível que marca o fim da lista de mensagens */}
-        <div ref={messagesEndRef} />
-      </div>
+        <div ref={messagesEndRef} /></div>
 
       <div className='w-full max-h-[250px] p-3'>
         <div className='flex items-center gap-2'>
@@ -105,6 +111,7 @@ const Chat = () => {
                 setMessage(e.target.value);
                 adjustTextareaHeight();
               }}
+              onKeyDown={handleKeyDown}
               className="textarea textarea-bordered w-full max-h-[200px] overflow-auto resize-none"
               placeholder="Pergunte o que quiser..."
               rows={1} // Começa com uma linha
