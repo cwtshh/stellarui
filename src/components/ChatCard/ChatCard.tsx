@@ -8,6 +8,7 @@ interface ChatCardProps {
 }
 
 const ChatCard = ({ chat }: ChatCardProps) => {
+  console.log(chat)
   const created_at = new Date(chat.created_at)
   const { select_chat, delete_chat } = useChat();
   const first_user_message = chat.messages[0]?.content;

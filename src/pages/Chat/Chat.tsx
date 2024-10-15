@@ -4,6 +4,7 @@ import { BsSendFill } from 'react-icons/bs';
 import { IoMdAttach } from 'react-icons/io';
 import UserChatBubble from '../../components/ChatBubble/UserChatBubble';
 import chatbg from '../../assets/chatbg.jpeg';
+import AssistantChatBubble from '../../components/ChatBubble/AssistantChatBubble';
 
 const Chat = () => {
   const { selectedChat, send_message } = useChat();
@@ -47,7 +48,7 @@ const Chat = () => {
           message.sent_by === 'user' ? (
         <UserChatBubble message={message} key={index} />
           ) : (
-        <></>
+        <AssistantChatBubble message={message} key={index} />
           )
         )) : (
           <div className='flex'>

@@ -56,8 +56,9 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         if(!selectedChat) {
             return;
         }
-        await axios.post(`${BASE_API_URL}/user/chat/send`, { chat_id: selectedChat._id, user_id: user?._id, message }, { withCredentials: true }).then(async() => {
+        await axios.post(`${BASE_API_URL}/user/chat/send`, { chat_id: selectedChat._id, user_id: user?._id, message }, { withCredentials: true }).then(async(response) => {
             fetch_user_chats();
+            console.log(response)
             await axios.get(`${BASE_API_URL}/user/chat/${selectedChat._id}`, { withCredentials: true }).then(res => {
                 setSelectedChat(res.data);
             })

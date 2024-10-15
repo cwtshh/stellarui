@@ -19,7 +19,7 @@ const MessageSchema = new Schema({
     },
     sent_by: {
         type: String,
-        enum: ['user', 'ai'],
+        enum: ['user', 'assistant'],
         required: true
     },
     created_at: {

@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 import Chat from '../model/Chat';
 import { query } from 'express-validator';
 import Message from '../model/Message';
-import send_message_to_ai from './MessageController';
+import { send_message_to_ai } from './MessageController';
 
 const SECRET = process.env.SECRET_KEY || 'secret';
 
@@ -113,6 +113,7 @@ interface MessageBody {
 
 const send_message = async(req: Request, res: Response) => {
     const { chat_id, user_id, message } = req.body;
+    console.log(chat_id, user_id, message);
     const chat = await Chat.findById(chat_id).populate({
         path: 'messages',
         model: 'Message'
@@ -167,25 +168,32 @@ const send_message = async(req: Request, res: Response) => {
     //         chat_history.push(message_conv);
     //     }
     // });
-    const ai_message = await send_message_to_ai('gemma2', chat_history, message);
-    if(!ai_message) {
+    const ai_message = await send_message_to_ai('llama3.1', chat_history, message);
+    if (typeof ai_message === 'object' && ai_message !== null && 'response' in ai_message) {
+        // console.log((ai_message as { response: string }).response);
+        if(!ai_message) {
+            res.status(400).json({ errors: ['Erro ao enviar mensagem.'] });
+            return;
+        }
+        const ai_response = await Message.create({
+            content: (ai_message as { response: string }).response,
+            chat: chat_id,
+            sent_by: 'assistant',
+            user_id: user_id
+        });
+        if(!ai_response) {
+            res.status(400).json({ errors: ['Erro ao enviar mensagem.'] });
+            return;
+        }
+        chat.messages.push(ai_response._id);
+        await chat.save();
+        res.status(201).json({ message: 'Mensagem enviada com sucesso.' });
+        return;
+    } else {
+        console.error('Unexpected AI message format:', ai_message);
         res.status(400).json({ errors: ['Erro ao enviar mensagem.'] });
         return;
     }
-    const ai_response = await Message.create({
-        content: ai_message,
-        chat: chat_id,
-        sent_by: 'assistant',
-        user_id: user_id
-    });
-    if(!ai_response) {
-        res.status(400).json({ errors: ['Erro ao enviar mensagem.'] });
-        return;
-    }
-    chat.messages.push(ai_response._id);
-    await chat.save();
-    res.status(201).json({ message: 'Mensagem enviada com sucesso.' });
-    return;
 };
 
 const get_chat = async(req: Request, res: Response) => {

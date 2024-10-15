@@ -32,7 +32,7 @@ const SideBar = () => {
                 <div>
                     <p className='font-bold text-white'>Chats Ativos</p>
                         {/* TODO ordenar de tras pra frente */}
-                    <div className='flex flex-col gap-6 mt-2 overflow-y-scroll max-h-[40rem]'>
+                    <div className='flex flex-col gap-6 mt-2 overflow-y-scroll h-full max-h-[40rem]'>
                         { chats?.map((chat, index) => (
                             <ChatCard chat={chat} key={index} />
                         ))}

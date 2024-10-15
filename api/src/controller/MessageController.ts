@@ -2,7 +2,7 @@ import axios from "axios";
 import { Request, Response } from "express";
 import { AI_ENDPOINT } from "../utils/constansts";
 
-const endpoint = 'https://25a5-2804-14c-65d6-419e-6b6a-4c29-76a3-1605.ngrok-free.app/'
+const endpoint = 'https://4d22-131-72-222-133.ngrok-free.app'
 
 interface MessageBody {
     role: string,
@@ -12,6 +12,7 @@ interface MessageBody {
 interface RequestBody {
     model: string,
     messages:  MessageBody[],
+    prompt: string,
     message: string,
     stream: boolean,
     
@@ -23,11 +24,12 @@ const send_message_to_ai = async(model: string, messages: MessageBody[], message
         model,
         messages,
         message,
+        prompt: message,
         stream: false,
     }
     console.log(AI_ENDPOINT)
     try {
-        const response = await axios.post(`${endpoint}/api/chat`, requestbody);
+        const response = await axios.post(`${endpoint}/api/generate`, requestbody);
         return response.data;
     } catch (error) {
         console.log(error);
@@ -35,4 +37,4 @@ const send_message_to_ai = async(model: string, messages: MessageBody[], message
     }
 };
 
-export default send_message_to_ai;
+export {send_message_to_ai};
