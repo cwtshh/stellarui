@@ -1,5 +1,5 @@
 import { ReactNode, createContext, useContext, useEffect, useState } from "react";
-import { ChatType } from "../utils/types/ChatType";
+import { ChatType, MessageType } from "../utils/types/ChatType";
 import axios from "axios";
 import { BASE_API_URL } from "../utils/constants";
 import { useAuth } from "./AuthContext";
@@ -12,6 +12,7 @@ interface ChatContextType {
     select_chat: (chat_id: string) => void
     send_message: (message: string) => void
     delete_chat: (chat_id: string) => void
+    localMessages: MessageType[]
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -20,6 +21,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const [ chats, setChats ] = useState<ChatType[]>([]);
     const [ selectedChat, setSelectedChat ] = useState<ChatType | null>(null);
     const { user } = useAuth();
+
+    const [ localMessages, setLocalMessages ] = useState<MessageType[]>([]);
 
     const add_chat = async() => {
         await axios.post(`${BASE_API_URL}/user/chat/create`, { user_id: user?._id }, { withCredentials: true }).then(async(res) => {
@@ -53,15 +56,38 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const send_message = async(message: string) => {
-        if(!selectedChat) {
+        if(!selectedChat || !user?._id) {
             return;
         }
+
+        const newMessage: MessageType = {
+            content: message,
+            sent_by: 'user',
+            user_id: user?._id,
+            _id: Math.random().toString(),
+            chat: selectedChat._id,
+            created_at: new Date().toISOString()
+        }
+        setLocalMessages([...localMessages, newMessage]);
         await axios.post(`${BASE_API_URL}/user/chat/send`, { chat_id: selectedChat._id, user_id: user?._id, message }, { withCredentials: true }).then(async(response) => {
             fetch_user_chats();
-            console.log(response)
-            await axios.get(`${BASE_API_URL}/user/chat/${selectedChat._id}`, { withCredentials: true }).then(res => {
-                setSelectedChat(res.data);
-            })
+            console.log(response.data);
+
+                // Atualiza o chat com a nova resposta da AI
+                const aiMessage: MessageType = {
+                    content: response.data.ai_message,
+                    sent_by: 'assistant',
+                    _id: Math.random().toString(), // Outro ID temporário para a resposta da AI
+                    chat: selectedChat._id,
+                    user_id: user?._id,
+                    created_at: new Date().toISOString()
+                };
+
+                setLocalMessages([...localMessages, newMessage, aiMessage]);
+
+                await axios.get(`${BASE_API_URL}/user/chat/${selectedChat._id}`, { withCredentials: true }).then(res => {
+                    setSelectedChat(res.data);
+                });
         }).catch(err => {
             NotifyToast({ message: err.response.data.errors[0], type: 'error' });
         })
@@ -82,7 +108,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     }, [user])
 
     return (
-        <ChatContext.Provider value={{ chats, selectedChat, add_chat, select_chat, send_message, delete_chat }}>
+        <ChatContext.Provider value={{ chats, selectedChat, add_chat, select_chat, send_message, delete_chat, localMessages }}>
             { children }
         </ChatContext.Provider>
     )

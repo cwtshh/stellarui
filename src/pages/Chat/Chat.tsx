@@ -7,7 +7,7 @@ import chatbg from '../../assets/chatbg.jpeg';
 import AssistantChatBubble from '../../components/ChatBubble/AssistantChatBubble';
 
 const Chat = () => {
-  const { selectedChat, send_message } = useChat();
+  const { selectedChat, send_message, localMessages } = useChat();
   const [ model, setModel ] = useState('Gemma 2');
   const [ message, setMessage ] = useState('');
   const chat_date = new Date(selectedChat?.created_at ?? '').toLocaleString('pt-br');
@@ -44,7 +44,7 @@ const Chat = () => {
 
       <div className='overflow-y-scroll flex flex-col w-full h-full p-6' style={{backgroundImage: `url(${chatbg})`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat"}}>
         
-        {selectedChat ? selectedChat?.messages.map((message, index) => (
+        {selectedChat ? [...selectedChat.messages, ...localMessages].map((message, index) => (
           message.sent_by === 'user' ? (
         <UserChatBubble message={message} key={index} />
           ) : (

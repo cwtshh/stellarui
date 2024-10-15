@@ -151,23 +151,6 @@ const send_message = async(req: Request, res: Response) => {
         }
         return undefined;
     }).filter((message): message is MessageBody => message !== undefined);
-
-    // messages.forEach((message: any) => {
-    //     if (message.sent_by === 'user') {
-    //         const message_conv: MessageBody = {
-    //             role: 'user',
-    //             content: message.content
-    //         }
-    //         chat_history.push(message_conv);
-    //     }
-    //     if(message.sent_by === 'assistant') {
-    //         const message_conv: MessageBody = {
-    //             role: 'assistant',
-    //             content: message.content
-    //         }
-    //         chat_history.push(message_conv);
-    //     }
-    // });
     const ai_message = await send_message_to_ai('llama3.1', chat_history, message);
     if (typeof ai_message === 'object' && ai_message !== null && 'response' in ai_message) {
         // console.log((ai_message as { response: string }).response);
@@ -187,7 +170,7 @@ const send_message = async(req: Request, res: Response) => {
         }
         chat.messages.push(ai_response._id);
         await chat.save();
-        res.status(201).json({ message: 'Mensagem enviada com sucesso.' });
+        res.status(201).json({ message: 'Mensagem enviada com sucesso.', ai_message: (ai_message as { response: string }).response });
         return;
     } else {
         console.error('Unexpected AI message format:', ai_message);
