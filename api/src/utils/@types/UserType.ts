@@ -12,3 +12,9 @@ export interface MessageType {
     sent_by: string,
     created_at: Date
 }
+
+
+export interface ChatRequestBody {
+    role: string,
+    content: string,
+}

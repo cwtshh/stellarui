@@ -12,24 +12,24 @@ interface MessageBody {
 interface RequestBody {
     model: string,
     messages:  MessageBody[],
-    prompt: string,
-    message: string,
-    stream: boolean,
-    
+    stream: boolean,   
+}
+
+export interface ResponseType {
+    model: string,
+    message: MessageBody,
 }
 
 
 const send_message_to_ai = async(model: string, messages: MessageBody[], message: string) => {
     const requestbody: RequestBody = {
-        model,
-        messages,
-        message,
-        prompt: message,
+        model: model,
+        messages: messages,
         stream: false,
     }
-    console.log(AI_ENDPOINT)
+    // console.log(AI_ENDPOINT)
     try {
-        const response = await axios.post(`${endpoint}/api/generate`, requestbody);
+        const response = await axios.post<ResponseType>(`${endpoint}/api/chat`, requestbody);
         return response.data;
     } catch (error) {
         console.log(error);

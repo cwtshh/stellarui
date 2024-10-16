@@ -1,4 +1,4 @@
-import { MessageType, UserType } from '../utils/@types/UserType';
+import { ChatRequestBody, MessageType, UserType } from '../utils/@types/UserType';
 import User from '../model/User';
 import bcrypt from 'bcryptjs';
 import { Request, Response } from 'express';
@@ -111,9 +111,17 @@ interface MessageBody {
     content: string,
 }
 
+const get_chat_messages = async(message_ids: string[]) => {
+    const messages = await Message.find({ _id: { $in: message_ids } });
+    return messages;
+}
+
 const send_message = async(req: Request, res: Response) => {
-    const { chat_id, user_id, message } = req.body;
-    console.log(chat_id, user_id, message);
+    const { chat_id, user_id, messages, model, message } = req.body;
+
+
+
+    // procura o chat
     const chat = await Chat.findById(chat_id).populate({
         path: 'messages',
         model: 'Message'
@@ -122,6 +130,8 @@ const send_message = async(req: Request, res: Response) => {
         res.status(400).json({ errors: ['Chat não encontrado.'] });
         return;
     }
+
+    // cria mensagem
     const new_message = await Message.create({
         content: message,
         chat: chat_id,
@@ -132,51 +142,71 @@ const send_message = async(req: Request, res: Response) => {
         res.status(400).json({ errors: ['Erro ao enviar mensagem.'] });
         return;
     }
-    
+    // coloca ela no chat
     chat.messages.push(new_message._id);
-    let chat_history: MessageBody[] = chat.messages.map((message: any) => {
-        if (message.sent_by === 'user') {
-            const message_conv: MessageBody = {
-                role: 'user',
-                content: message.content
-            }
-            return message_conv;
+
+    let chat_history: ChatRequestBody[] = []
+
+    // adiciona todas as mensagens
+    let messages_ids = chat.messages.map(message => message._id);
+    let messages_hist = await get_chat_messages(messages_ids.map(id => id.toString()));
+    chat_history = messages_hist.map(message => {
+        return {
+            role: message.sent_by,
+            content: message.content
         }
-        if(message.sent_by === 'assistant') {
-            const message_conv: MessageBody = {
-                role: 'assistant',
-                content: message.content
-            }
-            return message_conv;
-        }
-        return undefined;
-    }).filter((message): message is MessageBody => message !== undefined);
+    });
+    chat_history.push({
+        role: 'user',
+        content: message
+    });
+    // console.log(chat_history);
     const ai_message = await send_message_to_ai('llama3.1', chat_history, message);
-    if (typeof ai_message === 'object' && ai_message !== null && 'response' in ai_message) {
-        // console.log((ai_message as { response: string }).response);
-        if(!ai_message) {
-            res.status(400).json({ errors: ['Erro ao enviar mensagem.'] });
-            return;
-        }
-        const ai_response = await Message.create({
-            content: (ai_message as { response: string }).response,
-            chat: chat_id,
-            sent_by: 'assistant',
-            user_id: user_id
-        });
-        if(!ai_response) {
-            res.status(400).json({ errors: ['Erro ao enviar mensagem.'] });
-            return;
-        }
-        chat.messages.push(ai_response._id);
-        await chat.save();
-        res.status(201).json({ message: 'Mensagem enviada com sucesso.', ai_message: (ai_message as { response: string }).response });
-        return;
-    } else {
-        console.error('Unexpected AI message format:', ai_message);
+    //console.log(ai_message);
+
+    if(!ai_message) {
         res.status(400).json({ errors: ['Erro ao enviar mensagem.'] });
         return;
     }
+    const ai_response = await Message.create({
+        content: ai_message.message.content,
+        chat: chat_id,
+        sent_by: 'assistant',
+        user_id: user_id
+    });
+    if(!ai_response) {
+        res.status(400).json({ errors: ['Erro ao enviar mensagem.'] });
+        return;
+    }
+    chat.messages.push(ai_response._id);
+    await chat.save();
+    res.status(201).json({ message: 'Mensagem enviada com sucesso.', ai_message: ai_message.message.content });
+    return;
+    // if (typeof ai_message === 'object' && ai_message !== null && 'response' in ai_message) {
+    //     // console.log((ai_message as { response: string }).response);
+    //     if(!ai_message) {
+    //         res.status(400).json({ errors: ['Erro ao enviar mensagem.'] });
+    //         return;
+    //     }
+    //     const ai_response = await Message.create({
+    //         content: (ai_message as { response: string }).response,
+    //         chat: chat_id,
+    //         sent_by: 'assistant',
+    //         user_id: user_id
+    //     });
+    //     if(!ai_response) {
+    //         res.status(400).json({ errors: ['Erro ao enviar mensagem.'] });
+    //         return;
+    //     }
+    //     chat.messages.push(ai_response._id);
+    //     await chat.save();
+    //     res.status(201).json({ message: 'Mensagem enviada com sucesso.', ai_message: (ai_message as { response: string }).response });
+    //     return;
+    // } else {
+    //     console.error('Unexpected AI message format:', ai_message);
+    //     res.status(400).json({ errors: ['Erro ao enviar mensagem.'] });
+    //     return;
+    // }
 };
 
 const get_chat = async(req: Request, res: Response) => {
@@ -197,7 +227,8 @@ const delete_chat = async(req: Request, res: Response) => {
         return;
     }
     res.status(200).json({ message: 'Chat deletado com sucesso.' });
-}
+};
+
 
 
 export { register_user, login_user, logout_user, create_chat, get_all_user_chats, send_message, get_chat, delete_chat };
