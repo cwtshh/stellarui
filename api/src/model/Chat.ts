@@ -14,6 +14,10 @@ const ChatSchema = new Schema({
     created_at: {
         type: Date,
         default: Date.now
+    },
+    chat_sessionid: {
+        type: String,
+        default: ''
     }
 });
 
