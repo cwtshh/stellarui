@@ -8,6 +8,8 @@ import ChatCard from '../ChatCard/ChatCard'
 import { BsStars } from 'react-icons/bs'
 import logo from '../../assets/DPDF_Branca 1.png'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { FaUser, FaVideo } from 'react-icons/fa'
+import { IoChatboxEllipses } from 'react-icons/io5'
 
 const SideBar = () => {
     const { logout, user } = useAuth();
@@ -32,9 +34,15 @@ const SideBar = () => {
 
                 {isActivePage('/chat') ? (
 
-                    <button className='btn' onClick={() => navigate('/transcription')}>Transcrição de Vídeo</button>
+                    <button className='btn' onClick={() => navigate('/transcription')}>
+                        Transcrição de Vídeo
+                        <FaVideo />    
+                    </button>
                 ) : (
-                    <button className='btn' onClick={() => navigate('/chat')}>Voltar ao chat</button>
+                    <button className='btn' onClick={() => navigate('/chat')}>
+                        Voltar ao chat
+                        <IoChatboxEllipses />
+                    </button>
                 )}
 
 
@@ -50,13 +58,16 @@ const SideBar = () => {
                     <div className='flex flex-col gap-6 mt-2 overflow-y-scroll h-full max-h-[40rem]'>
                         { chats?.map((chat, index) => (
                             <ChatCard chat={chat} key={index} />
-                        ))}
+                        ))} 
                     </div>
                 </div>
             </div>
             <div className="dropdown dropdown-top flex flex-col">
-                <div tabIndex={0} role="button" className="btn m-1">{user?.name}</div>
-                <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                <div tabIndex={0} role="button" className="btn m-1">
+                    {user?.name}
+                    <FaUser />
+                </div>
+                <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-[90%] p-2 shadow absolute left-1/2 transform -translate-x-1/2">
                     <li>
                         <a>
                             <GrConfigure className='mr-2' />
