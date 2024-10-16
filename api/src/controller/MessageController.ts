@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { AI_ENDPOINT } from "../utils/constansts";
 import axios from "axios";
 
-const endpoint = 'https://4d22-131-72-222-133.ngrok-free.app'
+const endpoint = 'https://9d88-131-72-222-133.ngrok-free.app'
 
 interface MessageBody {
     role: string,
