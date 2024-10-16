@@ -2,7 +2,7 @@ import React from 'react';
 import Estela from '../../../src/assets/Estela.jpeg';
 
 const AssistantChatBubble = ({ message }) => {
-    const date = new Date().toLocaleString('pt-br');
+    const date = new Date(message.created_at).toLocaleString('pt-br');
 
     return (
         <div className="chat chat-start">

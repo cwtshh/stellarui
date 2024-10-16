@@ -7,10 +7,17 @@ import { useChat } from '../../context/ChatContext'
 import ChatCard from '../ChatCard/ChatCard'
 import { BsStars } from 'react-icons/bs'
 import logo from '../../assets/DPDF_Branca 1.png'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 const SideBar = () => {
     const { logout, user } = useAuth();
     const { chats, add_chat, lockChat } = useChat();
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const isActivePage = (path: string) => {
+        return location.pathname === path;
+    }
 
     return (
         <div className='bg-primary w-[20%] p-5 flex flex-col justify-between shadow-[4px_0_5px_rgba(0,0,0,0.50)] z-50'>
@@ -23,7 +30,15 @@ const SideBar = () => {
                     <img className='w-12' src={logo} alt="" />
                 </div>
 
-                <button className='btn'>Transcrição de Vídeo</button>
+                {isActivePage('/chat') ? (
+
+                    <button className='btn' onClick={() => navigate('/transcription')}>Transcrição de Vídeo</button>
+                ) : (
+                    <button className='btn' onClick={() => navigate('/chat')}>Voltar ao chat</button>
+                )}
+
+
+                
                 <button disabled={lockChat} className='btn' onClick={() => add_chat()}>
                     Criar novo chat
                     <HiMiniPencilSquare className='text-xl' />

@@ -11,7 +11,7 @@ const UserChatBubble = ( {message} : UserChatBubbleProps) => {
     return (
         <div className="chat chat-end">
             <div className="chat-image avatar"></div>
-            <div className="chat-bubble bg-secondary break-words whitespace-pre-wrap">{message.content}</div>
+            <div className="chat-bubble  bg-secondary max-w-[90rem] break-words whitespace-pre-wrap">{message.content}</div>
             <div className="chat-footer text-white opacity-50">{date}</div>
         </div>
     )
