@@ -26,6 +26,10 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
     const [ localMessages, setLocalMessages ] = useState<MessageType[]>([]);
 
+    const clearLocalMessages = () => {
+        setLocalMessages([]); // Limpa as mensagens locais
+      };
+
     const add_chat = async() => {
         if (lockChat) return;
         
@@ -118,7 +122,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     }, [user])
 
     return (
-        <ChatContext.Provider value={{ chats, selectedChat, add_chat, select_chat, send_message, delete_chat, localMessages, lockChat }}>
+        <ChatContext.Provider value={{ chats, selectedChat, add_chat, select_chat, send_message, delete_chat, localMessages, lockChat, clearLocalMessages }}>
             { children }
         </ChatContext.Provider>
     )
