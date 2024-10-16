@@ -112,6 +112,8 @@ interface MessageBody {
     content: string,
 }
 
+let url = "https://flowise.aidadpdf.cloud/api/v1/prediction/70873bc0-fd4d-4d77-9781-18178d0d38a6";
+
 const send_message = async(req: Request, res: Response) => {
 
     const { message, chat_id, user_id } = req.body;
@@ -124,11 +126,7 @@ const send_message = async(req: Request, res: Response) => {
         res.status(400).json({ errors: ['Chat não encontrado.'] });
         return;
     }
-
     
-
-
-    let url = "https://flowise.aidadpdf.cloud/api/v1/prediction/70873bc0-fd4d-4d77-9781-18178d0d38a6"
     const client = new FlowiseClient({
         baseUrl: 'https://flowise.aidadpdf.cloud',
     });
@@ -138,6 +136,45 @@ const send_message = async(req: Request, res: Response) => {
         question: message,
     });
 
+    if(chat.chat_sessionid === '') {
+        chat.chat_sessionid = prediction.sessionId;
+        await chat.save();
+    }
+
+    if(!prediction) {
+        res.status(400).json({ errors: ['Erro ao enviar mensagem.'] });
+        return;
+    }
+
+    const new_message = await Message.create({
+        content: message,
+        chat: chat_id,
+        sent_by: 'user',
+        user_id: user_id,
+    });
+    if(!new_message) {
+        res.status(400).json({ errors: ['Erro ao enviar mensagem.'] });
+        return;
+    }
+    const new_ai_message = await Message.create({
+        content: prediction.text,
+        chat: chat_id,
+        sent_by: 'assistant',
+        user_id: user_id,
+    });
+    if(!new_ai_message) {
+        res.status(400).json({ errors: ['Erro ao enviar mensagem.'] });
+        return;
+    }
+
+    chat.messages.push(new_message._id);
+    chat.messages.push(new_ai_message._id);
+
+    await chat.save();
+
+    console.log(prediction);
+
+    res.status(201).json({ message: 'Mensagem enviada com sucesso.', ai_message: prediction.text });
     // let variable = prediction.sourceDocuments[0].metadata.pdf.info.Title;
     // console.log(variable);
 

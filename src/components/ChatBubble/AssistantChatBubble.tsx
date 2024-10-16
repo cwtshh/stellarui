@@ -1,5 +1,5 @@
-import React from 'react'
-import Estela from '../../../src/assets/Estela.jpeg'
+import React from 'react';
+import Estela from '../../../src/assets/Estela.jpeg';
 
 const AssistantChatBubble = ({ message }) => {
     const date = new Date().toLocaleString('pt-br');
@@ -18,7 +18,19 @@ const AssistantChatBubble = ({ message }) => {
             {message === 'loading' ? (
                 <div className="w-5 h-5 rounded-full bg-green-500 animate-pulse"></div> // Mostra um indicador de carregamento
             ) : (
-                <div className="chat-bubble">{message.content}</div>
+                <div className="chat-bubble">
+                    {message.content.split('\n').map((line, index) => (
+                        <p key={index}>
+                            {line.trim().startsWith('*') ? (
+                                <ul className='list-disc' style={{ paddingLeft: '20px' }}>
+                                    <li>{line.trim().slice(1).trim()}</li>
+                                </ul>
+                            ) : (
+                                line
+                            )}
+                        </p>
+                    ))}
+                </div>
             )}
 
             <div className="chat-footer text-white opacity-50">{date}</div>

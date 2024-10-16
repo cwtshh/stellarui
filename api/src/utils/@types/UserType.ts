@@ -10,5 +10,6 @@ export interface MessageType {
     user_id: string,
     chat: string,
     sent_by: string,
-    created_at: Date
+    created_at: Date,
+    chat_sessionid: string
 }
