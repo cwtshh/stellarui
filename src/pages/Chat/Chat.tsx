@@ -7,7 +7,7 @@ import chatbg from '../../assets/chatbg.jpeg';
 import AssistantChatBubble from '../../components/ChatBubble/AssistantChatBubble';
 
 const Chat = () => {
-  const { selectedChat, send_message, localMessages } = useChat();
+  const { selectedChat, send_message, localMessages, lockChat, clearLocalMessages } = useChat();
   const [ model, setModel ] = useState('Gemma 2');
   const [ message, setMessage ] = useState('');
   const chat_date = new Date(selectedChat?.created_at ?? '').toLocaleString('pt-br');
@@ -35,6 +35,13 @@ const Chat = () => {
     }
   }, [selectedChat?.messages, localMessages]);
 
+  // Efeito para limpar mensagens locais ao mudar de chat
+  useEffect(() => {
+    if (selectedChat) {
+      clearLocalMessages(); // Função para limpar mensagens
+    }
+  }, [selectedChat]);
+
   // Função para ajustar a altura do textarea dinamicamente
   const adjustTextareaHeight = () => {
     if (textareaRef.current) {
@@ -44,7 +51,7 @@ const Chat = () => {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Enter' && !e.shiftKey && !lockChat) {
       e.preventDefault(); // Impede o comportamento padrão de nova linha
       handleMessage(e); // Envia a mensagem
     }
@@ -70,9 +77,14 @@ const Chat = () => {
       {selectedChat ? (
         [...selectedChat.messages, ...localMessages.filter(localMessage =>
           !selectedChat.messages.some(chatMessage => chatMessage.content === localMessage.content) // Comparando pelo conteúdo
-        )].map((message, index) => (
+        )].map((message, index, array) => (
           message.sent_by === 'user' ? (
-            <UserChatBubble message={message} key={index} />
+            <>
+              <UserChatBubble message={message} key={index} />
+              {lockChat && index === array.length - 1 && (
+                <AssistantChatBubble message="loading" key={`loading-${index}`} />
+              )}
+            </>
           ) : (
             <AssistantChatBubble message={message} key={index} />
           )
@@ -85,7 +97,6 @@ const Chat = () => {
         </div>
       )}
 
-        {/* Div invisível que marca o fim da lista de mensagens */}
         <div ref={messagesEndRef} /></div>
 
       <div className='w-full max-h-[250px] p-3'>
@@ -121,7 +132,7 @@ const Chat = () => {
               rows={1} // Começa com uma linha
               style={{ height: 'auto' }} // Estilo inicial para altura
             />
-            <button className='btn ml-2 h-full'>
+            <button disabled={lockChat} className='btn ml-2 h-full'>
               <BsSendFill className='text-2xl' />
             </button>
           </form>

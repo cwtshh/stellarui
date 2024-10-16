@@ -12,7 +12,8 @@ interface ChatContextType {
     select_chat: (chat_id: string) => void
     send_message: (message: string) => void
     delete_chat: (chat_id: string) => void
-    localMessages: MessageType[]
+    localMessages: MessageType[],
+    lockChat: boolean
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -20,11 +21,18 @@ const ChatContext = createContext<ChatContextType | undefined>(undefined);
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const [ chats, setChats ] = useState<ChatType[]>([]);
     const [ selectedChat, setSelectedChat ] = useState<ChatType | null>(null);
+    const [ lockChat, setLockChat ] = useState<boolean>(false);
     const { user } = useAuth();
 
     const [ localMessages, setLocalMessages ] = useState<MessageType[]>([]);
 
+    const clearLocalMessages = () => {
+        setLocalMessages([]); // Limpa as mensagens locais
+      };
+
     const add_chat = async() => {
+        if (lockChat) return;
+        
         await axios.post(`${BASE_API_URL}/user/chat/create`, { user_id: user?._id }, { withCredentials: true }).then(async(res) => {
             NotifyToast({ message: res.data.message, type: 'success' });
             fetch_user_chats();
@@ -56,9 +64,11 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const send_message = async(message: string) => {
-        if(!selectedChat || !user?._id) {
+        if(lockChat || !selectedChat || !user?._id) {
             return;
         }
+
+        setLockChat(true)
 
         const newMessage: MessageType = {
             content: message,
@@ -91,6 +101,9 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         }).catch(err => {
             NotifyToast({ message: err.response.data.errors[0], type: 'error' });
         })
+        .finally(() =>{
+            setLockChat(false)
+        })
     };
 
     const delete_chat = async(chat_id: string) => {
@@ -109,7 +122,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     }, [user])
 
     return (
-        <ChatContext.Provider value={{ chats, selectedChat, add_chat, select_chat, send_message, delete_chat, localMessages }}>
+        <ChatContext.Provider value={{ chats, selectedChat, add_chat, select_chat, send_message, delete_chat, localMessages, lockChat, clearLocalMessages }}>
             { children }
         </ChatContext.Provider>
     )

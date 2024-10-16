@@ -10,7 +10,7 @@ import logo from '../../assets/DPDF_Branca 1.png'
 
 const SideBar = () => {
     const { logout, user } = useAuth();
-    const { chats, add_chat } = useChat();
+    const { chats, add_chat, lockChat } = useChat();
 
     return (
         <div className='bg-primary w-[20%] p-5 flex flex-col justify-between shadow-[4px_0_5px_rgba(0,0,0,0.50)] z-50'>
@@ -23,11 +23,11 @@ const SideBar = () => {
                     <img className='w-12' src={logo} alt="" />
                 </div>
 
-                <button className='btn' onClick={() => add_chat()}>
+                <button className='btn'>Transcrição de Vídeo</button>
+                <button disabled={lockChat} className='btn' onClick={() => add_chat()}>
                     Criar novo chat
                     <HiMiniPencilSquare className='text-xl' />
                 </button>
-                <button className='btn'>Workspace</button>
 
                 <div>
                     <p className='font-bold text-white'>Chats Ativos</p>
