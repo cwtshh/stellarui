@@ -63,13 +63,11 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         }
     }
 
-    const send_message = async(message: string) => {
-        if(lockChat || !selectedChat || !user?._id) {
+    const send_message = async (message: string) => {
+        if (lockChat || !selectedChat || !user?._id) {
             return;
         }
-
-        setLockChat(true)
-
+    
         const newMessage: MessageType = {
             content: message,
             sent_by: 'user',
@@ -77,33 +75,38 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             _id: Math.random().toString(),
             chat: selectedChat._id,
             created_at: new Date().toISOString()
+        };
+    
+        setLocalMessages((prevMessages) => [...prevMessages, newMessage]);
+    
+        setLockChat(true);
+    
+        try {
+            const response = await axios.post(`${BASE_API_URL}/user/chat/send`, {
+                chat_id: selectedChat._id,
+                user_id: user?._id,
+                message
+            }, { withCredentials: true });
+    
+            const aiMessage: MessageType = {
+                content: response.data.ai_message,
+                sent_by: 'assistant',
+                _id: Math.random().toString(),
+                chat: selectedChat._id,
+                user_id: user?._id,
+                created_at: new Date().toISOString()
+            };
+    
+            setLocalMessages((prevMessages) => [...prevMessages, aiMessage]);
+    
+            const chatResponse = await axios.get(`${BASE_API_URL}/user/chat/${selectedChat._id}`, { withCredentials: true });
+            setSelectedChat(chatResponse.data);
+    
+        } catch (err) {
+            NotifyToast({ message: err.response?.data.errors[0] || 'Erro ao enviar a mensagem.', type: 'error' });
+        } finally {
+            setLockChat(false);
         }
-        setLocalMessages([...localMessages, newMessage]);
-        await axios.post(`${BASE_API_URL}/user/chat/send`, { chat_id: selectedChat._id, user_id: user?._id, message }, { withCredentials: true }).then(async(response) => {
-            fetch_user_chats();
-            console.log(response.data);
-
-                // Atualiza o chat com a nova resposta da AI
-                const aiMessage: MessageType = {
-                    content: response.data.ai_message,
-                    sent_by: 'assistant',
-                    _id: Math.random().toString(), // Outro ID temporário para a resposta da AI
-                    chat: selectedChat._id,
-                    user_id: user?._id,
-                    created_at: new Date().toISOString()
-                };
-
-                setLocalMessages([...localMessages, newMessage, aiMessage]);
-
-                await axios.get(`${BASE_API_URL}/user/chat/${selectedChat._id}`, { withCredentials: true }).then(res => {
-                    setSelectedChat(res.data);
-                });
-        }).catch(err => {
-            NotifyToast({ message: err.response.data.errors[0], type: 'error' });
-        })
-        .finally(() =>{
-            setLockChat(false)
-        })
     };
 
     const delete_chat = async(chat_id: string) => {

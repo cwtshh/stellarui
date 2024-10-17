@@ -2,7 +2,7 @@ import React from 'react'
 import Estela from '../../../src/assets/Estela.jpeg'
 
 const AssistantChatBubble = ({ message }) => {
-    const date = new Date().toLocaleString('pt-br');
+    const date = new Date(message.created_at).toLocaleString('pt-br');
 
     return (
         <div className="chat chat-start">
@@ -11,19 +11,20 @@ const AssistantChatBubble = ({ message }) => {
                     <img src={Estela} alt="Estela" />
                 </div>
             </div>
-            <div className="chat-header text-white">
-                Estela
-            </div>
+            <div className="chat-header text-white">Estela</div>
 
             {message === 'loading' ? (
-                <div className="w-5 h-5 rounded-full bg-green-500 animate-pulse"></div> // Mostra um indicador de carregamento
+                <div className="w-5 h-5 rounded-full bg-green-500 animate-pulse"></div>
             ) : (
-                <div className="chat-bubble">{message.content}</div>
+                <>
+                    <div className="chat-bubble">{message.content}</div>
+                    <div className="chat-footer text-white opacity-50">{date}</div>
+                </>
             )}
 
-            <div className="chat-footer text-white opacity-50">{date}</div>
         </div>
     );
-}
+};
+
 
 export default AssistantChatBubble;
