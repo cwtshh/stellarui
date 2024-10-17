@@ -28,32 +28,29 @@ const Chat = () => {
     }
   };
 
-  // Efeito para rolar automaticamente para o fim quando novas mensagens são adicionadas
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [selectedChat?.messages, localMessages]);
 
-  // Efeito para limpar mensagens locais ao mudar de chat
   useEffect(() => {
     if (selectedChat) {
-      clearLocalMessages(); // Função para limpar mensagens
+      clearLocalMessages();
     }
   }, [selectedChat]);
 
-  // Função para ajustar a altura do textarea dinamicamente
   const adjustTextareaHeight = () => {
     if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto'; // Reseta a altura
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // Ajusta a altura ao conteúdo
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey && !lockChat) {
-      e.preventDefault(); // Impede o comportamento padrão de nova linha
-      handleMessage(e); // Envia a mensagem
+      e.preventDefault();
+      handleMessage(e);
     }
   };
 
@@ -72,7 +69,7 @@ const Chat = () => {
         )}
       </div>
 
-      <div className='overflow-y-scroll flex flex-col w-full h-full p-6' style={{backgroundImage: `url(${chatbg})`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat"}}>
+      <div className='scroll-hidden overflow-y-scroll flex flex-col w-full h-full p-6' style={{backgroundImage: `url(${chatbg})`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat"}}>
         
       {selectedChat ? (
           [...selectedChat.messages, ...localMessages].map((message, index, array) => (
@@ -94,9 +91,6 @@ const Chat = () => {
               </div>
           </div>
       )}
-
-
-
 
         <div ref={messagesEndRef} /></div>
 
@@ -130,8 +124,8 @@ const Chat = () => {
               onKeyDown={handleKeyDown}
               className="textarea textarea-bordered w-full max-h-[200px] overflow-auto resize-none"
               placeholder="Pergunte o que quiser..."
-              rows={1} // Começa com uma linha
-              style={{ height: 'auto' }} // Estilo inicial para altura
+              rows={1}
+              style={{ height: 'auto' }}
             />
             <button disabled={lockChat} className='btn ml-2 h-full'>
               <BsSendFill className='text-2xl' />

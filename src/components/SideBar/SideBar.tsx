@@ -12,8 +12,8 @@ import { FaUser, FaVideo } from 'react-icons/fa'
 import { IoChatboxEllipses } from 'react-icons/io5'
 
 const SideBar = () => {
-    const { logout, user } = useAuth();
     const { chats, add_chat, lockChat } = useChat();
+    const { logout, user } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -44,8 +44,6 @@ const SideBar = () => {
                         <IoChatboxEllipses />
                     </button>
                 )}
-
-
                 
                 <button disabled={lockChat} className='btn' onClick={() => add_chat()}>
                     Criar novo chat
@@ -54,7 +52,7 @@ const SideBar = () => {
 
                 <div>
                     <p className='font-bold text-white'>Chats Ativos</p>
-                    <div className='flex flex-col gap-6 mt-2 overflow-y-scroll h-full max-h-[40rem]'>
+                    <div className='scroll-hidden flex flex-col gap-6 mt-2 overflow-y-scroll h-full max-h-[40rem]'>
                         { chats?.map((chat, index) => (
                             <ChatCard chat={chat} key={index} />
                         ))} 
@@ -91,9 +89,7 @@ const SideBar = () => {
             </div>
             {/* <button className='btn'>
                 USUARIO
-            </button> */}
-
-            
+            </button> */}           
         </div>
   )
 }

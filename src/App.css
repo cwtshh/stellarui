@@ -1,0 +1,6 @@
+.scroll-hidden::-webkit-scrollbar {
+    display: none; /* Esconde a barra de rolagem */
+}
+.scroll-hidden {
+    scrollbar-width: none; /* Esconde a barra de rolagem para Firefox */
+}
