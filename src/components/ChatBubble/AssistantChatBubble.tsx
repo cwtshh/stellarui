@@ -33,7 +33,7 @@ const AssistantChatBubble = ({ message }) => {
                 </div>
             )}
 
-            <div className="chat-footer text-white opacity-50">{date}</div>
+            <div className="chat-footer text-white opacity-50">{message === 'loading' ? <></> : <>{date}</>}</div>
         </div>
     );
 }
