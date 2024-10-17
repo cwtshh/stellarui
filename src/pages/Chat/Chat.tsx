@@ -75,27 +75,28 @@ const Chat = () => {
       <div className='overflow-y-scroll flex flex-col w-full h-full p-6' style={{backgroundImage: `url(${chatbg})`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat"}}>
         
       {selectedChat ? (
-        [...selectedChat.messages, ...localMessages.filter(localMessage =>
-          !selectedChat.messages.some(chatMessage => chatMessage.content === localMessage.content) // Comparando pelo conteúdo
-        )].map((message, index, array) => (
-          message.sent_by === 'user' ? (
-            <>
-              <UserChatBubble message={message} key={index} />
-              {lockChat && index === array.length - 1 && (
-                <AssistantChatBubble message="loading" key={`loading-${index}`} />
-              )}
-            </>
-          ) : (
-            <AssistantChatBubble message={message} key={index} />
-          )
-        ))
+          [...selectedChat.messages, ...localMessages].map((message, index, array) => (
+              <>
+                  {message.sent_by === 'user' ? (
+                      <UserChatBubble message={message} key={index}/>
+                  ) : (
+                      <AssistantChatBubble message={message} key={index}/>
+                  )}
+                  {lockChat && index === array.length - 1 && message.sent_by === 'user' && message.content !== array[index - 1]?.content && (
+                      <AssistantChatBubble message="loading" key="loading" />
+                  )}
+              </>
+          ))
       ) : (
-        <div className='flex'>
-          <div>
-            <h1 className='text-2xl text-white'>Selecione um chat para começar a conversar</h1>
+          <div className='flex'>
+              <div>
+                  <h1 className='text-2xl text-white'>Selecione um chat para começar a conversar</h1>
+              </div>
           </div>
-        </div>
       )}
+
+
+
 
         <div ref={messagesEndRef} /></div>
 

@@ -1,13 +1,12 @@
-import React from 'react'
-import { MessageType } from '../../utils/types/ChatType'
+import { MessageType } from '../../utils/types/ChatType';
 
 interface UserChatBubbleProps {
-    message: MessageType
+  message: MessageType;
 }
 
-const UserChatBubble = ( {message} : UserChatBubbleProps) => {
+const UserChatBubble = ({ message }: UserChatBubbleProps) => {
+  const date = new Date(message.created_at).toLocaleString('pt-br');
 
-    const date = new Date(message.created_at).toLocaleString('pt-br');
     return (
         <div className="chat chat-end">
             <div className="chat-image avatar"></div>
@@ -17,4 +16,4 @@ const UserChatBubble = ( {message} : UserChatBubbleProps) => {
     )
 }
 
-export default UserChatBubble
+export default UserChatBubble;
