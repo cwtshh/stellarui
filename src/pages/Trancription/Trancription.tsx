@@ -28,7 +28,9 @@ const Trancription = () => {
     <div className='h-full w-full flex flex-col  p-5'>
 
       <div className='flex items-center justify-center h-full'>
-        <div className='bg-primary text-white p-6 h-[50rem] w-[30%] rounded-xl flex flex-col gap-6 overflow-y-scroll shadow-xl'>
+        <div className=' text-white p-6 h-[50rem] w-[30%] rounded-xl flex flex-col gap-6'>
+
+        <div className='bg-primary p-6 scroll-hidden h-[50rem] w-[100%] rounded-xl flex flex-col gap-6 overflow-y-scroll shadow-xl'>
           
           {ding_ding.map((item, index) => {
             return <TranscriptionCard key={index} speaker={item.speaker} text={item.text} />
@@ -51,22 +53,25 @@ const Trancription = () => {
               CRAZYFROG - DING DING DING DING DING DING DING DING DING DING DING DING DING DING DING DING DING DING DING DING DING DING DING DING DING
             </p>
           </div> */}
+        </div>
 
 
+     
 
-
+        <div className='flex justify-center'>
+          <button className='btn btn-primary w-[200px] text-white p-6 rounded-xl h-full'>
+            Transcrição
+            <FaDownload />  
+          </button>
+        </div>
         </div>
         <div className='flex flex-col gap-5 h-full items-center justify-center p-6'>
           <video src={crazyFrog} className='w-full rounded-xl shadow-xl' controls></video>
         </div>
+        
       </div>
 
-      <div>
-        <button className='btn btn-primary text-white p-6 rounded-xl h-full'>
-          Transcrição
-          <FaDownload />  
-        </button>
-      </div>
+
 
     </div>
   )
