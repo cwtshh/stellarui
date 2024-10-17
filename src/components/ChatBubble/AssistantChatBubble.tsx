@@ -1,4 +1,3 @@
-import React from 'react'
 import Estela from '../../../src/assets/Estela.jpeg'
 
 const AssistantChatBubble = ({ message }) => {
