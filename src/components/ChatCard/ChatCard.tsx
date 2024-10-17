@@ -2,6 +2,7 @@ import React from 'react';
 import { ChatType } from '../../utils/types/ChatType';
 import { useChat } from '../../context/ChatContext';
 import { FaTrash } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom'
 
 interface ChatCardProps {
   chat: ChatType;
@@ -11,6 +12,7 @@ const ChatCard = ({ chat }: ChatCardProps) => {
   const created_at = new Date(chat.created_at);
   const { select_chat, delete_chat, lockChat, selectedChat } = useChat(); // Adicione selectedChat aqui
   const first_user_message = chat.messages[0]?.content;
+  const navigate = useNavigate();
 
   const isActive = selectedChat?._id === chat._id;
 
@@ -18,7 +20,10 @@ const ChatCard = ({ chat }: ChatCardProps) => {
     <div
       role='button'
       disabled={lockChat}
-      onClick={() => select_chat(chat._id)}
+      onClick={() => {
+        select_chat(chat._id); // Seleciona o chat
+        navigate('/chat'); // Navega para a rota de chat
+      }}
       className={`card h-20 shadow-xl p-0 m-0 btn ${isActive ? 'bg-neutral text-white hover:bg-secondary' : 'bg-base-100'}`}
     >
       <div>
