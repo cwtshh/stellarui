@@ -10,12 +10,10 @@ const AssistantChatBubble = ({ message }) => {
                     <img src={Estela} alt="Estela" />
                 </div>
             </div>
-            <div className="chat-header text-white">
-                Estela
-            </div>
+            <div className="chat-header text-white">Estela</div>
 
             {message === 'loading' ? (
-                <div className="w-5 h-5 rounded-full bg-green-500 animate-pulse"></div> // Mostra um indicador de carregamento
+                <div className="w-5 h-5 rounded-full bg-green-500 animate-pulse"></div>
             ) : (
                 <div className="chat-bubble">
                     {message.content.split('\n').map((line: string, index: number) => (
@@ -35,6 +33,7 @@ const AssistantChatBubble = ({ message }) => {
             <div className="chat-footer text-white opacity-50">{message === 'loading' ? <></> : <>{date}</>}</div>
         </div>
     );
-}
+};
+
 
 export default AssistantChatBubble;
