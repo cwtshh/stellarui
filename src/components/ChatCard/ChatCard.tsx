@@ -12,7 +12,6 @@ const ChatCard = ({ chat }: ChatCardProps) => {
   const { select_chat, delete_chat, lockChat, selectedChat } = useChat(); // Adicione selectedChat aqui
   const first_user_message = chat.messages[0]?.content;
 
-  // Verifica se o chat atual é o selecionado
   const isActive = selectedChat?._id === chat._id;
 
   return (
@@ -20,7 +19,7 @@ const ChatCard = ({ chat }: ChatCardProps) => {
       role='button'
       disabled={lockChat}
       onClick={() => select_chat(chat._id)}
-      className={`card h-20 shadow-xl btn ${isActive ? 'bg-neutral text-white' : 'bg-base-100'}`}
+      className={`card h-20 shadow-xl btn ${isActive ? 'bg-neutral text-white hover:bg-secondary' : 'bg-base-100'}`}
     >
       <div>
         <div className="card-body flex items-start justify-start w-full">
@@ -34,7 +33,7 @@ const ChatCard = ({ chat }: ChatCardProps) => {
         <button
           disabled={lockChat}
           onClick={() => delete_chat(chat._id)}
-          className='btn hover:bg-primary hover:text-white'
+          className='btn hover:bg-[red] hover:text-white border-none'
         >
           <FaTrash />
         </button>

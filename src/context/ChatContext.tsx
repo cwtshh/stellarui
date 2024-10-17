@@ -66,7 +66,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-
     const send_message = async (message: string) => {
         if (lockChat || !selectedChat || !user?._id) {
             return;
@@ -81,6 +80,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             created_at: new Date().toISOString()
         };
     
+        // Atualiza as mensagens locais
         setLocalMessages((prevMessages) => [...prevMessages, newMessage]);
         setLockChat(true);
     
@@ -90,7 +90,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                 user_id: user?._id,
                 message
             }, { withCredentials: true });
-
+    
             const aiMessage: MessageType = {
                 content: response.data.ai_message,
                 sent_by: 'assistant',
@@ -99,10 +99,14 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                 user_id: user?._id,
                 created_at: new Date().toISOString()
             };
-
+    
+            // Atualiza o estado do chat com a nova mensagem do usuário
             setLocalMessages((prevMessages) => [...prevMessages, aiMessage]);
+            
+            // Recarrega o chat atualizado
             const chatResponse = await axios.get(`${BASE_API_URL}/user/chat/${selectedChat._id}`, { withCredentials: true });
             setSelectedChat(chatResponse.data);
+            fetch_user_chats()
             
         } catch (err) {
             NotifyToast({ message: err.response?.data.errors[0] || 'Erro ao enviar a mensagem.', type: 'error' });
@@ -110,6 +114,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             setLockChat(false);
         }
     };
+    
 
     const delete_chat = async(chat_id: string) => {
         await axios.delete(`${BASE_API_URL}/user/chat/${chat_id}`, { withCredentials: true }).then(() => {
