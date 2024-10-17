@@ -32,7 +32,7 @@ services:
       - stellar_db
 
   stellar_db:
-    container_name: stellar_db
+    container_name: mongo_db
     image: mongo
     restart: always
     env_file:
