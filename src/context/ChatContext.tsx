@@ -14,50 +14,66 @@ interface ChatContextType {
     delete_chat: (chat_id: string) => void,
     localMessages: MessageType[],
     lockChat: boolean,
+    clearLocalMessages: () => void, // Adicionei clearLocalMessages na interface
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
-    const [ chats, setChats ] = useState<ChatType[]>([]);
-    const [ selectedChat, setSelectedChat ] = useState<ChatType | null>(null);
-    const [ lockChat, setLockChat ] = useState<boolean>(false);
+    const [chats, setChats] = useState<ChatType[]>([]);
+    const [selectedChat, setSelectedChat] = useState<ChatType | null>(null);
+    const [lockChat, setLockChat] = useState<boolean>(false);
     const { user } = useAuth();
 
-    const [ localMessages, setLocalMessages ] = useState<MessageType[]>([]);
+    const [localMessages, setLocalMessages] = useState<MessageType[]>([]);
 
     const clearLocalMessages = () => {
-        setLocalMessages([]); // Limpa as mensagens locais
+        setLocalMessages([]);
     };
 
-    const add_chat = async() => {
+    const add_chat = async () => {
         if (lockChat) return;
-
-        await axios.post(`${BASE_API_URL}/user/chat/create`, { user_id: user?._id }, { withCredentials: true }).then(async(res) => {
-            NotifyToast({ message: res.data.message, type: 'success' });
-            fetch_user_chats();
-        }).catch(err => {
-            NotifyToast({ message: err.response.data.errors[0], type: 'error' });
-            console.log(err);
-        });
+    
+        await axios.post(`${BASE_API_URL}/user/chat/create`, { user_id: user?._id }, { withCredentials: true })
+            .then(async (res) => {
+                NotifyToast({ message: res.data.message, type: 'success' });
+                // Defina o novo chat como selecionado
+                setSelectedChat(res.data.chat); // Supondo que o chat criado esteja na resposta
+                fetch_side(); // Você ainda pode chamar para atualizar a lista
+            })
+            .catch(err => {
+                NotifyToast({ message: err.response.data.errors[0], type: 'error' });
+                console.log(err);
+            });
     };
+    
 
-    const fetch_user_chats = async() => {
+    const fetch_side = async () => {
         if (!user) {
             return;
         }
         await axios.get(`${BASE_API_URL}/user/chat/all/${user?._id}`, { withCredentials: true }).then(res => {
-            const reversedChats = res.data.reverse(); // Inverte a lista para que o último chat fique primeiro
+            const reversedChats = res.data.reverse();
             setChats(reversedChats);
-    
-            // Se houver chats, selecione o último
+
             if (reversedChats.length > 0) {
-                setSelectedChat(reversedChats[0]); // Seleciona o último chat
+                setSelectedChat(reversedChats[0]);
             }
         }).catch(err => {
             NotifyToast({ message: err.response.data.errors[0], type: 'error' });
         });
-    }    
+    }
+
+    const fetch_user_chats = async () => {
+        if (!user) {
+            return;
+        }
+        await axios.get(`${BASE_API_URL}/user/chat/all/${user?._id}`, { withCredentials: true }).then(res => {
+            setChats(res.data.reverse());
+        }).catch(err => {
+            NotifyToast({ message: err.response.data.errors[0], type: 'error' });
+        });
+    }
 
     const select_chat = (chat_id: string) => {
         const chat = chats.find(chat => chat._id === chat_id);
@@ -70,7 +86,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         if (lockChat || !selectedChat || !user?._id) {
             return;
         }
-    
+
         const newMessage: MessageType = {
             content: message,
             sent_by: 'user',
@@ -79,18 +95,17 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             chat: selectedChat._id,
             created_at: new Date().toISOString()
         };
-    
-        // Atualiza as mensagens locais
+
         setLocalMessages((prevMessages) => [...prevMessages, newMessage]);
         setLockChat(true);
-    
+
         try {
             const response = await axios.post(`${BASE_API_URL}/user/chat/send`, {
                 chat_id: selectedChat._id,
                 user_id: user?._id,
                 message
             }, { withCredentials: true });
-    
+
             const aiMessage: MessageType = {
                 content: response.data.ai_message,
                 sent_by: 'assistant',
@@ -99,24 +114,20 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                 user_id: user?._id,
                 created_at: new Date().toISOString()
             };
-    
-            // Atualiza o estado do chat com a nova mensagem do usuário
+
             setLocalMessages((prevMessages) => [...prevMessages, aiMessage]);
-            
-            // Recarrega o chat atualizado
-            const chatResponse = await axios.get(`${BASE_API_URL}/user/chat/${selectedChat._id}`, { withCredentials: true });
-            setSelectedChat(chatResponse.data);
+
+            await axios.get(`${BASE_API_URL}/user/chat/${selectedChat._id}`, { withCredentials: true });
             fetch_user_chats()
-            
+
         } catch (err) {
             NotifyToast({ message: err.response?.data.errors[0] || 'Erro ao enviar a mensagem.', type: 'error' });
         } finally {
             setLockChat(false);
         }
     };
-    
 
-    const delete_chat = async(chat_id: string) => {
+    const delete_chat = async (chat_id: string) => {
         await axios.delete(`${BASE_API_URL}/user/chat/${chat_id}`, { withCredentials: true }).then(() => {
             fetch_user_chats();
             setSelectedChat(null);
@@ -129,11 +140,12 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
     useEffect(() => {
         fetch_user_chats();
+        fetch_side();
     }, [user]);
 
     return (
         <ChatContext.Provider value={{ chats, selectedChat, add_chat, select_chat, send_message, delete_chat, localMessages, lockChat, clearLocalMessages }}>
-            { children }
+            {children}
         </ChatContext.Provider>
     );
 };
