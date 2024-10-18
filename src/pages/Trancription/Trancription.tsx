@@ -4,6 +4,7 @@ import { TranscriptionCard } from '../../components/TranscriptionCard/Transcript
 import { NotifyToast } from '../../components/Toast/Toast';
 import axios from 'axios';
 import chatbg from '../../assets/chatbg.jpeg';
+import { FaPlusCircle } from "react-icons/fa";
 
 interface SegmentsBody {
   id: number;
@@ -34,6 +35,16 @@ const Trancription = () => {
   
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const transcriptionRefs = useRef<(HTMLDivElement | null)[]>([]); // Ref para armazenar os cards
+
+  const [showMessage, setShowMessage] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowMessage(true);
+    }, 9000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -144,26 +155,37 @@ const Trancription = () => {
           )}
 
           {loading && (
-            <>
+              <>
               <div className="flex items-center flex-col justify-center h-64">
-                <p className='text-white'>Transcrevendo:</p>
-                <progress className="progress w-56 bg-secondary"></progress>
-                <p className='text-[#307bf8]'>{file?.name}</p>
+                <p className='text-white font-bold text-3xl'>Transcrevendo</p>
+                {showMessage && (
+                  <p className='text-white italic'>Isso pode levar algum tempo...</p>
+                )}
+                <span className="bg-white loading loading-dots loading-lg"></span>
+                <p className='text-[#307bf8] font-bold'>{file?.name}</p>
               </div>
             </>
           )}
 
           {videoUrl && !loading && (
-            <video
-              ref={videoRef}
-              src={videoUrl}
-              className='rounded-xl shadow-xl'
-              style={{ width: '100%', height: 'auto', maxHeight: '100%' }}
-              controls
-              preload="false"
-              muted
-              onTimeUpdate={handleTimeUpdate}
-            />
+            <>
+              <video
+                ref={videoRef}
+                src={videoUrl}
+                className='rounded-xl shadow-xl'
+                style={{ width: '100%', height: 'auto', maxHeight: '100%' }}
+                controls
+                preload="false"
+                muted
+                onTimeUpdate={handleTimeUpdate}
+              />
+              <div className='flex justify-center items-center w-[500px]'>
+              <button onClick={() => {window.location.reload()}} className='btn btn-primary w-[300px] flex justify-center items-center text-white p-6 rounded-xl h-full'>
+                Transcrever Novo
+                <FaPlusCircle />
+              </button>
+            </div>
+            </>
           )}
         </div>
       </div>
