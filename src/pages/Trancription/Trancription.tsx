@@ -104,7 +104,7 @@ const Trancription = () => {
               <input
                 type="file"
                 onChange={handleFileChange}
-                className="file-input file-input-bordered w-full max-w-xs"
+                className="file-input file-input-bordered border-none w-full max-w-xs"
               />
             </div>
           )}
