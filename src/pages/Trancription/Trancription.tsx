@@ -6,6 +6,7 @@ import axios from 'axios';
 import chatbg from '../../assets/chatbg.jpeg';
 import { FaPlusCircle } from "react-icons/fa";
 import jsPDF from 'jspdf';
+import { BASE_TRANSCRIPTION_API_URL } from '../../utils/constants';
 
 interface SegmentsBody {
   id: number;
@@ -29,7 +30,7 @@ interface ResponseBody {
 
 const Trancription = () => {
   const [file, setFile] = useState<File | null>(null);
-  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [videoUrl, setVideoUrl] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
   const [segments, setSegments] = useState<any[]>([]);
   const [currentTime, setCurrentTime] = useState<number>(0);
@@ -61,7 +62,7 @@ const Trancription = () => {
       formData.append('file', file);
       
       try {
-        const response: any = await axios.post('https://d855-131-72-222-133.ngrok-free.app/upload-video/', formData);
+        const response: any = await axios.post(`${BASE_TRANSCRIPTION_API_URL}/upload-video/`, formData);
 
         let segment_list = [];
         for(let i = 0; i < response.data.result.segments.length; i++) {
@@ -158,7 +159,7 @@ const Trancription = () => {
             })}
           </div>
           <div className='flex justify-center items-center w-[500px]'>
-            <button onClick={() => downloadTranscriptionPDF(segments)} disabled={loading} className='btn btn-primary w-[300px] flex justify-center items-center text-white p-6 rounded-xl h-full'>
+            <button onClick={() => downloadTranscriptionPDF(segments)} disabled={loading || !videoUrl} className='btn btn-primary w-[300px] flex justify-center items-center text-white p-6 rounded-xl h-full'>
               Transcrição
               <FaDownload />
             </button>
@@ -189,18 +190,17 @@ const Trancription = () => {
             </>
           )}
 
+          <video
+            ref={videoRef}
+            src={videoUrl}
+            className={`${loading || !videoUrl ? 'hidden' : ''} rounded-xl shadow-xl`}
+            style={{ width: '100%', height: 'auto', maxHeight: '100%' }}
+            controls
+            preload="false"
+            onTimeUpdate={handleTimeUpdate}
+          />
           {videoUrl && !loading && (
             <>
-              <video
-                ref={videoRef}
-                src={videoUrl}
-                className='rounded-xl shadow-xl'
-                style={{ width: '100%', height: 'auto', maxHeight: '100%' }}
-                controls
-                preload="false"
-                muted
-                onTimeUpdate={handleTimeUpdate}
-              />
               <div className='flex justify-center items-center w-[500px]'>
               <button onClick={() => {window.location.reload()}} className='btn btn-primary w-[300px] flex justify-center items-center text-white p-6 rounded-xl h-full'>
                 Transcrever Novo
