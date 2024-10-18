@@ -86,23 +86,23 @@ const Trancription = () => {
     <div className='h-full w-full flex flex-col p-5'>
       {file ? (
         <>
-          <div className='flex items-center justify-center h-full'>
-            <div className='text-white p-6 h-[50rem] w-[30%] rounded-xl flex flex-col gap-6'>
-              <div className='bg-primary p-6 scroll-hidden h-[50rem] w-[100%] rounded-xl flex flex-col gap-6 overflow-y-scroll shadow-xl'>
+          <div className='flex items-start justify-center h-full gap-[95px]'>
+            <div className='text-white p-6 h-vh w-[30%] rounded-xl flex flex-col gap-7'>
+              <div className='bg-primary p-6 scroll-hidden h-[800px] w-[500px] rounded-xl flex flex-col gap-6 overflow-y-scroll shadow-xl'>
                 {segments.map((item: any, index: number) => {
                   return (
                     <TranscriptionCard key={index} text={item.text} speaker='Speaker' />
                   )
                 })}
               </div>
-              <div className='flex justify-center'>
-                <button className='btn btn-primary w-[200px] text-white p-6 rounded-xl h-full'>
+              <div className='flex justify-center items-center w-[500px]'>
+                <button className='btn btn-primary w-[300px] flex justify-center items-center text-white p-6 rounded-xl h-full'>
                   Transcrição
                   <FaDownload />
                 </button>
               </div>
             </div>
-            <div className='flex flex-col gap-5 h-full items-center justify-center p-6'>
+            <div className='flex flex-col gap-5 w-[900px] h-[700px] items-center justify-center p-6'>
               <p>{file.name}</p>
               {loading ? (
                 <div className="flex items-center justify-center h-64">
@@ -112,7 +112,7 @@ const Trancription = () => {
                 videoUrl && (
                   <video 
                     src={videoUrl} 
-                    className='w-full rounded-xl shadow-xl' 
+                    className='rounded-xl shadow-xl w-[100%] h-[100%]' 
                     controls 
                     preload="false" // Carregamento antecipado
                     muted 
