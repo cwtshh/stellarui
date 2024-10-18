@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FaDownload } from 'react-icons/fa';
 import { TranscriptionCard } from '../../components/TranscriptionCard/TranscriptionCard';
 import { NotifyToast } from '../../components/Toast/Toast';
@@ -30,6 +30,8 @@ const Trancription = () => {
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [ segments, setSegments ] = useState<any[]>([]);
+
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -79,14 +81,22 @@ const Trancription = () => {
     }
   }, [file]);
 
+  const seekToTime = (time: number) => {
+    if (videoRef.current) {
+      videoRef.current.currentTime = time;
+      videoRef.current.play(); // Opcional, para começar a reproduzir
+    }
+  };
+
   return (
-    <div className='h-full w-full flex flex-col p-5' style={{ backgroundImage: `url(${chatbg})`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat" }}>
+    <div className='h-full w-full overflow-hidden flex flex-col p-5' style={{ backgroundImage: `url(${chatbg})`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat" }}>
       <div className='flex items-start justify-center h-full gap-[95px]'>
         <div className='text-white p-6 h-vh w-[30%] rounded-xl flex flex-col gap-7'>
-          <div className='bg-base-100 p-6 scroll-hidden h-[800px] w-[500px] rounded-xl flex flex-col gap-6 overflow-y-scroll shadow-xl'>
+          <div className='bg-base-100 p-6 scroll-hidden h-[780px] w-[500px] rounded-xl flex flex-col gap-6 overflow-y-scroll shadow-xl'>
             {segments.map((item: any, index: number) => {
+              console.log(item);
               return (
-                <TranscriptionCard key={index} text={item.text} speaker='Speaker' />
+                <TranscriptionCard key={index} TextInfo={item} onClick={seekToTime} />
               )
             })}
           </div>
@@ -120,6 +130,7 @@ const Trancription = () => {
 
           {videoUrl && !loading && (
             <video
+              ref={videoRef}
               src={videoUrl}
               className='rounded-xl shadow-xl'
               style={{ width: '100%', height: 'auto', maxHeight: '100%' }}
