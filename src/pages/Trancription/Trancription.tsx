@@ -4,6 +4,7 @@ import { TranscriptionCard } from '../../components/TranscriptionCard/Transcript
 import { NotifyToast } from '../../components/Toast/Toast';
 import axios from 'axios';
 import chatbg from '../../assets/chatbg.jpeg';
+import jsPDF from 'jspdf';
 
 interface SegmentsBody {
   id: number;
@@ -88,20 +89,41 @@ const Trancription = () => {
     }
   };
 
+  const time_span = (seconds: number) => {
+    let h = Math.floor(seconds / 3600);
+    let m = Math.floor(seconds % 3600 / 60);
+    let s = Math.floor(seconds % 3600 % 60);
+
+    return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  };
+
+  const downloadTranscriptionPDF = (segments: any[]) => {
+    const document = new jsPDF();
+    
+    document.text(`Transcrição do arquivo ${file?.name}`, 105, 10, { align: 'center' });
+    segments.forEach((item, index) => {
+      const times_stamp = time_span(item.start) + ' - ' + time_span(item.end);
+      document.text(`${times_stamp} - ${item.text}`, 10, 20 + (index * 10));
+    });
+
+    document.save('transcription.pdf');
+  }
+
+  console.log(segments);
+
   return (
     <div className='h-full w-full overflow-hidden flex flex-col p-5' style={{ backgroundImage: `url(${chatbg})`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat" }}>
       <div className='flex items-start justify-center h-full gap-[95px]'>
         <div className='text-white p-6 h-vh w-[30%] rounded-xl flex flex-col gap-7'>
           <div className='bg-base-100 p-6 scroll-hidden h-[780px] w-[500px] rounded-xl flex flex-col gap-6 overflow-y-scroll shadow-xl'>
             {segments.map((item: any, index: number) => {
-              console.log(item);
               return (
                 <TranscriptionCard key={index} TextInfo={item} onClick={seekToTime} />
               )
             })}
           </div>
           <div className='flex justify-center items-center w-[500px]'>
-            <button className='btn btn-primary w-[300px] flex justify-center items-center text-white p-6 rounded-xl h-full'>
+            <button onClick={() => downloadTranscriptionPDF(segments)} disabled={loading} className='btn btn-primary w-[300px] flex justify-center items-center text-white p-6 rounded-xl h-full'>
               Transcrição
               <FaDownload />
             </button>
