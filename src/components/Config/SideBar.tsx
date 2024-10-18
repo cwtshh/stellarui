@@ -3,16 +3,20 @@ import { Outlet, Link } from 'react-router-dom';
 
 export default function Config() {
   return (
-    <div className="flex h-full w-full">
-      <div className="w-80 bg-base-200 p-4">
-        <ul className="menu text-base-content">
-          <li><Link to="/configuracoes/geral">General</Link></li>
-          <li><Link to="/configuracoes/perfil">Perfil</Link></li>
-          <li><Link to="/configuracoes/AdminPainel">Admin Painel</Link></li>
-          <li><Link to="/configuracoes/chats">Chats</Link></li>
+    <div className="flex h-screen w-screen bg-green-900">
+      {/* Sidebar */}
+      <div className="w-64 bg-green-700 p-6 shadow-lg">
+        <h2 className="text-2xl font-bold text-green-50 mb-6">Settings</h2>
+        <ul className="space-y-4">
+          <li><Link to="/configuracoes/geral" className="text-green-200 hover:text-green-100 transition-colors duration-200">General</Link></li>
+          <li><Link to="/configuracoes/perfil" className="text-green-200 hover:text-green-100 transition-colors duration-200">Profile</Link></li>
+          <li><Link to="/configuracoes/AdminPainel" className="text-green-200 hover:text-green-100 transition-colors duration-200">Admin Panel</Link></li>
+          <li><Link to="/configuracoes/chats" className="text-green-200 hover:text-green-100 transition-colors duration-200">Chats</Link></li>
         </ul>
       </div>
-      <div className="flex-1 p-4">
+
+      {/* Main Content */}
+      <div className="flex-1 p-8 bg-green-800 shadow-inner rounded-lg">
         <Outlet />
       </div>
     </div>

@@ -45,8 +45,6 @@ const SideBar = () => {
                     </button>
                 )}
 
-
-                
                 <button disabled={lockChat} className='btn' onClick={() => add_chat()}>
                     Criar novo chat
                     <HiMiniPencilSquare className='text-xl' />

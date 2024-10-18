@@ -8,15 +8,15 @@ export default function Geral() {
   };
 
   return (
-    <div className='max-w-md mx-auto bg-gray-800 shadow-lg rounded-lg p-6'>
-      <h2 className="text-2xl font-bold mb-6 text-gray-100">General Settings</h2>
+    <div className="max-w-md mx-auto bg-green-800 shadow-lg rounded-lg p-6">
+      <h2 className="text-2xl font-bold mb-6 text-green-50">General Settings</h2>
       <div className="mb-4">
-        <label htmlFor="language" className="block text-sm font-medium text-gray-300 mb-2">Language</label>
+        <label htmlFor="language" className="block text-sm font-medium text-green-200 mb-2">Language</label>
         <select
           id="language"
           value={language}
           onChange={handleLanguageChange}
-          className="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 focus:ring-blue-500 focus:border-blue-500"
+          className="w-full p-2 bg-green-700 border border-green-600 rounded-md text-green-100 focus:ring-green-400 focus:border-green-400"
         >
           <option value="">Select a language</option>
           <option value="en">English</option>
@@ -26,14 +26,14 @@ export default function Geral() {
         </select>
       </div>
       <div className="mb-4">
-        <label htmlFor="systemPrompt" className="block text-sm font-medium text-gray-300 mb-2">System Prompt</label>
+        <label htmlFor="systemPrompt" className="block text-sm font-medium text-green-200 mb-2">System Prompt</label>
         <input
           type="text"
           id="systemPrompt"
-          className="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-gray-100 focus:ring-blue-500 focus:border-blue-500"
+          className="w-full p-2 bg-green-700 border border-green-600 rounded-md text-green-100 focus:ring-green-400 focus:border-green-400"
         />
       </div>
-      <button className="w-full bg-blue-600 text-gray-100 py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-200">
+      <button className="w-full bg-green-600 text-green-50 py-2 px-4 rounded-md hover:bg-green-700 transition-colors duration-200">
         Save
       </button>
     </div>
