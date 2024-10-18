@@ -29,9 +29,11 @@ const Trancription = () => {
   const [file, setFile] = useState<File | null>(null);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [ segments, setSegments ] = useState<any[]>([]);
-
+  const [segments, setSegments] = useState<any[]>([]);
+  const [currentTime, setCurrentTime] = useState<number>(0);
+  
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const transcriptionRefs = useRef<(HTMLDivElement | null)[]>([]); // Ref para armazenar os cards
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -47,14 +49,7 @@ const Trancription = () => {
       formData.append('file', file);
       
       try {
-        const response: any = await axios.post('http://0.0.0.0:8045/upload-video/', formData);
-
-        console.log(response.data);
-
-        // response.data.result.segments.map((item: any) => {
-        //   console.log(item);
-        //   setSegments([...segments, item]);
-        // })
+        const response: any = await axios.post('https://d855-131-72-222-133.ngrok-free.app/upload-video/', formData);
 
         let segment_list = [];
         for(let i = 0; i < response.data.result.segments.length; i++) {
@@ -84,9 +79,27 @@ const Trancription = () => {
   const seekToTime = (time: number) => {
     if (videoRef.current) {
       videoRef.current.currentTime = time;
-      videoRef.current.play(); // Opcional, para começar a reproduzir
+      videoRef.current.play();
     }
   };
+
+  // Atualizar o tempo atual do vídeo
+  const handleTimeUpdate = () => {
+    if (videoRef.current) {
+      setCurrentTime(Number(videoRef.current.currentTime.toFixed(2)));
+    }
+  };
+
+  // Rolagem automática para o item ativo
+  useEffect(() => {
+    const activeIndex = segments.findIndex(
+      (item) => currentTime >= item.start && currentTime <= item.end
+    );
+
+    if (activeIndex !== -1 && transcriptionRefs.current[activeIndex]) {
+      transcriptionRefs.current[activeIndex]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [currentTime, segments]);
 
   return (
     <div className='h-full w-full overflow-hidden flex flex-col p-5' style={{ backgroundImage: `url(${chatbg})`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat" }}>
@@ -94,9 +107,20 @@ const Trancription = () => {
         <div className='text-white p-6 h-vh w-[30%] rounded-xl flex flex-col gap-7'>
           <div className='bg-base-100 p-6 scroll-hidden h-[780px] w-[500px] rounded-xl flex flex-col gap-6 overflow-y-scroll shadow-xl'>
             {segments.map((item: any, index: number) => {
-              console.log(item);
               return (
-                <TranscriptionCard key={index} TextInfo={item} onClick={seekToTime} />
+                <TranscriptionCard
+                ref={(el) => (transcriptionRefs.current[index] = el)}
+                key={index}
+                className={
+                  currentTime >= item.start &&
+                  (index === segments.length - 1 || currentTime <= item.end)
+                    ? 'bg-primary flex p-5 rounded-xl hover:bg-secondary transition-colors'
+                    : 'bg-[#005e15] p-5 flex rounded-xl hover:bg-secondary transition-colors'
+                }
+                TextInfo={item}
+                onClick={seekToTime}
+              />
+              
               )
             })}
           </div>
@@ -122,8 +146,9 @@ const Trancription = () => {
           {loading && (
             <>
               <div className="flex items-center flex-col justify-center h-64">
-                <p className='text-white'>{file?.name}</p>
+                <p className='text-white'>Transcrevendo:</p>
                 <progress className="progress w-56 bg-secondary"></progress>
+                <p className='text-[#307bf8]'>{file?.name}</p>
               </div>
             </>
           )}
@@ -137,12 +162,12 @@ const Trancription = () => {
               controls
               preload="false"
               muted
+              onTimeUpdate={handleTimeUpdate}
             />
           )}
         </div>
       </div>
     </div>
-
   );
 };
 
