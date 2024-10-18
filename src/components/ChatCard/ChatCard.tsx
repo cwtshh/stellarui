@@ -38,7 +38,7 @@ const ChatCard = ({ chat }: ChatCardProps) => {
         <button
           disabled={lockChat}
           onClick={() => delete_chat(chat._id)}
-          className='btn hover:bg-[red] hover:text-white border-none'
+          className='btn hover:bg-[#bd0012] hover:text-white border-none'
         >
           <FaTrash />
         </button>
