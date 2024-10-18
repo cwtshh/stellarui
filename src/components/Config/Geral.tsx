@@ -8,7 +8,7 @@ export default function Geral() {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-green-800 shadow-lg rounded-lg p-6">
+    <div className="max-w-md mx-auto bg-green-500 shadow-lg rounded-lg p-6">
       <h2 className="text-2xl font-bold mb-6 text-green-50">General Settings</h2>
       <div className="mb-4">
         <label htmlFor="language" className="block text-sm font-medium text-green-200 mb-2">Language</label>
