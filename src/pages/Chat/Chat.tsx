@@ -12,7 +12,7 @@ const Chat = () => {
   const chat_date = new Date(selectedChat?.created_at ?? '').toLocaleString('pt-br');
   const [model, setModel] = useState('Gemma 2');
   const [message, setMessage] = useState('');
-  const [previwFile, setPreviwFile] = useState(null);
+  const [previewFile, setPreviewFile] = useState(null);
 
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -111,24 +111,30 @@ const Chat = () => {
           </div>
         )}
 
-        <div ref={messagesEndRef} />
-      </div>
-
-      <div className="w-full max-h-[250px] p-3">
-        {previwFile && (
-          <div className={`h-[70px] min-w-[300px] border-[gray] mb-4 border-[2px] rounded-xl indicator flex justify-start items-center transition-all duration-300 ease-in-out ${previwFile ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
-            <span className="indicator-item indicator-middle w-8 h-8 badge bg-[#bd0012] border-none text-white hover:bg-white hover:text-black hover:border-solid border-[2px] hover:border-[gray] cursor-pointer" onClick={() => {
-              setPreviwFile(null);
+      <div className="relative w-full h-full"> 
+        <div className={`absolute opacity-0 bottom-0 left-0 min-w-[300px] hover:bg-secondary bg-[green] border-2 border-base-100 rounded-xl indicator flex justify-start items-center transition-opacity transition-transform duration-400 ease-in-out ${previewFile !== null ? 'animate-bounce opacity-100 translate-x-8' : 'opacity-0 translate-x-0'}`}>
+          <span
+            className="indicator-item indicator-middle w-8 h-8 badge bg-[#bd0012] border-none text-white hover:bg-[red] hover:border-solid border-2 hover:border-base-100 cursor-pointer"
+            onClick={() => {
+              setPreviewFile(null);
               fileInputRef.current.value = '';
             }}>
-              <p className='font-bold'>X</p>
-            </span>
-            <div className="flex gap-4 h-[100%] w-[100%] m-5 p-2 place-items-center">
-              <GoFileSymlinkFile className='text-3xl' />
-              <p>{previwFile.name}</p>
+            <p className='font-bold'>X</p>
+          </span>
+
+          {previewFile && (
+            <div className="flex gap-4 h-full w-full p-3 place-items-center">
+              <GoFileSymlinkFile className='text-3xl text-white' />
+              <p className='text-white mr-10'>{previewFile.name}</p>
             </div>
-          </div>
-        )}
+          )}
+        </div>
+      </div>
+
+
+      <div ref={messagesEndRef} /></div>
+
+      <div className="w-full p-3">
         <div className="flex items-center gap-2">
           <div>
             <IoMdAttach className="text-2xl cursor-pointer" onClick={handleIconClick} />
@@ -140,7 +146,7 @@ const Chat = () => {
               onChange={(e) => {
                 const file = e.target.files[0];
                 if (file) {
-                  setPreviwFile(file);
+                  setPreviewFile(file);
                   console.log("Arquivo selecionado:", file);
                 }
               }}
