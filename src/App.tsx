@@ -8,23 +8,33 @@ import Transcription from './pages/Trancription/Trancription'
 import { ToastContainer } from 'react-toastify'
 import Chat from './pages/Chat/Chat'
 import { useAuth } from './context/AuthContext'
+import Config from './components/Config/SideBar'
+import Perfil from './components/Config/Perfil'
+import Geral from './components/Config/Geral'
+import AdminPainel from './components/Config/AdminPainel'
+import Chats  from './components/Config/chats'
 
 function App() {
   const { user } = useAuth();
   return (
     <div className='flex h-full w-full'>
       <BrowserRouter>
-      { user ? <SideBar /> : null }
+        { user ? <SideBar /> : null }
         <Routes>
           <Route path="/" element={<Navigate to={'/login'} />} />
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
           <Route path='/chat' element={<Chat />} />
+          <Route path='/configuracoes' element={<Config />}>
+            <Route path="geral" element={<Geral />} />
+            <Route path="perfil" element={<Perfil />} />
+            <Route path="AdminPainel" element={<AdminPainel />} />
+            <Route path="Chats" element={<Chats />} />
+          </Route>
           <Route path='/transcription' element={<Transcription />} />
         </Routes>
         <ToastContainer />
       </BrowserRouter>
-
     </div>
   )
 }
