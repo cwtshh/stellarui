@@ -37,6 +37,9 @@ const Chat = () => {
   useEffect(() => {
     if (selectedChat) {
       clearLocalMessages();
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+      }
     }
   }, [selectedChat]);
 

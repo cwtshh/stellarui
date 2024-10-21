@@ -1,9 +1,9 @@
 import { ReactNode, createContext, useContext, useEffect, useState } from "react";
 import { ChatType, MessageType } from "../utils/types/ChatType";
-import axios from "axios";
+import { NotifyToast } from "../components/Toast/Toast";
 import { BASE_API_URL } from "../utils/constants";
 import { useAuth } from "./AuthContext";
-import { NotifyToast } from "../components/Toast/Toast";
+import axios from "axios";
 
 interface ChatContextType {
     chats: ChatType[],
@@ -14,7 +14,7 @@ interface ChatContextType {
     delete_chat: (chat_id: string) => void,
     localMessages: MessageType[],
     lockChat: boolean,
-    clearLocalMessages: () => void, // Adicionei clearLocalMessages na interface
+    clearLocalMessages: () => void,
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -37,9 +37,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         await axios.post(`${BASE_API_URL}/user/chat/create`, { user_id: user?._id }, { withCredentials: true })
             .then(async (res) => {
                 NotifyToast({ message: res.data.message, type: 'success' });
-                // Defina o novo chat como selecionado
-                setSelectedChat(res.data.chat); // Supondo que o chat criado esteja na resposta
-                fetch_side(); // Você ainda pode chamar para atualizar a lista
+                setSelectedChat(res.data.chat);
+                fetch_side();
             })
             .catch(err => {
                 NotifyToast({ message: err.response.data.errors[0], type: 'error' });
@@ -47,7 +46,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             });
     };
     
-
     const fetch_side = async () => {
         if (!user) {
             return;
