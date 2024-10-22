@@ -12,7 +12,7 @@ import Config from './components/Config/SideBar'
 import Perfil from './components/Config/Perfil'
 import Geral from './components/Config/Geral'
 import AdminPainel from './components/Config/AdminPainel'
-import Chats  from './components/Config/chats'
+import Chats  from './components/Config/Chats'
 
 function App() {
   const { user } = useAuth();
