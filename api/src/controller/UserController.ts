@@ -13,6 +13,10 @@ import path from 'path';
 import fs from 'fs';
 
 const SECRET = process.env.SECRET_KEY || 'secret';
+const FLOWISE_URL_ = process.env.FLOWISE_URL;
+const FLOWISE_CHATFLOWID_ = process.env.FLOWISE_CHATFLOWID;
+
+
 
 if(!SECRET) {
     console.error('SECRET VARIABLE is not defined.');
@@ -166,7 +170,7 @@ const send_message_file = async(req: Request, res: Response) => {
         console.log(message);
         try {
             const prediction = await client.createPrediction({
-                chatflowId: "6ac71f88-8509-4230-89f9-111e84669633",
+                chatflowId: "84820c3e-7fb4-472c-a803-10f14e81a97a",
                 question: message,
                 uploads: [{
                     type: 'file',
@@ -194,7 +198,7 @@ const send_message_file = async(req: Request, res: Response) => {
 };
 
 const send_message = async(req: Request, res: Response) => {
-
+    console.log(FLOWISE_URL_, FLOWISE_CHATFLOWID_);
     const { message, chat_id, user_id } = req.body;
 
     const chat = await Chat.findById(chat_id).populate({
@@ -207,15 +211,15 @@ const send_message = async(req: Request, res: Response) => {
     }
     
     const client = new FlowiseClient({
-        baseUrl: 'https://flowise.aidadpdf.cloud',
-        apiKey: '4QyRe4cw5wKaxvIgNS6aWYQzoQeWv4j9OsYu4iGiwbY',
+        baseUrl: FLOWISE_URL_ || '',
+        // apiKey: '4QyRe4cw5wKaxvIgNS6aWYQzoQeWv4j9OsYu4iGiwbY',
     });
 
     try {
         if(chat.chat_sessionid === '') {
             console.log('sem chat session id');
             const prediction = await client.createPrediction({
-                chatflowId: "70873bc0-fd4d-4d77-9781-18178d0d38a6",
+                chatflowId: FLOWISE_CHATFLOWID_ || '',
                 question: message,
             });
             chat.chat_sessionid = prediction.sessionId;
