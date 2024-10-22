@@ -10,6 +10,9 @@ import logo from '../../assets/DPDF_Branca 1.png'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { FaUser, FaVideo } from 'react-icons/fa'
 import { IoChatboxEllipses } from 'react-icons/io5'
+import Config from '../Config/SideBar'
+import { Outlet, Link } from 'react-router-dom';
+
 
 const SideBar = () => {
     const { chats, add_chat, lockChat } = useChat();
@@ -19,6 +22,10 @@ const SideBar = () => {
 
     const isActivePage = (path: string) => {
         return location.pathname === path;
+    }
+
+    const isActiveConfPage = (path: string) => {
+        return location.pathname.startsWith(path);
     }
 
     return (
@@ -44,21 +51,37 @@ const SideBar = () => {
                         <IoChatboxEllipses />
                     </button>
                 )}
-                <button disabled={lockChat} className='btn' onClick={() => {
-                    add_chat() 
-                    navigate('/chat')}}>
-                    Criar novo chat
-                    <HiMiniPencilSquare className='text-xl' />
-                </button>
 
-                <div>
-                    <p className='font-bold text-white'>Chats Ativos</p>
-                    <div className='scroll-hidden flex flex-col gap-6 mt-2 overflow-y-scroll h-full max-h-[40rem]'>
-                        { chats?.map((chat, index) => (
-                            <ChatCard chat={chat} key={index} />
-                        ))} 
+
+                {!isActiveConfPage('/configuracoes') ? (
+                <>
+                    <button disabled={lockChat} className='btn' onClick={() => {
+                        add_chat() 
+                        navigate('/chat')}}>
+                        Criar novo chat
+                        <HiMiniPencilSquare className='text-xl' />
+                    </button>
+                    <div>
+                        <p className='font-bold text-white'>Chats Ativos</p>
+                        <div className='scroll-hidden flex flex-col gap-6 mt-2 overflow-y-scroll h-full max-h-[40rem]'>
+                            { chats?.map((chat, index) => (
+                                <ChatCard chat={chat} key={index} />
+                            ))} 
+                        </div>
                     </div>
+                </>
+                ):(
+                <div>
+                    <p className='font-bold text-white'>Configurações</p>
+                    <ul className="space-y-4">
+                        <li><Link to="/configuracoes/geral" className="text-green-200 hover:text-green-100 transition-colors duration-200">General</Link></li>
+                        <li><Link to="/configuracoes/perfil" className="text-green-200 hover:text-green-100 transition-colors duration-200">Profile</Link></li>
+                        <li><Link to="/configuracoes/AdminPainel" className="text-green-200 hover:text-green-100 transition-colors duration-200">Admin Panel</Link></li>
+                        <li><Link to="/configuracoes/Chats" className="text-green-200 hover:text-green-100 transition-colors duration-200">Chats</Link></li>
+                    </ul>
                 </div>
+              
+                )}
             </div>
             <div className="dropdown dropdown-top flex flex-col">
                 <div tabIndex={0} role="button" className="btn m-1">
@@ -66,12 +89,17 @@ const SideBar = () => {
                     <FaUser />
                 </div>
                 <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-[90%] p-2 shadow absolute left-1/2 transform -translate-x-1/2">
+                    {!isActiveConfPage('/configuracoes') ? (
                     <li>
                         <a href='/configuracoes'>
                             <GrConfigure className='mr-2' />
-                            Configuracoes
+                            Configurações
                         </a>
                     </li>
+                    ) : (
+                        <>
+                        </>
+                    )}
                     { user?.role === 'admin' && ( 
                         <li>
                             <a>

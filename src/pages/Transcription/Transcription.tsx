@@ -2,11 +2,12 @@ import { TranscriptionCard } from '../../components/TranscriptionCard/Transcript
 import { BASE_TRANSCRIPTION_API_URL } from '../../utils/constants';
 import React, { useEffect, useRef, useState } from 'react';
 import { NotifyToast } from '../../components/Toast/Toast';
-import chatbg from '../../assets/chatbg.jpeg';
+import { downloadTranscriptionPDF } from './TranscriptPDF'
 import { FaPlusCircle } from "react-icons/fa";
+import chatbg from '../../assets/chatbg.jpeg';
 import { FaDownload } from 'react-icons/fa';
 import axios from 'axios';
-import { downloadTranscriptionPDF } from './TranscriptPDF'
+
 
 interface SegmentsBody {
   id: number;
