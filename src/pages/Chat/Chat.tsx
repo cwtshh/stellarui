@@ -112,7 +112,7 @@ const Chat = () => {
         )}
 
       <div className="relative w-full h-full"> 
-        <div className={`absolute opacity-0 bottom-0 left-0 min-w-[300px] hover:bg-secondary bg-[green] border-2 border-base-100 rounded-xl indicator flex justify-start items-center transition-opacity transition-transform duration-400 ease-in-out ${previewFile !== null ? 'animate-bounce opacity-100 translate-x-8' : 'opacity-0 translate-x-0'}`}>
+        <div className={`absolute opacity-0 bottom-0 left-0 min-w-[300px] hover:bg-secondary bg-primary border-2 border-base-100 rounded-xl indicator flex justify-start items-center transition-opacity transition-transform duration-400 ease-in-out ${previewFile !== null ? 'animate-bounce opacity-100 translate-x-8' : 'opacity-0 translate-x-0'}`}>
           <span
             className="indicator-item indicator-middle w-8 h-8 badge bg-[#bd0012] border-none text-white hover:bg-[red] hover:border-solid border-2 hover:border-base-100 cursor-pointer"
             onClick={() => {

@@ -44,7 +44,9 @@ const SideBar = () => {
                         <IoChatboxEllipses />
                     </button>
                 )}
-                <button disabled={lockChat} className='btn' onClick={() => add_chat()}>
+                <button disabled={lockChat} className='btn' onClick={() => {
+                    add_chat() 
+                    navigate('/chat')}}>
                     Criar novo chat
                     <HiMiniPencilSquare className='text-xl' />
                 </button>
