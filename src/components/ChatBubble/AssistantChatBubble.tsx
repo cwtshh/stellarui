@@ -1,4 +1,5 @@
 import Estela from '../../../src/assets/Estela.jpeg';
+import HighlightText from '../HighlightText/HighlightText';
 
 const AssistantChatBubble = ({ message }) => {
     const date = new Date(message.created_at).toLocaleString('pt-br');
@@ -23,7 +24,7 @@ const AssistantChatBubble = ({ message }) => {
                                     <li>{line.trim().slice(1).trim()}</li>
                                 </ul>
                             ) : (
-                                line
+                                <HighlightText text={line} />
                             )}
                         </p>
                     ))}
