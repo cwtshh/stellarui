@@ -2,17 +2,17 @@ import React, { useState } from 'react';
 import { X, Settings, Users, Database } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const Modal = ({ isOpen, onClose }) => {
-    const [selectedSection, setSelectedSection] = useState('Database');
-    const navigate = useNavigate();
+const AdminModal = ({ isOpen, onClose }) => {
+  const [selectedSection, setSelectedSection] = useState('Database');
+  const navigate = useNavigate();
 
-    if (!isOpen) return null;
+  if (!isOpen) return null;
 
-    const handleConfiguracoesClick = () => {
-        setSelectedSection('Configuracoes');
-        navigate('/configuracoes/geral');
-        onClose();
-    };
+  const handleConfiguracoesClick = () => {
+    setSelectedSection('Configuracoes');
+    navigate('/configuracoes/geral');
+    onClose();
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -54,14 +54,14 @@ const Modal = ({ isOpen, onClose }) => {
               <div className="mb-6">
                 <h3 className="text-xl font-semibold text-white mb-4">Usuarios</h3>
                 <div className="space-y-3">
-                  <p className='text-green-500'>Manage users here...</p>
+                  <p className="text-green-500">Manage users here...</p>
                 </div>
               </div>
             )}
             {selectedSection === 'Configuracoes' && (
               <div className="mb-6">
                 <h3 className="text-xl font-semibold text-white mb-4">Configuracoes</h3>
-                <p className='text-white'>Manage settings here...</p>
+                <p className="text-white">Manage settings here...</p>
               </div>
             )}
           </div>
@@ -72,7 +72,10 @@ const Modal = ({ isOpen, onClose }) => {
 };
 
 const NavItem = ({ icon, label, onClick }) => (
-  <button onClick={onClick} className="flex items-center gap-3 w-full px-3 py-2 text-green-300 hover:text-white hover:bg-green-800 rounded-lg transition-colors">
+  <button 
+    onClick={onClick} 
+    className="flex items-center gap-3 w-full px-3 py-2 text-green-300 hover:text-white hover:bg-green-800 rounded-lg transition-colors"
+  >
     {icon}
     <span>{label}</span>
   </button>
@@ -85,4 +88,4 @@ const DatabaseItem = ({ label }) => (
   </button>
 );
 
-export default Modal;
+export default AdminModal;
