@@ -67,7 +67,7 @@ const SideBar = () => {
                 </div>
                 <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-[90%] p-2 shadow absolute left-1/2 transform -translate-x-1/2">
                     <li>
-                        <a href='/configuracoes/geral'>
+                        <a href='/configuracoes'>
                             <GrConfigure className='mr-2' />
                             Configuracoes
                         </a>
