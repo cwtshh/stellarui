@@ -10,7 +10,6 @@ import logo from '../../assets/DPDF_Branca 1.png'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { FaUser, FaVideo } from 'react-icons/fa'
 import { IoChatboxEllipses } from 'react-icons/io5'
-import Config from '../Config/SideBar'
 import { Outlet, Link } from 'react-router-dom';
 
 
@@ -80,7 +79,6 @@ const SideBar = () => {
                         <li><Link to="/configuracoes/Chats" className="text-green-200 hover:text-green-100 transition-colors duration-200">Chats</Link></li>
                     </ul>
                 </div>
-              
                 )}
             </div>
             <div className="dropdown dropdown-top flex flex-col">
