@@ -8,7 +8,6 @@ import chatbg from '../../assets/chatbg.jpeg';
 import { FaDownload } from 'react-icons/fa';
 import axios from 'axios';
 
-
 interface SegmentsBody {
   id: number;
   seek: number;

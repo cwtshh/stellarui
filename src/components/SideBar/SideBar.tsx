@@ -28,7 +28,7 @@ const SideBar = () => {
     }
 
     return (
-        <div className='bg-primary w-[20%] p-5 flex flex-col justify-between shadow-[4px_0_5px_rgba(0,0,0,0.50)] z-50'>
+        <div className='bg-primary w-[380px] p-5 flex flex-col justify-between shadow-[4px_0_5px_rgba(0,0,0,0.50)] z-50'>
             <div className='flex flex-col gap-5'>
                 <div className='flex justify-between'>
                     <div className='flex items-center gap-2'>
@@ -39,7 +39,6 @@ const SideBar = () => {
                 </div>
 
                 {isActivePage('/chat') ? (
-
                     <button className='btn' onClick={() => navigate('/transcription')}>
                         Transcrição de Vídeo
                         <FaVideo />    
@@ -50,7 +49,6 @@ const SideBar = () => {
                         <IoChatboxEllipses />
                     </button>
                 )}
-
 
                 {!isActiveConfPage('/configuracoes') ? (
                 <>
@@ -73,10 +71,10 @@ const SideBar = () => {
                 <div>
                     <p className='font-bold text-white'>Configurações</p>
                     <ul className="space-y-4">
-                        <li><Link to="/configuracoes/geral" className="text-green-200 hover:text-green-100 transition-colors duration-200">General</Link></li>
-                        <li><Link to="/configuracoes/perfil" className="text-green-200 hover:text-green-100 transition-colors duration-200">Profile</Link></li>
-                        <li><Link to="/configuracoes/AdminPainel" className="text-green-200 hover:text-green-100 transition-colors duration-200">Admin Panel</Link></li>
-                        <li><Link to="/configuracoes/Chats" className="text-green-200 hover:text-green-100 transition-colors duration-200">Chats</Link></li>
+                        <li><Link to="/configuracoes/geral" className="h-full max-h-[40rem] text-green-200 hover:text-green-100 transition-colors duration-200">General</Link></li>
+                        <li><Link to="/configuracoes/perfil" className="h-full max-h-[40rem] text-green-200 hover:text-green-100 transition-colors duration-200">Profile</Link></li>
+                        <li><Link to="/configuracoes/AdminPainel" className="h-full max-h-[40rem] text-green-200 hover:text-green-100 transition-colors duration-200">Admin Panel</Link></li>
+                        <li><Link to="/configuracoes/Chats" className="h-full max-h-[40rem]text-green-200 hover:text-green-100 transition-colors duration-200">Chats</Link></li>
                     </ul>
                 </div>
                 )}
@@ -86,7 +84,7 @@ const SideBar = () => {
                     {user?.name}
                     <FaUser />
                 </div>
-                <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-[90%] p-2 shadow absolute left-1/2 transform -translate-x-1/2">
+                <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-[300px] p-2 shadow absolute left-1/2 transform -translate-x-1/2">
                     {!isActiveConfPage('/configuracoes') ? (
                     <li>
                         <a href='/configuracoes'>
