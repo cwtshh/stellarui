@@ -15,6 +15,7 @@ interface ChatContextType {
     localMessages: MessageType[],
     lockChat: boolean,
     clearLocalMessages: () => void,
+    send_message_file: (message: string, file: File) => void
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -136,13 +137,35 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         });
     };
 
+    const send_message_file = async(message: string, file: File) => {
+        let formData = new FormData();
+        formData.append("files", file)
+        formData.append("user", "ljit")
+        formData.append("password", `dpdf@2024`)
+        formData.append("host", "https://flowise.aidadpdf.cloud")
+
+        try {
+            const response = await axios.post("https://flowise.aidadpdf.cloud/api/v1/vector/upsert/2d10644f-08ab-4b9f-9e3c-e7c0c24619f7", {
+                Headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+                body: formData
+            });
+            console.log(response);
+
+        } catch (error) {
+            console.error(error);
+        }
+
+    }
+
     useEffect(() => {
         fetch_user_chats();
         fetch_side();
     }, [user]);
 
     return (
-        <ChatContext.Provider value={{ chats, selectedChat, add_chat, select_chat, send_message, delete_chat, localMessages, lockChat, clearLocalMessages }}>
+        <ChatContext.Provider value={{ chats, selectedChat, add_chat, select_chat, send_message, delete_chat, localMessages, lockChat, clearLocalMessages, send_message_file }}>
             {children}
         </ChatContext.Provider>
     );

@@ -11,6 +11,7 @@ import { FlowiseClient } from 'flowise-sdk';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import axios from 'axios';
 
 const SECRET = process.env.SECRET_KEY || 'secret';
 const FLOWISE_URL_ = process.env.FLOWISE_URL;
@@ -149,51 +150,58 @@ const send_message_file = async(req: Request, res: Response) => {
     const upload = multer({storage: storage}).single('file');
     upload(req, res, async(err) => {
         const { message } = req.body;
-        if(err) {
-            res.status(400).json({ errors: ['Erro ao enviar arquivo.'] });
-            return;
-        }
-        const file_ = req.file;
+        console.log(message);
+        console.log(req.file);
 
-        if (!file_) {
+        if (!req.file) {
             res.status(400).json({ errors: ['Arquivo não encontrado.'] });
             return;
         }
+        const local_file_path = path.join(upload_directory, req.file.filename);
+        const local_file = fs.readFileSync(local_file_path).toString('base64');
 
-        const fileData = fs.readFileSync(path.join(upload_directory, file_.filename)).toString('base64');
-        const file_object = {
-            type: 'file',
-                    name: file_.originalname,
-                    data: `data:${file_.mimetype};base64,${fileData}`,
-                    mime: file_.mimetype
-        }
-        console.log(message);
-        try {
-            const prediction = await client.createPrediction({
-                chatflowId: "84820c3e-7fb4-472c-a803-10f14e81a97a",
-                question: message,
-                uploads: [{
-                    type: 'file',
-                    name: file_.originalname,
-                    data: `data:${file_.mimetype};base64,${fileData}`,
-                    mime: file_.mimetype,
-                    
-                }],
-            })
-            
-            
+        
+        console.log(local_file);
 
-            console.log(prediction);
-            res.status(201).json({ message: 'Arquivo enviado com sucesso.', ai_message: prediction.text });
-            return;
-        } catch (error) {
-            console.error(error);
-            res.status(400).json({ errors: ['Erro ao enviar arquivo.'] });
-            return;
-        }
+        // const formData = new FormData();
+        // const blob = new Blob([local_file], { type: req.file.mimetype });
+        // formData.append('files', blob, req.file.originalname);
+        // formData.append('question', message);
+        // formData.append('sessionid', '');
+
+        
+
+        // const response = await axios.post(`https://flowise.aidadpdf.cloud/api/v1/${FLOWISE_CHATFLOWID_}`, formData);
+        // console.log(response.data);
+        // res.send(response.data);
+
+        // try {
+        //     // console.log(req.file.mimetype)
+        //     // const prediction = await client.createPrediction({
+        //     //     chatflowId: FLOWISE_CHATFLOWID_ || '',
+        //     //     question: message,
+        //     //     overrideConfig: {
+        //     //         sessionid: '',
+        //     //         files: [
+        //     //             {
+        //     //                 name: req.file.originalname,
+        //     //                 content: local_file,
+        //     //                 mimetype: req.file.mimetype,
+        //     //             }
+        //     //         ]
+        //     //     }
+        //     // });
+        //     // console.log(prediction);
+        //     // res.send(prediction);
+        //     return;
+        // } catch (err) {
+        //     console.error(err);
+        //     res.status(400).json({ errors: ['Erro ao enviar mensagem.'] });
+        //     return;
+        // }
 
 
-        // res.status(201).json({ message: 'Arquivo enviado com sucesso.', });
+        res.status(201).json({ message: 'Arquivo enviado com sucesso.', });
     })
 };
 
@@ -266,7 +274,9 @@ const send_message = async(req: Request, res: Response) => {
             const prediction = await client.createPrediction({
                 chatflowId: "70873bc0-fd4d-4d77-9781-18178d0d38a6",
                 question: message,
-                sessionId: chat.chat_sessionid
+                overrideConfig: {
+                    sessionId: chat.chat_sessionid
+                }
             });
 
             console.log(prediction);
