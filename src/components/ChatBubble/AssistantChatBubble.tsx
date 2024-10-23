@@ -19,14 +19,14 @@ const AssistantChatBubble = ({ message }) => {
                     <img src={Estela} alt="Estela" />
                 </div>
             </div>
-            <div className="chat-header text-white">Estela</div>
+            <div className="chat-header text-white">Estella</div>
 
             {message === 'loading' ? (
                 <div className="w-5 h-5 rounded-full bg-green-500 animate-pulse"></div>
             ) : (
                 <>
                     <div
-                        className="chat-bubble indicator"
+                        className="chat-bubble indicator max-w-[90rem]"
                         onMouseEnter={() => setIsHovered(true)}
                         onMouseLeave={() => setIsHovered(false)} 
                     >
@@ -58,7 +58,7 @@ const AssistantChatBubble = ({ message }) => {
             <div className="chat-footer text-white opacity-50 flex justify-between w-full">
                 {message === 'loading' ? 
                     <></> : 
-                    <>{date}</>}            
+                    <>{date.replaceAll(',', ' | ')}</>}            
             </div>
         </div>
     );
