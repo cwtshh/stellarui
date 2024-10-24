@@ -9,7 +9,7 @@ import { BsSendFill } from 'react-icons/bs';
 import { IoMdAttach } from 'react-icons/io';
 
 const Chat = () => {
-  const { selectedChat, send_message, localMessages, lockChat, clearLocalMessages } = useChat();
+  const { selectedChat, send_message, localMessages, lockChat, clearLocalMessages, send_message_file } = useChat();
   const chat_date = new Date(selectedChat?.created_at ?? '').toLocaleString('pt-br');
   const [message, setMessage] = useState('');
   const [previewFile, setPreviewFile] = useState<File | null>(null);
@@ -24,6 +24,19 @@ const Chat = () => {
 
   const handleMessage = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if(previewFile) {
+      send_message_file(previewFile, message);
+      setMessage('');
+      setPreviewFile(null);
+      setTimeout(() => {
+        if (textareaRef.current) {
+          textareaRef.current.style.height = '40px';
+        }
+      }, 0);
+      return;
+    }
+
     if (message.trim()) {
       send_message(message);
       setMessage('');
@@ -32,6 +45,7 @@ const Chat = () => {
           textareaRef.current.style.height = '40px';
         }
       }, 0);
+      return;
     }
   };
 

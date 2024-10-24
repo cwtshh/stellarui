@@ -119,7 +119,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             await axios.get(`${BASE_API_URL}/user/chat/${selectedChat._id}`, { withCredentials: true });
             fetch_user_chats()
 
-        } catch (err) {
+        } catch (err: any) {
             NotifyToast({ message: err.response?.data.errors[0] || 'Erro ao enviar a mensagem.', type: 'error' });
         } finally {
             setLockChat(false);
@@ -137,26 +137,46 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         });
     };
 
-    const send_message_file = async(message: string, file: File) => {
-        let formData = new FormData();
-        formData.append("files", file)
-        formData.append("user", "ljit")
-        formData.append("password", `dpdf@2024`)
-        formData.append("host", "https://flowise.aidadpdf.cloud")
+    const send_message_file = async(file: File, message: string) => {
+        if(!selectedChat || !user?._id || lockChat) {
+            return;
+        }
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('message', message);
+        formData.append('chat_id', selectedChat?._id || '');
+        formData.append('user_id', user?._id || '');
 
-        try {
-            const response = await axios.post("https://flowise.aidadpdf.cloud/api/v1/vector/upsert/2d10644f-08ab-4b9f-9e3c-e7c0c24619f7", {
-                Headers: {
-                    'Content-Type': 'multipart/form-data'
-                },
-                body: formData
-            });
-            console.log(response);
-
-        } catch (error) {
-            console.error(error);
+        const newMessage: MessageType = {
+            content: message,
+            sent_by: 'user',
+            user_id: user?._id,
+            _id: Math.random().toString(),
+            chat: selectedChat._id,
+            created_at: new Date().toISOString()
         }
 
+        setLocalMessages((prevMessages) => [...prevMessages, newMessage]);
+        setLockChat(true);
+
+        try {
+            const reponse = await axios.post(`${BASE_API_URL}/user/chat/send/pdf`, formData, { withCredentials: true });
+            const aiMessage: MessageType = {
+                content: reponse.data.ai_message,
+                sent_by: 'assistant',
+                _id: Math.random().toString(),
+                chat: selectedChat._id,
+                user_id: user?._id,
+                created_at: new Date().toISOString()
+            };
+            setLocalMessages((prevMessages) => [...prevMessages, aiMessage]);
+            await axios.get(`${BASE_API_URL}/user/chat/${selectedChat._id}`, { withCredentials: true });
+            fetch_user_chats();
+        } catch (error) {
+            NotifyToast({ message: error.response?.data.errors[0] || 'Erro ao enviar a mensagem.', type: 'error'});
+        } finally {
+            setLockChat(false);
+        }
     }
 
     useEffect(() => {

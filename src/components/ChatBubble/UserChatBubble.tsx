@@ -14,7 +14,7 @@ const UserChatBubble = ({ message }: UserChatBubbleProps) => {
             <div className="chat-bubble  bg-secondary max-w-[90rem] break-words whitespace-pre-wrap">
               <HighlightText text={message.content} />
             </div>
-            <div className="chat-footer text-white opacity-50">{date}</div>
+            <div className="chat-footer text-white opacity-50">{date.replaceAll(',', ' | ')}</div>
         </div>
     )
 }

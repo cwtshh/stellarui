@@ -1,5 +1,5 @@
 import express from 'express';
-import { create_chat, delete_chat, get_all_user_chats, get_chat, login_user, logout_user, register_user, send_message, send_message_file } from '../controller/UserController';
+import { create_chat, delete_chat, get_all_user_chats, get_chat, login_user, logout_user, register_user, send_message, send_message_file, send_message_pdf } from '../controller/UserController';
 import UserCreateValidations from '../middlewares/UserCreateValidation';
 import HandleValidations from '../middlewares/HandleValidations';
 import UserLoginValidations from '../middlewares/UserLoginValidation';
@@ -18,6 +18,7 @@ UserRouter.post('/chat/send', send_message);
 UserRouter.get('/chat/:chat_id', get_chat);
 UserRouter.delete('/chat/:chat_id', delete_chat);
 UserRouter.post('/chat/sendfile', send_message_file);
+UserRouter.post('/chat/send/pdf', send_message_pdf);
 
 
 export default UserRouter;

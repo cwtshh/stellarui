@@ -12,6 +12,7 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import axios from 'axios';
+import pdf from 'pdf-parse'
 
 const SECRET = process.env.SECRET_KEY || 'secret';
 const FLOWISE_URL_ = process.env.FLOWISE_URL;
@@ -123,6 +124,185 @@ interface MessageBody {
 let url = "https://flowise.aidadpdf.cloud/api/v1/prediction/70873bc0-fd4d-4d77-9781-18178d0d38a6";
 
 
+const send_message_pdf = async(req: Request, res: Response) => {
+    const upload_directory = path.join(__dirname, '..', '..', 'uploads');
+    if(!fs.existsSync(upload_directory)) {
+        fs.mkdirSync(upload_directory);
+    }
+
+    const storage = multer.diskStorage({
+        destination: function(req, file, cb) {
+            cb(null, upload_directory);
+        },
+        filename: function(req, file, cb) {
+            cb(null, `${file.originalname}-${Date.now()}${path.extname(file.originalname)}`);
+        }
+    })
+
+    const upload = multer({ storage: storage }).single('file');
+    upload(req, res, async(err) => {
+        console.log('envio pdf')
+        const { chat_id, user_id, message } = req.body;
+        const file = req.file;
+        const chat = await Chat.findById(chat_id);
+        if(!chat) {
+            res.status(400).json({ errors: ['Chat não encontrado.'] });
+            return;
+        }
+        if(!file) {
+            res.status(400).json({ errors: ['Arquivo não encontrado.'] });
+            return;
+        }
+
+        const local_file = await fs.readFileSync(path.join(upload_directory, file.filename));
+        let data;
+        try {
+            data = await pdf(local_file);
+            console.log(data.text);
+        } catch (error) {
+            console.error(error);
+        }
+
+
+        if(!local_file) {
+            res.status(400).json({ errors: ['Erro ao ler arquivo.'] });
+            return;
+        }
+
+        const client = new FlowiseClient({
+            baseUrl: FLOWISE_URL_ || '',
+        });
+
+        if(chat.chat_sessionid === '') {
+            const prediction = await client.createPrediction({
+                chatflowId: FLOWISE_CHATFLOWID_ || '',
+                question: message,
+                history: [
+                    {
+                        role: 'userMessage',
+                        content: `Este é o conteudo do arquivo: ${data?.text}`,
+                        message: `Este é o conteudo do arquivo: ${data?.text}`,
+                        type: 'userMessage'
+                    }
+                ],
+                overrideConfig: {
+                    history: [
+                        {
+                            role: 'userMessage',
+                            content: `Este é o conteudo do arquivo: ${data?.text}`,
+                            
+                        }
+                    ],
+                }
+            });
+
+            if(!prediction) {
+                res.status(400).json({ errors: ['Erro ao enviar arquivo.'] });
+                return;
+            }
+
+            const new_message = await Message.create({
+                content: message,
+                chat: chat_id,
+                sent_by: 'user',
+                user_id: user_id,
+            });
+
+            if(!new_message) {
+                res.status(400).json({ errors: ['Erro ao enviar arquivo.'] });
+                return;
+            }
+
+            const new_ai_message = await Message.create({
+                content: prediction.text || 'Erro ao enviar arquivo.',
+                chat: chat_id,
+                sent_by: 'assistant',
+                user_id: user_id,
+            });
+
+            if(!new_ai_message) {
+                res.status(400).json({ errors: ['Erro ao enviar arquivo.'] });
+                return;
+            }
+
+            chat.messages.push(new_message._id);
+            chat.messages.push(new_ai_message._id);
+            await chat.save();
+
+            res.status(201).json({ message: 'Arquivo enviado com sucesso.', ai_message: prediction.text });
+            return;
+        }
+        if(chat.chat_sessionid !== '') {
+            const prediction = await client.createPrediction({
+                chatflowId: FLOWISE_CHATFLOWID_ || '',
+                question: message,
+                uploads: [
+                    {
+                        "type": "file",
+                        "name": file.filename,
+                        "data": `data:application/pdf;base64,${local_file.toString('base64')}`,
+                        "mime": "application/pdf"
+                    }
+                ],
+                history: [
+                    {
+                        role: 'userMessage',
+                        content: `Este é o conteudo do arquivo: ${data?.text}`,
+                        message: `Este é o conteudo do arquivo: ${data?.text}`,
+                        type: 'userMessage'
+                    }
+                ],
+                overrideConfig: {
+                    sessionId: chat.chat_sessionid,
+                    history: [
+                        {
+                            role: 'userMessage',
+                            content: `Este é o conteudo do arquivo: ${data}`,
+                            
+                        }
+                    ],
+                }
+            });
+
+            if(!prediction) {
+                res.status(400).json({ errors: ['Erro ao enviar arquivo.'] });
+                return;
+            }
+
+            const new_message = await Message.create({
+                content: message,
+                chat: chat_id,
+                sent_by: 'user',
+                user_id: user_id,
+            });
+
+            if(!new_message) {
+                res.status(400).json({ errors: ['Erro ao enviar arquivo.'] });
+                return;
+            }
+
+            const new_ai_message = await Message.create({
+                content: prediction.text || 'Erro ao enviar arquivo.',
+                chat: chat_id,
+                sent_by: 'assistant',
+                user_id: user_id,
+            });
+
+            if(!new_ai_message) {
+                res.status(400).json({ errors: ['Erro ao enviar arquivo.'] });
+                return;
+            }
+
+            chat.messages.push(new_message._id);
+            chat.messages.push(new_ai_message._id);
+            await chat.save();
+
+            res.status(201).json({ message: 'Arquivo enviado com sucesso.', ai_message: prediction.text });
+            return;
+        }
+    });
+}
+
 
 const send_message_file = async(req: Request, res: Response) => {
     const file = req.file;
@@ -191,8 +371,7 @@ const send_message_file = async(req: Request, res: Response) => {
             })
 
             // console.log(prediction);
-            res.status(200).json(prediction.data);
-
+            res.status(201).json({ message: 'Arquivo enviado com sucesso.', ai_message: (prediction.data as { text: string }).text });
             return;
         } catch (error) {
             console.error(error);
@@ -421,4 +600,4 @@ const delete_chat = async(req: Request, res: Response) => {
 }
 
 
-export { register_user, login_user, logout_user, create_chat, get_all_user_chats, send_message, get_chat, delete_chat, send_message_file };
+export { register_user, login_user, logout_user, create_chat, get_all_user_chats, send_message, get_chat, delete_chat, send_message_file, send_message_pdf };
