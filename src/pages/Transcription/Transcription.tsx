@@ -1,12 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { FaDownload } from 'react-icons/fa';
 import { TranscriptionCard } from '../../components/TranscriptionCard/TranscriptionCard';
-import { NotifyToast } from '../../components/Toast/Toast';
-import axios from 'axios';
-import chatbg from '../../assets/chatbg.jpeg';
-import { FaPlusCircle } from "react-icons/fa";
-import jsPDF from 'jspdf';
 import { BASE_TRANSCRIPTION_API_URL } from '../../utils/constants';
+import React, { useEffect, useRef, useState } from 'react';
+import { NotifyToast } from '../../components/Toast/Toast';
+import { downloadTranscriptionPDF } from './TranscriptPDF'
+import { FaPlusCircle } from "react-icons/fa";
+import chatbg from '../../assets/chatbg.jpeg';
+import { FaDownload } from 'react-icons/fa';
+import axios from 'axios';
 
 interface SegmentsBody {
   id: number;
@@ -34,9 +34,10 @@ const Trancription = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [segments, setSegments] = useState<any[]>([]);
   const [currentTime, setCurrentTime] = useState<number>(0);
+  const [mouseOver, setMouseOver ] = useState(false)
   
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const transcriptionRefs = useRef<(HTMLDivElement | null)[]>([]); // Ref para armazenar os cards
+  const transcriptionRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const [showMessage, setShowMessage] = useState(false);
 
@@ -96,50 +97,34 @@ const Trancription = () => {
     }
   };
 
-  // Atualizar o tempo atual do vídeo
   const handleTimeUpdate = () => {
     if (videoRef.current) {
       setCurrentTime(Number(videoRef.current.currentTime.toFixed(2)));
     }
   };
 
-  // Rolagem automática para o item ativo
   useEffect(() => {
     const activeIndex = segments.findIndex(
       (item) => currentTime >= item.start && currentTime <= item.end
     );
 
-    if (activeIndex !== -1 && transcriptionRefs.current[activeIndex]) {
+    if (activeIndex !== -1 && transcriptionRefs.current[activeIndex] && !mouseOver) {
       transcriptionRefs.current[activeIndex]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }, [currentTime, segments]);
-  const time_span = (seconds: number) => {
-    let h = Math.floor(seconds / 3600);
-    let m = Math.floor(seconds % 3600 / 60);
-    let s = Math.floor(seconds % 3600 % 60);
 
-    return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  const handleScroll = () => {
+    if (mouseOver && videoRef.current) {
+      videoRef.current.pause();
+    }
   };
-
-  const downloadTranscriptionPDF = (segments: any[]) => {
-    const document = new jsPDF();
-    
-    document.text(`Transcrição do arquivo ${file?.name}`, 105, 10, { align: 'center' });
-    segments.forEach((item, index) => {
-      const times_stamp = time_span(item.start) + ' - ' + time_span(item.end);
-      document.text(`${times_stamp} - ${item.text}`, 10, 20 + (index * 10));
-    });
-
-    document.save('transcription.pdf');
-  }
-
-  console.log(segments);
 
   return (
     <div className='h-full w-full overflow-hidden flex flex-col p-5' style={{ backgroundImage: `url(${chatbg})`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat" }}>
       <div className='flex items-start justify-center h-full gap-[95px]'>
         <div className='text-white p-6 h-vh w-[30%] rounded-xl flex flex-col gap-7'>
-          <div className='bg-base-100 p-6 scroll-hidden h-[780px] w-[500px] rounded-xl flex flex-col gap-6 overflow-y-scroll shadow-xl'>
+          <div onMouseEnter={() => setMouseOver(true)} onMouseLeave={() => setMouseOver(false)} onScroll={handleScroll}
+           className='bg-base-100 p-6 scroll-hidden h-[780px] w-[500px] rounded-xl flex flex-col gap-6 overflow-y-scroll shadow-xl'>
             {segments.map((item: any, index: number) => {
               return (
                 <TranscriptionCard
@@ -159,7 +144,7 @@ const Trancription = () => {
             })}
           </div>
           <div className='flex justify-center items-center w-[500px]'>
-            <button onClick={() => downloadTranscriptionPDF(segments)} disabled={loading || !videoUrl} className='btn btn-primary w-[300px] flex justify-center items-center text-white p-6 rounded-xl h-full'>
+            <button onClick={() => downloadTranscriptionPDF(file, segments)} disabled={loading || !videoUrl} className='btn btn-primary w-[300px] flex justify-center items-center text-white p-6 rounded-xl h-full'>
               Transcrição
               <FaDownload />
             </button>
@@ -171,6 +156,7 @@ const Trancription = () => {
             <div className='bg-transparent border-[2px] w-[335px] h-[60px] flex justify-center items-center rounded-xl'>
               <input
                 type="file"
+                accept='.mp4, .ogg, .mkv, .webm, .avi'
                 onChange={handleFileChange}
                 className="file-input file-input-bordered border-none w-full max-w-xs"
               />

@@ -10,6 +10,8 @@ import logo from '../../assets/DPDF_Branca 1.png'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { FaUser, FaVideo } from 'react-icons/fa'
 import { IoChatboxEllipses } from 'react-icons/io5'
+import { Outlet, Link } from 'react-router-dom';
+
 
 const SideBar = () => {
     const { chats, add_chat, lockChat } = useChat();
@@ -21,8 +23,12 @@ const SideBar = () => {
         return location.pathname === path;
     }
 
+    const isActiveConfPage = (path: string) => {
+        return location.pathname.startsWith(path);
+    }
+
     return (
-        <div className='bg-primary w-[20%] p-5 flex flex-col justify-between shadow-[4px_0_5px_rgba(0,0,0,0.50)] z-50'>
+        <div className='bg-primary w-[380px] p-5 flex flex-col justify-between shadow-[4px_0_5px_rgba(0,0,0,0.50)] z-50'>
             <div className='flex flex-col gap-5'>
                 <div className='flex justify-between'>
                     <div className='flex items-center gap-2'>
@@ -33,7 +39,6 @@ const SideBar = () => {
                 </div>
 
                 {isActivePage('/chat') ? (
-
                     <button className='btn' onClick={() => navigate('/transcription')}>
                         Transcrição de Vídeo
                         <FaVideo />    
@@ -44,34 +49,53 @@ const SideBar = () => {
                         <IoChatboxEllipses />
                     </button>
                 )}
-                <button disabled={lockChat} className='btn' onClick={() => {
-                    add_chat() 
-                    navigate('/chat')}}>
-                    Criar novo chat
-                    <HiMiniPencilSquare className='text-xl' />
-                </button>
 
-                <div>
-                    <p className='font-bold text-white'>Chats Ativos</p>
-                    <div className='scroll-hidden flex flex-col gap-6 mt-2 overflow-y-scroll h-full max-h-[40rem]'>
-                        { chats?.map((chat, index) => (
-                            <ChatCard chat={chat} key={index} />
-                        ))} 
+                {!isActiveConfPage('/configuracoes') ? (
+                <>
+                    <button disabled={lockChat} className='btn' onClick={() => {
+                        add_chat() 
+                        navigate('/chat')}}>
+                        Criar novo chat
+                        <HiMiniPencilSquare className='text-xl' />
+                    </button>
+                    <div>
+                        <p className='font-bold text-white'>Chats Ativos</p>
+                        <div className='scroll-hidden flex flex-col gap-6 mt-2 overflow-y-scroll h-full max-h-[40rem]'>
+                            { chats?.map((chat, index) => (
+                                <ChatCard chat={chat} key={index} />
+                            ))} 
+                        </div>
                     </div>
+                </>
+                ):(
+                <div>
+                    <p className='font-bold text-white'>Configurações</p>
+                    <ul className="space-y-4">
+                        <li><Link to="/configuracoes/geral" className="h-full max-h-[40rem] text-green-200 hover:text-green-100 transition-colors duration-200">General</Link></li>
+                        <li><Link to="/configuracoes/perfil" className="h-full max-h-[40rem] text-green-200 hover:text-green-100 transition-colors duration-200">Profile</Link></li>
+                        <li><Link to="/configuracoes/AdminPainel" className="h-full max-h-[40rem] text-green-200 hover:text-green-100 transition-colors duration-200">Admin Panel</Link></li>
+                        <li><Link to="/configuracoes/Chats" className="h-full max-h-[40rem]text-green-200 hover:text-green-100 transition-colors duration-200">Chats</Link></li>
+                    </ul>
                 </div>
+                )}
             </div>
             <div className="dropdown dropdown-top flex flex-col">
                 <div tabIndex={0} role="button" className="btn m-1">
                     {user?.name}
                     <FaUser />
                 </div>
-                <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-[90%] p-2 shadow absolute left-1/2 transform -translate-x-1/2">
+                <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-[300px] p-2 shadow absolute left-1/2 transform -translate-x-1/2">
+                    {!isActiveConfPage('/configuracoes') ? (
                     <li>
                         <a href='/configuracoes'>
                             <GrConfigure className='mr-2' />
-                            Configuracoes
+                            Configurações
                         </a>
                     </li>
+                    ) : (
+                        <>
+                        </>
+                    )}
                     { user?.role === 'admin' && ( 
                         <li>
                             <a>

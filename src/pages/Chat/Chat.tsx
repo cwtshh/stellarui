@@ -1,6 +1,7 @@
 import AssistantChatBubble from '../../components/ChatBubble/AssistantChatBubble';
 import UserChatBubble from '../../components/ChatBubble/UserChatBubble';
 import React, { useState, useRef, useEffect } from 'react';
+import Estela from '../../../src/assets/Estela.jpeg';
 import { useChat } from '../../context/ChatContext';
 import { GoFileSymlinkFile } from "react-icons/go";
 import chatbg from '../../assets/chatbg.jpeg';
@@ -10,7 +11,6 @@ import { IoMdAttach } from 'react-icons/io';
 const Chat = () => {
   const { selectedChat, send_message, localMessages, lockChat, clearLocalMessages } = useChat();
   const chat_date = new Date(selectedChat?.created_at ?? '').toLocaleString('pt-br');
-  const [model, setModel] = useState('Gemma 2');
   const [message, setMessage] = useState('');
   const [previewFile, setPreviewFile] = useState<File | null>(null);
 
@@ -69,15 +69,22 @@ const Chat = () => {
 
   return (
     <div className="h-full w-full flex flex-col justify-between">
-      <div className="flex justify-between text-xl bg-primary w-full p-4">
-        <details className="dropdown">
-          <summary className="cursor-pointer text-white">Model {model}</summary>
-          <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow-xl">
-            <li><a>Item 1</a></li>
-            <li><a>Item 2</a></li>
-          </ul>
-        </details>
-        {selectedChat && <p className="text-white">{chat_date}</p>}
+      <div className="flex justify-between items-center text-xl bg-primary w-full h-[72px] p-4">
+        <div className='flex gap-4 items-center'>
+            <div className="w-[40px] h-[40px] rounded-full bg-black">
+                <img src={Estela} alt="Estela" className='rounded-full'/>
+            </div>
+            <div>
+            <div className="chat-header text-white text-2xl">Estella</div>
+            {!lockChat ? (
+              <div className="chat-header text-[gray]">Sou Estella, ao seu dispor!</div>
+
+            ):(
+              <div className="chat-header text-[gray] animate-pulse">Digitando...</div>
+            )}
+            </div>
+        </div>
+        {selectedChat && <p className="text-white">{chat_date.replaceAll(',','')}</p>}
       </div>
 
       <div
