@@ -174,9 +174,10 @@ const send_message_pdf = async(req: Request, res: Response) => {
         });
 
         if(chat.chat_sessionid === '') {
+            console.log('sem chat session id');
             const prediction = await client.createPrediction({
                 chatflowId: FLOWISE_CHATFLOWID_ || '',
-                question: message,
+                question: `Este é o conteudo do arquivo: ${data?.text}, esta é a pergunta: ${message}`,
                 history: [
                     {
                         role: 'userMessage',
@@ -227,15 +228,18 @@ const send_message_pdf = async(req: Request, res: Response) => {
 
             chat.messages.push(new_message._id);
             chat.messages.push(new_ai_message._id);
+            chat.chat_sessionid = prediction.sessionId;
             await chat.save();
 
             res.status(201).json({ message: 'Arquivo enviado com sucesso.', ai_message: prediction.text });
             return;
         }
         if(chat.chat_sessionid !== '') {
+            console.log('tem session id');
             const prediction = await client.createPrediction({
                 chatflowId: FLOWISE_CHATFLOWID_ || '',
-                question: message,
+                question: `Este é o conteudo do arquivo: ${data?.text}, esta é a pergunta: ${message}`,
+                chatId: chat.chat_sessionid,
                 uploads: [
                     {
                         "type": "file",
@@ -263,6 +267,7 @@ const send_message_pdf = async(req: Request, res: Response) => {
                     ],
                 }
             });
+            console.log(prediction);
 
             if(!prediction) {
                 res.status(400).json({ errors: ['Erro ao enviar arquivo.'] });
