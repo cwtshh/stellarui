@@ -125,7 +125,6 @@ let url = "https://flowise.aidadpdf.cloud/api/v1/prediction/70873bc0-fd4d-4d77-9
 
 
 const send_message_file = async(req: Request, res: Response) => {
-    const { chat_id, user_id } = req.body;
     const file = req.file;
 
     const upload_directory = path.join(__dirname, '..', '..', 'uploads');
@@ -143,65 +142,99 @@ const send_message_file = async(req: Request, res: Response) => {
         }
     });
 
-    const client = new FlowiseClient({
-        baseUrl: 'https://flowise.aidadpdf.cloud',
-    })
-
     const upload = multer({storage: storage}).single('file');
     upload(req, res, async(err) => {
-        const { message } = req.body;
-        console.log(message);
-        console.log(req.file);
-
-        if (!req.file) {
+        const { chat_id, user_id, message, sessionId } = req.body;
+        console.log(chat_id, user_id, message, sessionId);
+        const file = req.file;
+        const chat = await Chat.findById(chat_id);
+        console.log(file);
+        if(!chat) {
+            res.status(400).json({ errors: ['Chat não encontrado.'] });
+            return;
+        }
+        if (!file) {
             res.status(400).json({ errors: ['Arquivo não encontrado.'] });
             return;
         }
-        const local_file_path = path.join(upload_directory, req.file.filename);
-        const local_file = fs.readFileSync(local_file_path).toString('base64');
 
-        
-        console.log(local_file);
+        const formData = new FormData();
+        const fileBuffer = await fs.promises.readFile(path.join(upload_directory, file.filename));
+        const blob = new Blob([fileBuffer]);
+        formData.append('files', blob, file.filename);
+        formData.append('returnSourceDocuments', 'true');
+        formData.append('chatId', sessionId);
+
+
+        try {
+            const upsert_file: any = await axios.post(`https://flowise.aidadpdf.cloud/api/v1/vector/upsert/84820c3e-7fb4-472c-a803-10f14e81a97a`, formData);            
+            console.log(upsert_file.data.addedDocs[0].metadata);
+
+            const prediction = await axios.post(`https://flowise.aidadpdf.cloud/api/v1/prediction/84820c3e-7fb4-472c-a803-10f14e81a97a`, {
+                question: message,
+                chatId: sessionId,
+                uploads: [
+                    {
+                        "type": "file",
+                        "name": file.filename,
+                        "data": `data:application/pdf;base64,${fileBuffer.toString('base64')}`,
+                        "mime": "application/pdf"
+                    }
+                ]
+            });
+
+            console.log({
+                "type": "file",
+                "name": file.filename,
+                "data": `data:application/pdf;base64,${fileBuffer.toString('base64')}`,
+                "mime": "application/pdf"
+            })
+
+            // console.log(prediction);
+            res.status(200).json(prediction.data);
+
+            return;
+        } catch (error) {
+            console.error(error);
+            res.status(400).json({ errors: ['Erro ao enviar arquivo.'] });
+            return;
+        }
+
 
         // const formData = new FormData();
-        // const blob = new Blob([local_file], { type: req.file.mimetype });
-        // formData.append('files', blob, req.file.originalname);
-        // formData.append('question', message);
-        // formData.append('sessionid', '');
-
-        
-
-        // const response = await axios.post(`https://flowise.aidadpdf.cloud/api/v1/${FLOWISE_CHATFLOWID_}`, formData);
-        // console.log(response.data);
-        // res.send(response.data);
+        // const blob = new Blob([local_file], { type: 'application/octet-stream' });
+        // formData.append('files', blob, req.file.filename);
+        // formData.append('question', 'O QUE TEM NESTE ARQUIVO?');
 
         // try {
-        //     // console.log(req.file.mimetype)
-        //     // const prediction = await client.createPrediction({
-        //     //     chatflowId: FLOWISE_CHATFLOWID_ || '',
-        //     //     question: message,
-        //     //     overrideConfig: {
-        //     //         sessionid: '',
-        //     //         files: [
-        //     //             {
-        //     //                 name: req.file.originalname,
-        //     //                 content: local_file,
-        //     //                 mimetype: req.file.mimetype,
-        //     //             }
-        //     //         ]
-        //     //     }
-        //     // });
-        //     // console.log(prediction);
-        //     // res.send(prediction);
+
+        //     const upsert_file = await axios.post(`${FLOWISE_URL_}/api/v1/vector/upsert/9ae4a666-0135-41bd-bf8a-eecb1e61cfcd`, formData);
+        //     console.log(upsert_file);
+
+        //     if(!upsert_file) {
+        //         res.status(400).json({ errors: ['Erro ao enviar arquivo.'] });
+        //         return;
+        //     }
+
+        //     const response: any = await axios.post(`${FLOWISE_URL_}/api/v1/prediction/9ae4a666-0135-41bd-bf8a-eecb1e61cfcd`, {
+        //         question: message,
+        //         uploads: [
+        //             {
+        //                 "type": "file",
+        //                 "name": req.file.filename,
+        //                 "data": `data:application/pdf;base64,${local_file.toString('base64')}`,
+        //                 "mime": "application/pdf"
+        //             }
+        //         ]
+        //     })
+        //     console.log(response);
+        //     res.status(201).json({ message: 'Arquivo enviado com sucesso.', ai_message: response.data.text });
         //     return;
-        // } catch (err) {
-        //     console.error(err);
-        //     res.status(400).json({ errors: ['Erro ao enviar mensagem.'] });
+        // } catch (error) {
+        //     console.error(error);
+        //     res.status(400).json({ errors: ['Erro ao enviar arquivo.'] });
         //     return;
         // }
-
-
-        res.status(201).json({ message: 'Arquivo enviado com sucesso.', });
     })
 };
 
