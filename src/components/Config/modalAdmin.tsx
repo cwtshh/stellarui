@@ -54,14 +54,12 @@ const AdminModal = ({ isOpen, onClose }) => {
               <div className="mb-6">
                 <h3 className="text-xl font-semibold text-white mb-4">Usuarios</h3>
                 <div className="space-y-3">
-                  <p className="text-green-500">Manage users here...</p>
+                  <p className="text-green-500"></p>
                 </div>
               </div>
             )}
             {selectedSection === 'Configuracoes' && (
               <div className="mb-6">
-                <h3 className="text-xl font-semibold text-white mb-4">Configuracoes</h3>
-                <p className="text-white">Manage settings here...</p>
               </div>
             )}
           </div>

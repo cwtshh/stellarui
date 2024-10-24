@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaUser, FaEnvelope, FaLock, FaImage } from 'react-icons/fa';
+import { useAuth } from '../../context/AuthContext';
 
 export default function ProfileEdit() {
+  const { user, update } = useAuth(); 
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
+    name: user?.name || '',
+    email: user?.email || '',
     password: '',
     confirmPassword: '',
     avatar: null
@@ -25,10 +27,18 @@ export default function ProfileEdit() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission logic here
-    console.log('Form submitted:', formData);
+    
+    const updateData = {
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+    };
+
+    if (user) {
+      await update(user._id, updateData); 
+    }
   };
 
   return (
