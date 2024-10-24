@@ -120,7 +120,13 @@ const Trancription = () => {
   };
 
   return (
-    <div className='h-full w-full overflow-hidden flex flex-col p-5' style={{ backgroundImage: `url(${chatbg})`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat" }}>
+    <div className='h-full w-full overflow-hidden flex flex-col p-5' style={{
+      backgroundImage: `url(${chatbg})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      backgroundAttachment: 'fixed',
+    }}>
       <div className='flex items-start justify-center h-full gap-[95px]'>
         <div className='text-white p-6 h-vh w-[30%] rounded-xl flex flex-col gap-7'>
           <div onMouseEnter={() => setMouseOver(true)} onMouseLeave={() => setMouseOver(false)} onScroll={handleScroll}

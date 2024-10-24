@@ -82,7 +82,7 @@ const Chat = () => {
   };
 
   return (
-    <div className="h-full w-full flex flex-col justify-between"style={{
+    <div className="h-full w-full flex flex-col justify-between" style={{
       backgroundImage: `url(${chatbg})`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
@@ -108,9 +108,7 @@ const Chat = () => {
       </div>
 
       <div
-        className="scroll-hidden overflow-y-scroll flex flex-col w-full h-full p-6"
-        
-      >
+        className="scroll-hidden overflow-y-scroll flex flex-col w-full h-full p-6">
         {selectedChat ? (
           [...selectedChat.messages, ...localMessages].map((message, index, array) => (
             <React.Fragment key={index}>
