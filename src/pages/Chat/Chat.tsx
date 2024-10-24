@@ -12,14 +12,14 @@ const Chat = () => {
   const { selectedChat, send_message, localMessages, lockChat, clearLocalMessages } = useChat();
   const chat_date = new Date(selectedChat?.created_at ?? '').toLocaleString('pt-br');
   const [message, setMessage] = useState('');
-  const [previewFile, setPreviewFile] = useState(null);
+  const [previewFile, setPreviewFile] = useState<File | null>(null);
 
-  const messagesEndRef = useRef(null);
-  const fileInputRef = useRef(null);
-  const textareaRef = useRef(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleIconClick = () => {
-    fileInputRef.current.click();
+    fileInputRef.current?.click();
   };
 
   const handleMessage = (e: React.FormEvent) => {
@@ -124,7 +124,9 @@ const Chat = () => {
             className="indicator-item indicator-middle w-8 h-8 badge bg-[#bd0012] border-none text-white hover:bg-[red] hover:border-solid border-2 hover:border-base-100 cursor-pointer"
             onClick={() => {
               setPreviewFile(null);
-              fileInputRef.current.value = '';
+              if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+              }
             }}>
             <p className='font-bold'>X</p>
           </span>
@@ -151,7 +153,7 @@ const Chat = () => {
               ref={fileInputRef}
               className="hidden"
               onChange={(e) => {
-                const file = e.target.files[0];
+                const file = e.target.files ? e.target.files[0] : null;
                 if (file) {
                   setPreviewFile(file);
                   console.log("Arquivo selecionado:", file);

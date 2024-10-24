@@ -1,4 +1,5 @@
 import Estela from '../../../src/assets/Estela.jpeg';
+import HighlightText from '../HighlightText/HighlightText';
 import { MdContentCopy } from "react-icons/md";
 import { NotifyToast } from "../../components/Toast/Toast";
 import { useState } from 'react';
@@ -46,7 +47,7 @@ const AssistantChatBubble = ({ message }) => {
                                             <li>{line.trim().slice(1).trim()}</li>
                                         </ul>
                                     ) : (
-                                        line
+                                        <HighlightText text={line} />
                                     )}
                                 </p>
                             ))}

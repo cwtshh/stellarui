@@ -11,8 +11,13 @@ import { FlowiseClient } from 'flowise-sdk';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import axios from 'axios';
 
 const SECRET = process.env.SECRET_KEY || 'secret';
+const FLOWISE_URL_ = process.env.FLOWISE_URL;
+const FLOWISE_CHATFLOWID_ = process.env.FLOWISE_CHATFLOWID;
+
+
 
 if(!SECRET) {
     console.error('SECRET VARIABLE is not defined.');
@@ -120,7 +125,6 @@ let url = "https://flowise.aidadpdf.cloud/api/v1/prediction/70873bc0-fd4d-4d77-9
 
 
 const send_message_file = async(req: Request, res: Response) => {
-    const { chat_id, user_id } = req.body;
     const file = req.file;
 
     const upload_directory = path.join(__dirname, '..', '..', 'uploads');
@@ -138,49 +142,57 @@ const send_message_file = async(req: Request, res: Response) => {
         }
     });
 
-    const client = new FlowiseClient({
-        baseUrl: 'https://flowise.aidadpdf.cloud',
-    })
-
     const upload = multer({storage: storage}).single('file');
     upload(req, res, async(err) => {
-        const { message } = req.body;
-        if(err) {
-            res.status(400).json({ errors: ['Erro ao enviar arquivo.'] });
+        const { chat_id, user_id, message, sessionId } = req.body;
+        console.log(chat_id, user_id, message, sessionId);
+        const file = req.file;
+        const chat = await Chat.findById(chat_id);
+        console.log(file);
+        if(!chat) {
+            res.status(400).json({ errors: ['Chat não encontrado.'] });
             return;
         }
-        const file_ = req.file;
-
-        if (!file_) {
+        if (!file) {
             res.status(400).json({ errors: ['Arquivo não encontrado.'] });
             return;
         }
 
-        const fileData = fs.readFileSync(path.join(upload_directory, file_.filename)).toString('base64');
-        const file_object = {
-            type: 'file',
-                    name: file_.originalname,
-                    data: `data:${file_.mimetype};base64,${fileData}`,
-                    mime: file_.mimetype
-        }
-        console.log(message);
-        try {
-            const prediction = await client.createPrediction({
-                chatflowId: "6ac71f88-8509-4230-89f9-111e84669633",
-                question: message,
-                uploads: [{
-                    type: 'file',
-                    name: file_.originalname,
-                    data: `data:${file_.mimetype};base64,${fileData}`,
-                    mime: file_.mimetype,
-                    
-                }],
-            })
-            
-            
+        const formData = new FormData();
+        const fileBuffer = await fs.promises.readFile(path.join(upload_directory, file.filename));
+        const blob = new Blob([fileBuffer]);
+        formData.append('files', blob, file.filename);
+        formData.append('returnSourceDocuments', 'true');
+        formData.append('chatId', sessionId);
 
-            console.log(prediction);
-            res.status(201).json({ message: 'Arquivo enviado com sucesso.', ai_message: prediction.text });
+
+        try {
+            const upsert_file: any = await axios.post(`https://flowise.aidadpdf.cloud/api/v1/vector/upsert/84820c3e-7fb4-472c-a803-10f14e81a97a`, formData);            
+            console.log(upsert_file.data.addedDocs[0].metadata);
+
+            const prediction = await axios.post(`https://flowise.aidadpdf.cloud/api/v1/prediction/84820c3e-7fb4-472c-a803-10f14e81a97a`, {
+                question: message,
+                chatId: sessionId,
+                uploads: [
+                    {
+                        "type": "file",
+                        "name": file.filename,
+                        "data": `data:application/pdf;base64,${fileBuffer.toString('base64')}`,
+                        "mime": "application/pdf"
+                    }
+                ]
+            });
+
+            console.log({
+                "type": "file",
+                "name": file.filename,
+                "data": `data:application/pdf;base64,${fileBuffer.toString('base64')}`,
+                "mime": "application/pdf"
+            })
+
+            // console.log(prediction);
+            res.status(200).json(prediction.data);
+
             return;
         } catch (error) {
             console.error(error);
@@ -189,12 +201,45 @@ const send_message_file = async(req: Request, res: Response) => {
         }
 
 
-        // res.status(201).json({ message: 'Arquivo enviado com sucesso.', });
+        // const formData = new FormData();
+        // const blob = new Blob([local_file], { type: 'application/octet-stream' });
+        // formData.append('files', blob, req.file.filename);
+        // formData.append('question', 'O QUE TEM NESTE ARQUIVO?');
+
+        // try {
+
+        //     const upsert_file = await axios.post(`${FLOWISE_URL_}/api/v1/vector/upsert/9ae4a666-0135-41bd-bf8a-eecb1e61cfcd`, formData);
+        //     console.log(upsert_file);
+
+        //     if(!upsert_file) {
+        //         res.status(400).json({ errors: ['Erro ao enviar arquivo.'] });
+        //         return;
+        //     }
+
+        //     const response: any = await axios.post(`${FLOWISE_URL_}/api/v1/prediction/9ae4a666-0135-41bd-bf8a-eecb1e61cfcd`, {
+        //         question: message,
+        //         uploads: [
+        //             {
+        //                 "type": "file",
+        //                 "name": req.file.filename,
+        //                 "data": `data:application/pdf;base64,${local_file.toString('base64')}`,
+        //                 "mime": "application/pdf"
+        //             }
+        //         ]
+        //     })
+        //     console.log(response);
+        //     res.status(201).json({ message: 'Arquivo enviado com sucesso.', ai_message: response.data.text });
+        //     return;
+        // } catch (error) {
+        //     console.error(error);
+        //     res.status(400).json({ errors: ['Erro ao enviar arquivo.'] });
+        //     return;
+        // }
     })
 };
 
 const send_message = async(req: Request, res: Response) => {
-
+    console.log(FLOWISE_URL_, FLOWISE_CHATFLOWID_);
     const { message, chat_id, user_id } = req.body;
 
     const chat = await Chat.findById(chat_id).populate({
@@ -207,15 +252,15 @@ const send_message = async(req: Request, res: Response) => {
     }
     
     const client = new FlowiseClient({
-        baseUrl: 'https://flowise.aidadpdf.cloud',
-        apiKey: '4QyRe4cw5wKaxvIgNS6aWYQzoQeWv4j9OsYu4iGiwbY',
+        baseUrl: FLOWISE_URL_ || '',
+        // apiKey: '4QyRe4cw5wKaxvIgNS6aWYQzoQeWv4j9OsYu4iGiwbY',
     });
 
     try {
         if(chat.chat_sessionid === '') {
             console.log('sem chat session id');
             const prediction = await client.createPrediction({
-                chatflowId: "70873bc0-fd4d-4d77-9781-18178d0d38a6",
+                chatflowId: FLOWISE_CHATFLOWID_ || '',
                 question: message,
             });
             chat.chat_sessionid = prediction.sessionId;
@@ -262,7 +307,9 @@ const send_message = async(req: Request, res: Response) => {
             const prediction = await client.createPrediction({
                 chatflowId: "70873bc0-fd4d-4d77-9781-18178d0d38a6",
                 question: message,
-                sessionId: chat.chat_sessionid
+                overrideConfig: {
+                    sessionId: chat.chat_sessionid
+                }
             });
 
             console.log(prediction);

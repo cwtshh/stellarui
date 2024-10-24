@@ -13,6 +13,7 @@ import Perfil from './components/Config/Perfil'
 import Geral from './components/Config/Geral'
 import AdminPainel from './components/Config/AdminPainel'
 import Chats  from './components/Config/Chats'
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'
 
 function App() {
   const { user } = useAuth();
@@ -24,14 +25,16 @@ function App() {
           <Route path="/" element={<Navigate to={'/login'} />} />
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
-          <Route path='/chat' element={<Chat />} />
-          <Route path='/configuracoes' element={<Config />}>
-            <Route path="geral" element={<Geral />} />
-            <Route path="perfil" element={<Perfil />} />
-            <Route path="AdminPainel" element={<AdminPainel />} />
-            <Route path="Chats" element={<Chats />} />
+          <Route path='/' element={<ProtectedRoute />}>
+            <Route path='/chat' element={<Chat />} />
+            <Route path='/transcription' element={<Transcription />} />
+            <Route path='/configuracoes' element={<Config />}>
+              <Route path="geral" element={<Geral />} />
+              <Route path="perfil" element={<Perfil />} />
+              <Route path="AdminPainel" element={<AdminPainel />} />
+              <Route path="Chats" element={<Chats />} />
+            </Route>
           </Route>
-          <Route path='/transcription' element={<Transcription />} />
         </Routes>
         <ToastContainer />
       </BrowserRouter>
