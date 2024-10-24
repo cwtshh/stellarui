@@ -83,5 +83,5 @@ export const downloadTranscriptionPDF = async (file: any, segments: any[]) => {
     };
 
     addPageNumbers();
-    document.save(`Transcrição_${(file?.name).replace(/\.[^/.]+$/, "")}.pdf`);
+    document.save(`Transcricao_${(file?.name).replace(/\.[^/.]+$/, "")}.pdf`);
 };

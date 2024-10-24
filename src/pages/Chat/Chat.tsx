@@ -82,7 +82,13 @@ const Chat = () => {
   };
 
   return (
-    <div className="h-full w-full flex flex-col justify-between">
+    <div className="h-full w-full flex flex-col justify-between"style={{
+      backgroundImage: `url(${chatbg})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      backgroundAttachment: 'fixed',
+    }}>
       <div className="flex justify-between items-center text-xl bg-primary w-full h-[72px] p-4">
         <div className='flex gap-4 items-center'>
             <div className="w-[40px] h-[40px] rounded-full bg-black">
@@ -103,13 +109,7 @@ const Chat = () => {
 
       <div
         className="scroll-hidden overflow-y-scroll flex flex-col w-full h-full p-6"
-        style={{
-          backgroundImage: `url(${chatbg})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          backgroundAttachment: 'fixed',
-        }}
+        
       >
         {selectedChat ? (
           [...selectedChat.messages, ...localMessages].map((message, index, array) => (
@@ -157,10 +157,12 @@ const Chat = () => {
 
       <div ref={messagesEndRef} /></div>
 
-      <div className="w-full p-3">
+      <div className="w-full p-3 bg-base">
         <div className="flex items-center gap-2">
           <div>
-            <IoMdAttach className="text-2xl cursor-pointer" onClick={handleIconClick} />
+            <button className='btn cursor-pointer bg-base-100 w-full p-3 flex items-center rounded-lg'>
+              <IoMdAttach className="text-2xl" onClick={handleIconClick} />
+            </button>
             <input
               type="file"
               accept=".pdf, .doc, .docx"

@@ -32,11 +32,14 @@ const AssistantChatBubble = ({ message }) => {
                         onMouseLeave={() => setIsHovered(false)} 
                     >
                         <span 
-                            className={`indicator-item badge badge-secondary w-[30px] h-[30px] hover:bg-primary transition-opacity transition-transform duration-400 ease-in-out ${isHovered ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}
+                            className={`indicator-item badge badge w-[80px] h-[20px] btn transition-opacity transition-transform duration-400 ease-in-out ${isHovered ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}
                             onClick={() => copyText(message.content)}
                         >
-                            <div className='cursor-pointer flex items-center justify-center'>
-                                <MdContentCopy className='hover:text-[green] transition' />
+                            <div className='cursor-pointer flex items-center justify-center shadow-xl'>
+                                <div className='gap-2 flex items-center justify-center'>
+                                    <MdContentCopy />
+                                    Copiar
+                                </div>
                             </div>
                         </span>
                         <div className="grid place-items-center">

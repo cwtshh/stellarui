@@ -25,6 +25,16 @@ const MessageSchema = new Schema({
     created_at: {
         type: Date,
         default: Date.now
+    },
+    file_attachment: {
+        file_name: {
+            type: String,
+            default: ''
+        },
+        file_path: {
+            type: String,
+            default: ''
+        },
     }
 });
 

@@ -207,6 +207,10 @@ const send_message_pdf = async(req: Request, res: Response) => {
                 chat: chat_id,
                 sent_by: 'user',
                 user_id: user_id,
+                file_attachment: {
+                    file_name: file.originalname,
+                    file_path: path.join(upload_directory, file.filename)
+                }
             });
 
             if(!new_message) {
@@ -279,6 +283,10 @@ const send_message_pdf = async(req: Request, res: Response) => {
                 chat: chat_id,
                 sent_by: 'user',
                 user_id: user_id,
+                file_attachment: {
+                    file_name: file.originalname,
+                    file_path: path.join(upload_directory, file.filename)
+                }
             });
 
             if(!new_message) {
