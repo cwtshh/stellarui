@@ -11,7 +11,7 @@ const UserChatBubble = ({ message }: any) => {
   // Verifica se há um anexo de arquivo
   const file_name = message?.file_attachment?.file_name;
   const file_path = message?.file_attachment?.file_path;
-  const clean_filename = file_name.split('-')[0];
+  const clean_filename = file_name?.split('-')[0];
 
   const handleDownload = async() => {
     try {

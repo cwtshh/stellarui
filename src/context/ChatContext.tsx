@@ -180,6 +180,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             NotifyToast({ message: error.response?.data.errors[0] || 'Erro ao enviar a mensagem.', type: 'error'});
         } finally {
             setLockChat(false);
+            window.location.reload()
         }
     }
 
