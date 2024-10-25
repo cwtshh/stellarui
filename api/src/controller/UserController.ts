@@ -130,12 +130,15 @@ const send_message_pdf = async(req: Request, res: Response) => {
         fs.mkdirSync(upload_directory);
     }
 
+    let file_name: string;
+
     const storage = multer.diskStorage({
         destination: function(req, file, cb) {
             cb(null, upload_directory);
         },
         filename: function(req, file, cb) {
-            cb(null, `${file.originalname}-${Date.now()}${path.extname(file.originalname)}`);
+            file_name = `${file.originalname}-${Date.now()}${path.extname(file.originalname)}`;
+            cb(null, file_name);
         }
     })
 
@@ -155,7 +158,7 @@ const send_message_pdf = async(req: Request, res: Response) => {
         }
 
         const local_file = await fs.readFileSync(path.join(upload_directory, file.filename));
-        let data;
+        let data: any;
         try {
             data = await pdf(local_file);
             console.log(data.text);
@@ -202,14 +205,17 @@ const send_message_pdf = async(req: Request, res: Response) => {
                 return;
             }
 
+            const file_originalname = file.filename;
+
             const new_message = await Message.create({
                 content: message,
                 chat: chat_id,
                 sent_by: 'user',
                 user_id: user_id,
                 file_attachment: {
-                    file_name: file.originalname,
-                    file_path: path.join(upload_directory, file.filename)
+                    file_name: file_name,
+                    file_path: path.join(upload_directory, file_name),
+                    original_filename: file_originalname
                 }
             });
 
@@ -271,12 +277,16 @@ const send_message_pdf = async(req: Request, res: Response) => {
                     ],
                 }
             });
-            console.log(prediction);
+            // console.log(prediction);
 
             if(!prediction) {
                 res.status(400).json({ errors: ['Erro ao enviar arquivo.'] });
                 return;
             }
+
+            const file_originalname = file.filename;
+
+            console.log("\n\n Nome:" + file.filename + "\n\n");
 
             const new_message = await Message.create({
                 content: message,
@@ -284,8 +294,9 @@ const send_message_pdf = async(req: Request, res: Response) => {
                 sent_by: 'user',
                 user_id: user_id,
                 file_attachment: {
-                    file_name: file.originalname,
-                    file_path: path.join(upload_directory, file.filename)
+                    file_name: file_name,
+                    file_path: path.join(upload_directory, file.filename),
+                    original_filename: file_originalname
                 }
             });
 
@@ -610,7 +621,30 @@ const delete_chat = async(req: Request, res: Response) => {
         return;
     }
     res.status(200).json({ message: 'Chat deletado com sucesso.' });
+};
+
+const download_file = (req: Request, res: Response) => {
+    const { file_name } = req.params;
+    const file_path = path.join(__dirname, '..', '..', 'uploads', file_name);
+    console.log(file_path);
+    if(!fs.existsSync(file_path)) {
+        res.status(400).json({ errors: ['Arquivo não encontrado.'] });
+        return;
+    }
+    res.download(file_path);
 }
 
 
-export { register_user, login_user, logout_user, create_chat, get_all_user_chats, send_message, get_chat, delete_chat, send_message_file, send_message_pdf };
+export { 
+    register_user, 
+    login_user, 
+    logout_user, 
+    create_chat, 
+    get_all_user_chats, 
+    send_message, 
+    get_chat, 
+    delete_chat, 
+    send_message_file, 
+    send_message_pdf,
+    download_file 
+};

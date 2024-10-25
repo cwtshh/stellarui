@@ -35,6 +35,10 @@ const MessageSchema = new Schema({
             type: String,
             default: ''
         },
+        original_filename: {
+            type: String,
+            default: ''
+        }
     }
 });
 
