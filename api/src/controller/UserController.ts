@@ -1,7 +1,7 @@
 import { MessageType, UserType } from '../utils/@types/UserType';
 import User from '../model/User';
 import bcrypt from 'bcryptjs';
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import Chat from '../model/Chat';
 import { query } from 'express-validator';
@@ -83,6 +83,43 @@ const login_user = async(req: Request, res: Response) => {
 
 const logout_user = async(req: Request, res: Response) => {
     res.clearCookie('token').json({ message: 'Usuário deslogado com sucesso.' });
+};
+
+const update_user = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const { id } = req.params; 
+        console.log(`Updating user with ID: ${id}`);
+        const { name, email, password } = req.body; 
+        const user = await User.findById(id); 
+        if (!user) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+
+        if (email) user.email = email;
+        if (password) {
+            const salt = await bcrypt.genSalt(10);
+            user.password = await bcrypt.hash(password, salt);
+        }
+        if (name) user.name = name;
+
+        const updated_user = await user.save();
+
+        res.status(200).json({
+            message: 'Usuário atualizado com sucesso.',
+            user: {
+                _id: updated_user._id,
+                name: updated_user.name,
+                email: updated_user.email,
+            },
+        });
+    } catch (error: unknown) {
+        console.error(error);
+        res.status(400).json({
+            errors: ['Erro ao atualizar usuário.'],
+            error: (error as Error).message || 'Erro desconhecido.',
+        });
+    }
 };
 
 const create_chat = async(req: Request, res: Response) => {
@@ -613,4 +650,4 @@ const delete_chat = async(req: Request, res: Response) => {
 }
 
 
-export { register_user, login_user, logout_user, create_chat, get_all_user_chats, send_message, get_chat, delete_chat, send_message_file, send_message_pdf };
+export { register_user, login_user, logout_user, create_chat, get_all_user_chats, send_message, get_chat, delete_chat, send_message_file, send_message_pdf, update_user};

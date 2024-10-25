@@ -11,6 +11,7 @@ interface AuthContextType {
     user: UserType | null;
     login: (login_data: LoginData) => Promise<boolean>;
     logout: () => void;
+    update: (id: string, updateData: Partial<UserType>) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -53,7 +54,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             console.log(err);
             NotifyToast({ message: 'Erro interno do servidor, verifique sua conexão tente novamente mais tarde', type: 'error' });
         })
-    }
+    };
+
+    const update = async (id: string, updateData: Partial<UserType>) => {
+        return axios.put(`${BASE_API_URL}/user/update/${id}`, updateData, { withCredentials: true })
+            .then(res => {
+                localStorage.setItem('stellar@auth_user', JSON.stringify(res.data.user));
+                setUser(res.data.user); 
+                NotifyToast({ message: 'Usuário atualizado com sucesso.', type: 'success' });
+            })
+            .catch(err => {
+                console.log(err);
+                NotifyToast({ message: 'Erro ao atualizar usuário.', type: 'error' });
+            });
+    };
 
     useEffect(() => {
         const user = localStorage.getItem('stellar@auth_user');
@@ -66,6 +80,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         <AuthContext.Provider value={{
             user,
             login,
+            update, 
             logout
         }}>
             { ready ? children : null }
