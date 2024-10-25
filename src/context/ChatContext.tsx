@@ -153,7 +153,11 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             user_id: user?._id,
             _id: Math.random().toString(),
             chat: selectedChat._id,
-            created_at: new Date().toISOString()
+            created_at: new Date().toISOString(),
+            file_attachment:{
+                file_name: file.name,
+                file_path: URL.createObjectURL(file)
+            }
         }
 
         setLocalMessages((prevMessages) => [...prevMessages, newMessage]);

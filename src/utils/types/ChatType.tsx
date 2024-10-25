@@ -5,6 +5,10 @@ export interface MessageType {
     content: string,
     sent_by: string,
     created_at: string,
+    file_attachment?: {
+        file_name: string,
+        file_path: string,
+    }
 }
 
 export interface ChatType {
