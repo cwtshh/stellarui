@@ -27,7 +27,6 @@ const send_message_to_ai = async(model: string, messages: MessageBody[], message
         prompt: message,
         stream: false,
     }
-    console.log(AI_ENDPOINT)
     try {
         const response = await axios.post(`${endpoint}/api/generate`, requestbody);
         return response.data;

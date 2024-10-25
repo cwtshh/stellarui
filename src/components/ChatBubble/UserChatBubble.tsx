@@ -6,21 +6,16 @@ import { BASE_API_URL } from '../../utils/constants';
 const UserChatBubble = ({ message }: any) => {
   const date = new Date(message.created_at).toLocaleString('pt-br');
 
-  console.log(message)
-
-  // Verifica se há um anexo de arquivo
   const file_name = message?.file_attachment?.file_name;
   const file_path = message?.file_attachment?.file_path;
   const clean_filename = file_name?.split('-')[0];
 
   const handleDownload = async() => {
     try {
-      // Define o responseType como 'blob' para garantir o download binário correto
       const response = await axios.get(`${BASE_API_URL}/user/chat/findfile/${file_name}`, {
         responseType: 'blob'
       });
   
-      // Cria um URL para o arquivo blob e define o link de download
       const url = window.URL.createObjectURL(new Blob([response.data as BlobPart]));
       const link = document.createElement('a');
       link.href = url;
@@ -29,7 +24,6 @@ const UserChatBubble = ({ message }: any) => {
       link.click();
       link.remove();
   
-      // Libera o URL do objeto para economizar memória
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Erro ao baixar o arquivo:', error);

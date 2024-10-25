@@ -144,7 +144,6 @@ const send_message_pdf = async(req: Request, res: Response) => {
 
     const upload = multer({ storage: storage }).single('file');
     upload(req, res, async(err) => {
-        console.log('envio pdf')
         const { chat_id, user_id, message } = req.body;
         const file = req.file;
         const chat = await Chat.findById(chat_id);
@@ -177,7 +176,6 @@ const send_message_pdf = async(req: Request, res: Response) => {
         });
 
         if(chat.chat_sessionid === '') {
-            console.log('sem chat session id');
             const prediction = await client.createPrediction({
                 chatflowId: FLOWISE_CHATFLOWID_ || '',
                 question: `Este é o conteudo do arquivo: ${data?.text}, esta é a pergunta: ${message}`,
@@ -245,7 +243,6 @@ const send_message_pdf = async(req: Request, res: Response) => {
             return;
         }
         if(chat.chat_sessionid !== '') {
-            console.log('tem session id');
             const prediction = await client.createPrediction({
                 chatflowId: FLOWISE_CHATFLOWID_ || '',
                 question: `Este é o conteudo do arquivo: ${data?.text}, esta é a pergunta: ${message}`,
@@ -277,7 +274,6 @@ const send_message_pdf = async(req: Request, res: Response) => {
                     ],
                 }
             });
-            // console.log(prediction);
 
             if(!prediction) {
                 res.status(400).json({ errors: ['Erro ao enviar arquivo.'] });
@@ -285,8 +281,6 @@ const send_message_pdf = async(req: Request, res: Response) => {
             }
 
             const file_originalname = file.filename;
-
-            console.log("\n\n Nome:" + file.filename + "\n\n");
 
             const new_message = await Message.create({
                 content: message,
@@ -332,7 +326,6 @@ const send_message_file = async(req: Request, res: Response) => {
     const file = req.file;
 
     const upload_directory = path.join(__dirname, '..', '..', 'uploads');
-    console.log(upload_directory);
     if(!fs.existsSync(upload_directory)) {
         fs.mkdirSync(upload_directory);
     }
@@ -349,10 +342,8 @@ const send_message_file = async(req: Request, res: Response) => {
     const upload = multer({storage: storage}).single('file');
     upload(req, res, async(err) => {
         const { chat_id, user_id, message, sessionId } = req.body;
-        console.log(chat_id, user_id, message, sessionId);
         const file = req.file;
         const chat = await Chat.findById(chat_id);
-        console.log(file);
         if(!chat) {
             res.status(400).json({ errors: ['Chat não encontrado.'] });
             return;
@@ -372,7 +363,6 @@ const send_message_file = async(req: Request, res: Response) => {
 
         try {
             const upsert_file: any = await axios.post(`https://flowise.aidadpdf.cloud/api/v1/vector/upsert/84820c3e-7fb4-472c-a803-10f14e81a97a`, formData);            
-            console.log(upsert_file.data.addedDocs[0].metadata);
 
             const prediction = await axios.post(`https://flowise.aidadpdf.cloud/api/v1/prediction/84820c3e-7fb4-472c-a803-10f14e81a97a`, {
                 question: message,
@@ -387,14 +377,6 @@ const send_message_file = async(req: Request, res: Response) => {
                 ]
             });
 
-            console.log({
-                "type": "file",
-                "name": file.filename,
-                "data": `data:application/pdf;base64,${fileBuffer.toString('base64')}`,
-                "mime": "application/pdf"
-            })
-
-            // console.log(prediction);
             res.status(201).json({ message: 'Arquivo enviado com sucesso.', ai_message: (prediction.data as { text: string }).text });
             return;
         } catch (error) {
@@ -442,7 +424,6 @@ const send_message_file = async(req: Request, res: Response) => {
 };
 
 const send_message = async(req: Request, res: Response) => {
-    console.log(FLOWISE_URL_, FLOWISE_CHATFLOWID_);
     const { message, chat_id, user_id } = req.body;
 
     const chat = await Chat.findById(chat_id).populate({
@@ -461,7 +442,6 @@ const send_message = async(req: Request, res: Response) => {
 
     try {
         if(chat.chat_sessionid === '') {
-            console.log('sem chat session id');
             const prediction = await client.createPrediction({
                 chatflowId: FLOWISE_CHATFLOWID_ || '',
                 question: message,
@@ -473,8 +453,6 @@ const send_message = async(req: Request, res: Response) => {
                 res.status(400).json({ errors: ['Erro ao enviar mensagem.'] });
                 return;
             }
-
-            console.log(prediction);
 
             const new_message = await Message.create({
                 content: message,
@@ -506,7 +484,6 @@ const send_message = async(req: Request, res: Response) => {
             return;
         }
         if(chat.chat_sessionid !== '') {
-            console.log('tem session id');
             const prediction = await client.createPrediction({
                 chatflowId: "70873bc0-fd4d-4d77-9781-18178d0d38a6",
                 question: message,
@@ -514,8 +491,6 @@ const send_message = async(req: Request, res: Response) => {
                     sessionId: chat.chat_sessionid
                 }
             });
-
-            console.log(prediction);
 
             if(!prediction) {
                 res.status(400).json({ errors: ['Erro ao enviar mensagem.'] });
@@ -626,7 +601,6 @@ const delete_chat = async(req: Request, res: Response) => {
 const download_file = (req: Request, res: Response) => {
     const { file_name } = req.params;
     const file_path = path.join(__dirname, '..', '..', 'uploads', file_name);
-    console.log(file_path);
     if(!fs.existsSync(file_path)) {
         res.status(400).json({ errors: ['Arquivo não encontrado.'] });
         return;
