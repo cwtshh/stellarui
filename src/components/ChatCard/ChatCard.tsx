@@ -31,7 +31,7 @@ const ChatCard = ({ chat }: ChatCardProps) => {
           <div className='flex text-left'>
             <p className='truncate w-[150px] text-ellipsis'>{first_user_message || 'Faça sua solicitação...'}</p>
           </div>
-          <p>{created_at.toLocaleString('pt-br')}</p>
+          <p>{created_at.toLocaleString('pt-br').replaceAll(',', ' | ')}</p>
         </div>
       </div>
       <div>
