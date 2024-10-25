@@ -18,6 +18,10 @@ const Chat = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  const file_name = previewFile ? previewFile.name : '';
+  const file_path = previewFile ? URL.createObjectURL(previewFile) : null;
+
+
   const handleIconClick = () => {
     fileInputRef.current?.click();
   };
@@ -146,7 +150,7 @@ const Chat = () => {
           {previewFile && (
             <div className="flex gap-4 h-full w-full p-3 place-items-center">
               <GoFileSymlinkFile className='text-3xl text-white' />
-              <p className='text-white mr-10'>{previewFile.name}</p>
+              <a href={file_path} download={file_name} className='hover:text-[#6d9ef3] hover:underline text-white mr-10'>{previewFile.name}</a>
             </div>
           )}
         </div>
@@ -158,8 +162,8 @@ const Chat = () => {
       <div className="w-full p-3 bg-base">
         <div className="flex items-center gap-2">
           <div>
-            <button className='btn cursor-pointer bg-base-100 w-full p-3 flex items-center rounded-lg'>
-              <IoMdAttach className="text-2xl" onClick={handleIconClick} />
+            <button onClick={handleIconClick} className='btn cursor-pointer bg-base-100 w-full p-3 flex items-center rounded-lg'>
+              <IoMdAttach className="text-2xl"/>
             </button>
             <input
               type="file"
@@ -168,10 +172,7 @@ const Chat = () => {
               className="hidden"
               onChange={(e) => {
                 const file = e.target.files ? e.target.files[0] : null;
-                if (file) {
-                  setPreviewFile(file);
-                  console.log("Arquivo selecionado:", file);
-                }
+                setPreviewFile(file);
               }}
             />
           </div>
