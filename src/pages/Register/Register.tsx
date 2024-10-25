@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { toast } from 'react-toastify';
+import React, { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { NotifyToast } from '../../components/Toast/Toast';
 import axios from 'axios';
 import { BASE_API_URL } from '../../utils/constants';
@@ -9,17 +8,27 @@ import logo from '../../assets/DPDF_Branca 1.png';
 import { BsStars } from 'react-icons/bs';
 
 const Register = () => {
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [showPass, setShowPass] = useState(false);
+    const [error, setError] = useState(false);
+    const [errorText, setErrorText] = useState('');
 
-    const [ name, setName ] = useState('');
-    const [ email, setEmail ] = useState('');
-    const [ password, setPassword ] = useState('');
-    const [ confirmPassword, setConfirmPassword ] = useState('');
-    const [ showPass, setShowPass ] = useState(false);
-    const [ error, setError ] = useState(false);
-    const [ errorText, setErrorText ] = useState('');
+    // Criação de referências para os campos de entrada
+    const nameInput = useRef<HTMLInputElement>(null);
+    const emailInput = useRef<HTMLInputElement>(null);
+    const passwordInput = useRef<HTMLInputElement>(null);
+    const confirmPasswordInput = useRef<HTMLInputElement>(null);
 
-    const handleRegister = async() => {
-        if(!name || !email || !password || !confirmPassword) {
+    // Efeito para focar no campo de Nome ao carregar o componente
+    useEffect(() => {
+        nameInput.current?.focus();
+    }, []);
+
+    const handleRegister = async () => {
+        if (!name || !email || !password || !confirmPassword) {
             NotifyToast({ message: 'Preencha todos os campos', type: 'error' });
             return;
         }
@@ -34,22 +43,38 @@ const Register = () => {
         }).catch(err => {
             err.response.data.errors.forEach((ind_error: string) => {
                 NotifyToast({ message: ind_error, type: 'error' });
-            })
+            });
         });
     };
 
     const handleShowPass = () => {
         setShowPass(!showPass);
-    }
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleRegister();
+        }
+    };
 
     useEffect(() => {
-        if(password !== confirmPassword) {
+        if (password !== confirmPassword) {
             setError(true);
             setErrorText('As senhas não coicidem!');
             return;
         }
         setError(false);
-    }, [password, confirmPassword])
+    }, [password, confirmPassword]);
+
+    // Manter o foco no campo apropriado
+    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPassword(e.target.value);
+    };
+
+    const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setConfirmPassword(e.target.value);
+    };
 
     return (
         <div className='flex flex-col gap-5 justify-center items-center h-screen w-full bg-primary'>
@@ -66,14 +91,26 @@ const Register = () => {
                             <div className="label">
                                 <span className="label-text">Nome:</span>
                             </div>
-                            <input onChange={e => setName(e.target.value)} type="text" className="input input-bordered w-full max-w-xs" />
+                            <input
+                                ref={nameInput}
+                                onKeyDown={handleKeyDown}
+                                onChange={e => setName(e.target.value)}
+                                type="text"
+                                className="input input-bordered w-full max-w-xs"
+                            />
                         </label>
 
                         <label className="form-control w-full max-w-xs">
                             <div className="label">
                                 <span className="label-text">Email:</span>
                             </div>
-                            <input onChange={e => setEmail(e.target.value)} type="text" className="input input-bordered w-full max-w-xs" />
+                            <input
+                                ref={emailInput}
+                                onKeyDown={handleKeyDown}
+                                onChange={e => setEmail(e.target.value)}
+                                type="text"
+                                className="input input-bordered w-full max-w-xs"
+                            />
                         </label>
 
                         <label className="form-control w-full max-w-xs">
@@ -81,9 +118,15 @@ const Register = () => {
                                 <span className="label-text">Senha:</span>
                             </div>
                             <label className="input input-bordered flex items-center gap-2">
-                                <input onChange={e => setPassword(e.target.value)} type={ showPass ? 'text' : 'password'} className="grow" />
-                                <button onClick={() => handleShowPass()} className='text-lg'>
-                                    { showPass ? <IoMdEye /> : <IoMdEyeOff /> }
+                                <input
+                                    ref={passwordInput}
+                                    onKeyDown={handleKeyDown}
+                                    onChange={handlePasswordChange}
+                                    type={showPass ? 'text' : 'password'}
+                                    className="grow"
+                                />
+                                <button onClick={handleShowPass} className='text-lg'>
+                                    {showPass ? <IoMdEye /> : <IoMdEyeOff />}
                                 </button>
                             </label>
                         </label>
@@ -93,27 +136,33 @@ const Register = () => {
                                 <span className="label-text">Confirmar Senha:</span>
                             </div>
                             <label className="input input-bordered flex items-center gap-2">
-                                <input onChange={e => setConfirmPassword(e.target.value)} type={ showPass ? 'text' : 'password'} className="grow" />
-                                <button onClick={() => handleShowPass()} className='text-lg'>
-                                    { showPass ? <IoMdEye /> : <IoMdEyeOff /> }
+                                <input
+                                    ref={confirmPasswordInput}
+                                    onKeyDown={handleKeyDown}
+                                    onChange={handleConfirmPasswordChange}
+                                    type={showPass ? 'text' : 'password'}
+                                    className="grow"
+                                />
+                                <button onClick={handleShowPass} className='text-lg'>
+                                    {showPass ? <IoMdEye /> : <IoMdEyeOff />}
                                 </button>
                             </label>
                         </label>
-                        
+
                         <div className='h-[25px]'>
-                            { error ? (
-                                <p className='font-bold'>As senhas não coicidem!</p>
-                            ) : (<></>)}
+                            {error && (
+                                <p className='font-bold text-red-600'>{errorText}</p>
+                            )}
                         </div>
 
-                        <button onClick={() => handleRegister()} className='btn btn-primary'>Criar Conta</button>
+                        <button onClick={handleRegister} className='btn btn-primary'>Criar Conta</button>
                     </div>
                 </div>
             </div>
 
             <p className='text-white'>Já tem conta? <Link className='font-bold text-[#1384e3]' to={'/login'}>Entrar!</Link></p>
         </div>
-    )
+    );
 }
 
-export default Register
+export default Register;
