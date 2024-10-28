@@ -1,17 +1,21 @@
-import { useEffect, useState } from 'react';
-import { BiLogOut } from 'react-icons/bi';
+import { MdOutlineAdminPanelSettings } from "react-icons/md";
+import { useLocation, useNavigate } from 'react-router-dom';
 import { GrConfigure, GrUserAdmin } from 'react-icons/gr';
 import { HiMiniPencilSquare } from 'react-icons/hi2';
 import { useAuth } from '../../context/AuthContext';
 import { useChat } from '../../context/ChatContext';
-import ChatCard from '../ChatCard/ChatCard';
-import { BsStars } from 'react-icons/bs';
-import logo from '../../assets/DPDF_Branca 1.png';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { FaUser, FaVideo } from 'react-icons/fa';
+import { RiChatSettingsFill } from "react-icons/ri";
 import { IoChatboxEllipses } from 'react-icons/io5';
-import { Link } from 'react-router-dom';
+import { MdOutlineSettings } from "react-icons/md";
+import logo from '../../assets/DPDF_Branca 1.png';
+import { FaUser, FaVideo } from 'react-icons/fa';
 import AdminModal from '../Config/modalAdmin';
+import ChatCard from '../ChatCard/ChatCard';
+import { useEffect, useState } from 'react';
+import { CgProfile } from "react-icons/cg";
+import { BiLogOut } from 'react-icons/bi';
+import { BsStars } from 'react-icons/bs';
+import { Link } from 'react-router-dom';
 
 const SideBar = () => {
     const { chats, add_chat, lockChat } = useChat();
@@ -99,26 +103,38 @@ const SideBar = () => {
                     <div>
                         <p className='font-bold text-white mb-4'>Configurações</p>
                         <ul className="space-y-4">
-                            <li className={`${isActivePage('/configuracoes/geral') && !isModalOpen ? 'bg-white text-[black] rounded-xl hover:bg-[#d6dbe1]' : ''} h-full p-3 text-green-200 transition-colors duration-200`}>
+                            <li className={`${isActivePage('/configuracoes/geral') && !isModalOpen ? 'bg-white text-[black] hover:bg-[#d6dbe1]' : ''} hover:bg-secondary  h-full p-3 rounded-xl text-green-200 transition-colors duration-200`}>
                                 <Link 
                                     to="/configuracoes/geral">
-                                    General
+                                    <div className='flex gap-4 items-center'>
+                                        <MdOutlineSettings />
+                                        General
+                                    </div>
                                 </Link>
                             </li>
-                            <li className={`${isActivePage('/configuracoes/perfil') && !isModalOpen ? 'bg-white text-[black] rounded-xl hover:bg-[#d6dbe1]' : ''} h-full p-3 text-green-200 transition-colors duration-200`}>
+                            <li className={`${isActivePage('/configuracoes/perfil') && !isModalOpen ? 'bg-white text-[black] hover:bg-[#d6dbe1]' : ''} hover:bg-secondary  h-full p-3 rounded-xl text-green-200 transition-colors duration-200`}>
                                 <Link 
                                     to="/configuracoes/perfil">
-                                    Profile
+                                    <div className='flex gap-4 items-center'>
+                                        <CgProfile />
+                                        Profile
+                                    </div>
                                 </Link>
                             </li>
-                            <li className={`${isActivePage('/configuracoes/Chats') && !isModalOpen ? 'bg-white text-[black] rounded-xl hover:bg-[#d6dbe1]' : ''} h-full p-3 text-green-200 transition-colors duration-200`}>
+                            <li className={`${isActivePage('/configuracoes/Chats') && !isModalOpen ? 'bg-white text-[black] hover:bg-[#d6dbe1]' : ''} hover:bg-secondary  h-full p-3 rounded-xl text-green-200 transition-colors duration-200`}>
                                 <Link 
                                     to="/configuracoes/Chats">
-                                    Chats
+                                    <div className='flex gap-4 items-center'>
+                                        <RiChatSettingsFill />
+                                        Chats
+                                    </div>
                                 </Link>
                             </li>
-                            <li className={`${isModalOpen ? 'bg-white text-[black] rounded-xl hover:bg-[#d6dbe1]' : ''} h-full p-3 text-green-200 transition-colors duration-200`} onClick={openModal}>
-                                Admin Panel
+                            <li className={`${isModalOpen ? 'bg-white text-[black] hover:bg-[#d6dbe1]' : ''} hover:bg-secondary  h-full p-3 rounded-xl text-green-200 transition-colors duration-200`} onClick={openModal}>
+                                <div className='flex gap-4 items-center'>
+                                    <MdOutlineAdminPanelSettings />
+                                    Admin Panel
+                                </div>
                             </li>
                         </ul>
                     </div>
