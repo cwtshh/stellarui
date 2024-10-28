@@ -76,7 +76,7 @@ const login_user = async(req: Request, res: Response) => {
             _id: user._id,
             name: user.name,
             email: user.email,
-            role: user.role
+            role: user.role,
         }
     })
 };

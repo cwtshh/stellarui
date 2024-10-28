@@ -37,7 +37,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             success = true;
             NotifyToast({ message: res.data.message, type: 'success' });
         }).catch(err => {
-            console.log(err);
             NotifyToast({ message: err.response.data.errors[0], type: 'error' });
             success = false;
         })
@@ -51,7 +50,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             NotifyToast({ message: res.data.message, type: 'success' });
             window.location.href = '/login';
         }).catch(err => {
-            console.log(err);
             NotifyToast({ message: 'Erro interno do servidor, verifique sua conexão tente novamente mais tarde', type: 'error' });
         })
     };
@@ -64,7 +62,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 NotifyToast({ message: 'Usuário atualizado com sucesso.', type: 'success' });
             })
             .catch(err => {
-                console.log(err);
                 NotifyToast({ message: 'Erro ao atualizar usuário.', type: 'error' });
             });
     };

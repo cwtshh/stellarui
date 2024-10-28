@@ -149,7 +149,7 @@ const Register = () => {
                             </label>
                         </label>
 
-                        <div className='h-[25px]'>
+                        <div className='h-[25px] text-center'>
                             {error && (
                                 <p className='font-bold text-red-600'>{errorText}</p>
                             )}
