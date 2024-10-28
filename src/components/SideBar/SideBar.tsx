@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BiLogOut } from 'react-icons/bi';
 import { GrConfigure, GrUserAdmin } from 'react-icons/gr';
 import { HiMiniPencilSquare } from 'react-icons/hi2';
@@ -36,6 +36,12 @@ const SideBar = () => {
         return location.pathname.startsWith(path);
     };
 
+    useEffect(() => {
+        if(location.pathname === '/configuracoes'){
+            navigate('configuracoes/geral');
+        }
+    }, [location, navigate])
+
     return (
         <div className='bg-primary min-w-[350px] p-5 flex flex-col justify-between shadow-[4px_0_5px_rgba(0,0,0,0.50)] z-50'>
             <div className='flex flex-col gap-5'>
@@ -54,7 +60,13 @@ const SideBar = () => {
                     </button>
                 ) : (
                     <button className='btn' onClick={() => navigate('/chat')}>
-                        Voltar ao chat
+                        {chats.length > 1 ? (
+                            <p> Voltar aos Chats</p>
+                        ) : (
+                            <p>
+                                Voltar ao Chat
+                            </p>
+                        )}
                         <IoChatboxEllipses />
                     </button>
                 )}
@@ -85,12 +97,29 @@ const SideBar = () => {
                     </>
                 ) : (
                     <div>
-                        <p className='font-bold text-white'>Configurações</p>
+                        <p className='font-bold text-white mb-4'>Configurações</p>
                         <ul className="space-y-4">
-                            <li><Link to="/configuracoes/geral" className="h-full max-h-[40rem] text-green-200 hover:text-green-100 transition-colors duration-200">General</Link></li>
-                            <li><Link to="/configuracoes/perfil" className="h-full max-h-[40rem] text-green-200 hover:text-green-100 transition-colors duration-200">Profile</Link></li>
-                            <li><Link to="/configuracoes/Chats" className="h-full max-h-[40rem] text-green-200 hover:text-green-100 transition-colors duration-200">Chats</Link></li>
-                            <li><Link to="/configuracoes/AdminPainel" className="h-full max-h-[40rem] text-green-200 hover:text-green-100 transition-colors duration-200" onClick={openModal}>Admin Panel</Link></li>
+                            <li className={`${isActivePage('/configuracoes/geral') && !isModalOpen ? 'bg-white text-[black] rounded-xl hover:bg-[#d6dbe1]' : ''} h-full p-3 text-green-200 transition-colors duration-200`}>
+                                <Link 
+                                    to="/configuracoes/geral">
+                                    General
+                                </Link>
+                            </li>
+                            <li className={`${isActivePage('/configuracoes/perfil') && !isModalOpen ? 'bg-white text-[black] rounded-xl hover:bg-[#d6dbe1]' : ''} h-full p-3 text-green-200 transition-colors duration-200`}>
+                                <Link 
+                                    to="/configuracoes/perfil">
+                                    Profile
+                                </Link>
+                            </li>
+                            <li className={`${isActivePage('/configuracoes/Chats') && !isModalOpen ? 'bg-white text-[black] rounded-xl hover:bg-[#d6dbe1]' : ''} h-full p-3 text-green-200 transition-colors duration-200`}>
+                                <Link 
+                                    to="/configuracoes/Chats">
+                                    Chats
+                                </Link>
+                            </li>
+                            <li className={`${isModalOpen ? 'bg-white text-[black] rounded-xl hover:bg-[#d6dbe1]' : ''} h-full p-3 text-green-200 transition-colors duration-200`} onClick={openModal}>
+                                Admin Panel
+                            </li>
                         </ul>
                     </div>
                

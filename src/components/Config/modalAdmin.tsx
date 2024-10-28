@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { X, Settings, Users, Database } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -15,7 +15,7 @@ const AdminModal = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="relative w-full max-w-4xl h-[90vh] bg-green-900 rounded-lg shadow-xl">
         <button 
           onClick={onClose}
@@ -68,6 +68,7 @@ const AdminModal = ({ isOpen, onClose }) => {
     </div>
   );
 };
+
 
 const NavItem = ({ icon, label, onClick }) => (
   <button 

@@ -1,6 +1,5 @@
 import './App.css'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
-import Home from './pages/Home/Home'
 import SideBar from './components/SideBar/SideBar'
 import Login from './pages/Login/Login'
 import Register from './pages/Register/Register'
@@ -11,7 +10,6 @@ import { useAuth } from './context/AuthContext'
 import Config from './components/Config/SideConfigBar'
 import Perfil from './components/Config/Perfil'
 import Geral from './components/Config/Geral'
-import AdminPainel from './components/Config/AdminPainel'
 import Chats  from './components/Config/Chats'
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'
 
@@ -31,7 +29,6 @@ function App() {
             <Route path='/configuracoes' element={<Config />}>
               <Route path="geral" element={<Geral />} />
               <Route path="perfil" element={<Perfil />} />
-              <Route path="AdminPainel" element={<AdminPainel />} />
               <Route path="Chats" element={<Chats />} />
             </Route>
           </Route>
