@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { BiLogOut } from 'react-icons/bi';
 import { GrConfigure, GrUserAdmin } from 'react-icons/gr';
 import { HiMiniPencilSquare } from 'react-icons/hi2';
@@ -10,7 +10,7 @@ import logo from '../../assets/DPDF_Branca 1.png';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FaUser, FaVideo } from 'react-icons/fa';
 import { IoChatboxEllipses } from 'react-icons/io5';
-import { Outlet, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import AdminModal from '../Config/modalAdmin';
 
 const SideBar = () => {
@@ -37,7 +37,7 @@ const SideBar = () => {
     };
 
     return (
-        <div className='bg-primary w-[380px] p-5 flex flex-col justify-between shadow-[4px_0_5px_rgba(0,0,0,0.50)] z-50'>
+        <div className='bg-primary min-w-[350px] p-5 flex flex-col justify-between shadow-[4px_0_5px_rgba(0,0,0,0.50)] z-50'>
             <div className='flex flex-col gap-5'>
                 <div className='flex justify-between'>
                     <div className='flex items-center gap-2'>
@@ -89,8 +89,8 @@ const SideBar = () => {
                         <ul className="space-y-4">
                             <li><Link to="/configuracoes/geral" className="h-full max-h-[40rem] text-green-200 hover:text-green-100 transition-colors duration-200">General</Link></li>
                             <li><Link to="/configuracoes/perfil" className="h-full max-h-[40rem] text-green-200 hover:text-green-100 transition-colors duration-200">Profile</Link></li>
-                            <li><Link to="/configuracoes/AdminPainel" className="h-full max-h-[40rem] text-green-200 hover:text-green-100 transition-colors duration-200" onClick={openModal}>Admin Panel</Link></li>
                             <li><Link to="/configuracoes/Chats" className="h-full max-h-[40rem] text-green-200 hover:text-green-100 transition-colors duration-200">Chats</Link></li>
+                            <li><Link to="/configuracoes/AdminPainel" className="h-full max-h-[40rem] text-green-200 hover:text-green-100 transition-colors duration-200" onClick={openModal}>Admin Panel</Link></li>
                         </ul>
                     </div>
                
