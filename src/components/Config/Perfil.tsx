@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { FaUser, FaEnvelope, FaLock, FaImage } from 'react-icons/fa';
+import { useState } from 'react';
+import { FaUser, FaEnvelope, FaLock } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
 
 export default function ProfileEdit() {
@@ -17,13 +17,6 @@ export default function ProfileEdit() {
     setFormData(prevState => ({
       ...prevState,
       [name]: value
-    }));
-  };
-
-  const handleFileChange = (e) => {
-    setFormData(prevState => ({
-      ...prevState,
-      avatar: e.target.files[0]
     }));
   };
 
@@ -103,24 +96,9 @@ export default function ProfileEdit() {
             className="w-full p-2 bg-green-700 border border-green-600 rounded-md text-green-100 focus:ring-green-400 focus:border-green-400"
           />
         </div>
-        <div className="mb-4">
-          <label htmlFor="avatar" className="block text-sm font-medium text-green-200 mb-2">
-            <FaImage className="inline mr-2" />
-            Profile Picture
-          </label>
-          <input
-            type="file"
-            id="avatar"
-            name="avatar"
-            onChange={handleFileChange}
-            className="w-full p-2 cursor-pointer bg-green-700 border border-green-600 rounded-md text-green-100 focus:ring-green-400 focus:border-green-400"
-            accept="image/*"
-          />
-        </div>
         <button 
           type="submit" 
-          className="w-full bg-green-600 text-green-50 py-2 px-4 rounded-md hover:bg-green-700 transition-colors duration-200"
-        >
+          className="w-full bg-green-600 text-green-50 py-2 px-4 rounded-md hover:bg-green-700 transition-colors duration-200">
           Save Changes
         </button>
       </form>

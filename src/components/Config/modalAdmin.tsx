@@ -1,10 +1,29 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { X, Settings, Users, Database } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const AdminModal = ({ isOpen, onClose }) => {
   const [selectedSection, setSelectedSection] = useState('Database');
   const navigate = useNavigate();
+  const modalRef = useRef(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -16,7 +35,7 @@ const AdminModal = ({ isOpen, onClose }) => {
 
   return (
     <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="relative w-full max-w-4xl bg-green-900 rounded-lg shadow-xl">
+      <div ref={modalRef} className="relative w-full max-w-5xl bg-green-900 rounded-lg shadow-xl">
         <button 
           onClick={onClose}
           className="absolute top-6 right-4 text-green-400 hover:text-white"

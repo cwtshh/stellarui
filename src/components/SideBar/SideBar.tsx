@@ -131,7 +131,7 @@ const SideBar = () => {
                                 </Link>
                             </li>
                             { user?.role === 'admin' && (
-                                <li className={`${isModalOpen ? 'bg-white text-[black] hover:bg-[#d6dbe1]' : ''} hover:bg-secondary  h-full p-3 rounded-xl text-green-200 transition-colors duration-200`} onClick={openModal}>
+                                <li className={`${isModalOpen ? 'bg-white text-[black] hover:bg-[#d6dbe1]' : ''} hover:bg-secondary  h-full p-3 rounded-xl text-green-200 transition-colors duration-200 cursor-pointer`} onClick={openModal}>
                                     <div className='flex gap-4 items-center'>
                                         <MdOutlineAdminPanelSettings />
                                         Admin Panel
@@ -157,8 +157,7 @@ const SideBar = () => {
                             </a>
                         </li>
                     ) : (
-                        <>
-                        </>
+                        <></>
                     )}
                     <li>
                         <button onClick={() => logout()}>
