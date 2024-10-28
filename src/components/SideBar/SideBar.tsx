@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { BiLogOut } from 'react-icons/bi';
 import { GrConfigure, GrUserAdmin } from 'react-icons/gr';
 import { HiMiniPencilSquare } from 'react-icons/hi2';
@@ -10,12 +11,22 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { FaUser, FaVideo } from 'react-icons/fa';
 import { IoChatboxEllipses } from 'react-icons/io5';
 import { Outlet, Link } from 'react-router-dom';
+import AdminModal from '../Config/modalAdmin';
 
 const SideBar = () => {
     const { chats, add_chat, lockChat } = useChat();
     const { logout, user } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const openModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
 
     const isActivePage = (path: string) => {
         return location.pathname === path;
@@ -82,6 +93,7 @@ const SideBar = () => {
                             <li><Link to="/configuracoes/Chats" className="h-full max-h-[40rem] text-green-200 hover:text-green-100 transition-colors duration-200">Chats</Link></li>
                         </ul>
                     </div>
+               
                 )}
             </div>
             <div className="dropdown dropdown-top flex flex-col">
@@ -103,10 +115,10 @@ const SideBar = () => {
                     )}
                     {user?.role === 'admin' && ( 
                         <li>
-                            <a>
+                            <button onClick={openModal}>
                                 <GrUserAdmin className='mr-2' />
                                 Painel de Admin
-                            </a>
+                            </button>
                         </li>
                     )}
                     <li>
@@ -117,8 +129,9 @@ const SideBar = () => {
                     </li>
                 </ul>
             </div>
+            <AdminModal isOpen={isModalOpen} onClose={closeModal} />
         </div>
     );
-}
+};
 
 export default SideBar;

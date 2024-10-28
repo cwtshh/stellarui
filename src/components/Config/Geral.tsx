@@ -27,9 +27,9 @@ export default function Geral() {
       </div>
       <div className="mb-4">
         <label htmlFor="systemPrompt" className="block text-sm font-medium text-green-200 mb-2">System Prompt</label>
-        <input
-          type="text"
+        <textarea
           id="systemPrompt"
+          rows={4} 
           className="w-full p-2 bg-green-700 border border-green-600 rounded-md text-green-100 focus:ring-green-400 focus:border-green-400"
         />
       </div>
