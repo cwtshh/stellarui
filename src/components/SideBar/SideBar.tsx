@@ -89,7 +89,7 @@ const SideBar = () => {
                         <ul className="space-y-4">
                             <li><Link to="/configuracoes/geral" className="h-full max-h-[40rem] text-green-200 hover:text-green-100 transition-colors duration-200">General</Link></li>
                             <li><Link to="/configuracoes/perfil" className="h-full max-h-[40rem] text-green-200 hover:text-green-100 transition-colors duration-200">Profile</Link></li>
-                            <li><Link to="/configuracoes/AdminPainel" className="h-full max-h-[40rem] text-green-200 hover:text-green-100 transition-colors duration-200">Admin Panel</Link></li>
+                            <li><Link to="/configuracoes/AdminPainel" className="h-full max-h-[40rem] text-green-200 hover:text-green-100 transition-colors duration-200" onClick={openModal}>Admin Panel</Link></li>
                             <li><Link to="/configuracoes/Chats" className="h-full max-h-[40rem] text-green-200 hover:text-green-100 transition-colors duration-200">Chats</Link></li>
                         </ul>
                     </div>
