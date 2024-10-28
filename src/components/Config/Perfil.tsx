@@ -42,8 +42,8 @@ export default function ProfileEdit() {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-green-500 shadow-lg rounded-lg p-6">
-      <h2 className="text-2xl font-bold mb-6 text-green-50">Edit Profile</h2>
+    <div className="w-[600px] bg-green-900 shadow-lg rounded-lg p-6">
+      <h2 className="text-2xl font-bold mb-6 text-green-50 border-b border-green-700 pb-6">Edit Profile</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label htmlFor="name" className="block text-sm font-medium text-green-200 mb-2">
@@ -113,7 +113,7 @@ export default function ProfileEdit() {
             id="avatar"
             name="avatar"
             onChange={handleFileChange}
-            className="w-full p-2 bg-green-700 border border-green-600 rounded-md text-green-100 focus:ring-green-400 focus:border-green-400"
+            className="w-full p-2 cursor-pointer bg-green-700 border border-green-600 rounded-md text-green-100 focus:ring-green-400 focus:border-green-400"
             accept="image/*"
           />
         </div>

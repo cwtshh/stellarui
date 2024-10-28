@@ -8,17 +8,18 @@ export default function Geral() {
   };
 
   return (
-    <div className="max-w-md w-[380px] mx-auto bg-green-500 shadow-lg rounded-lg p-6">
-      <h2 className="text-2xl font-bold mb-6 text-green-50">General Settings</h2>
+    <div className="w-[600px] bg-green-900 shadow-lg rounded-lg p-6">
+      <h2 className="text-2xl font-bold mb-6 text-green-50 border-b border-green-700 pb-6">General Settings</h2>
       <div className="mb-4">
         <label htmlFor="language" className="block text-sm font-medium text-green-200 mb-2">Language</label>
         <select
           id="language"
           value={language}
           onChange={handleLanguageChange}
-          className="w-full p-2 bg-green-700 border border-green-600 rounded-md text-green-100 focus:ring-green-400 focus:border-green-400"
+          className="cursor-pointer w-full p-2 bg-green-700 border border-green-600 rounded-md text-green-100 focus:ring-green-400 focus:border-green-400"
         >
-          <option value="">Select a language</option>
+          <option hidden value="">Select a language</option>
+          <option value="pt-br">Português</option>
           <option value="en">English</option>
           <option value="es">Spanish</option>
           <option value="fr">French</option>

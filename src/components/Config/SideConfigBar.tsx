@@ -3,7 +3,7 @@ import chatbg from '../../assets/chatbg.jpeg';
 
 export default function Config() {
   return (
-      <div className="relative flex-1 p-8 bg-secondary shadow-inner h-full" style={{
+      <div className="relative flex-1 p-8 bg-secondary justify-center items-center flex shadow-inner h-full" style={{
         backgroundImage: `url(${chatbg})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',

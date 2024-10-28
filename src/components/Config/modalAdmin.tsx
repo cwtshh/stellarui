@@ -16,15 +16,15 @@ const AdminModal = ({ isOpen, onClose }) => {
 
   return (
     <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="relative w-full max-w-4xl h-[90vh] bg-green-900 rounded-lg shadow-xl">
+      <div className="relative w-full max-w-4xl bg-green-900 rounded-lg shadow-xl">
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 text-green-400 hover:text-white"
+          className="absolute top-6 right-4 text-green-400 hover:text-white"
         >
           <X size={24} />
         </button>
 
-        <div className="border-b border-green-700 p-6">
+        <div className="border-b flex justify-center border-green-700 p-6">
           <h2 className="text-2xl font-bold text-white">Admin Panel</h2>
         </div>
 
