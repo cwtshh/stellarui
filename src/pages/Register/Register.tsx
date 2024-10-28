@@ -59,12 +59,14 @@ const Register = () => {
     };
 
     useEffect(() => {
-        if (password !== confirmPassword) {
-            setError(true);
-            setErrorText('As senhas não coicidem!');
-            return;
+        if(confirmPassword !== ''){
+            if (password !== confirmPassword) {
+                setError(true);
+                setErrorText('As senhas não coicidem!');
+                return;
+            }
+            setError(false);
         }
-        setError(false);
     }, [password, confirmPassword]);
 
     // Manter o foco no campo apropriado
