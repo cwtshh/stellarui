@@ -59,7 +59,7 @@ export const downloadTranscriptionPDF = async (file: any, segments: any[]) => {
         document.setFont('helvetica', 'bold');
     
         // Adiciona o texto
-        splitText.forEach((line) => {
+        splitText.forEach((line: any) => {
             // Verifique se o espaço restante é suficiente para adicionar a linha de texto
             if (yPos + lineHeight > pageHeight - marginBottom) {
                 document.addPage();

@@ -1,4 +1,4 @@
-import { create_chat, delete_chat, download_file, get_all_user_chats, get_chat, login_user, logout_user, register_user, send_message, send_message_file, send_message_pdf, update_user } from '../controller/UserController';
+import { create_chat, delete_chat, download_file, export_user_chats, get_all_user_chats, get_chat, login_user, logout_user, register_user, send_message, send_message_file, send_message_pdf, update_user } from '../controller/UserController';
 import UserCreateValidations from '../middlewares/UserCreateValidation';
 import UserUpdateValidation from '../middlewares/UserUpdateValidation'
 import UserLoginValidations from '../middlewares/UserLoginValidation';
@@ -22,5 +22,6 @@ UserRouter.delete('/chat/:chat_id', delete_chat);
 UserRouter.post('/chat/sendfile', send_message_file);
 UserRouter.post('/chat/send/pdf', send_message_pdf);
 UserRouter.get('/chat/findfile/:file_name', download_file);
+UserRouter.get('/chat/export/:user_id', export_user_chats);
 
 export default UserRouter;

@@ -640,6 +640,32 @@ const download_file = (req: Request, res: Response) => {
         return;
     }
     res.download(file_path);
+};
+
+const export_user_chats = async(req: Request, res: Response) => {
+    const { user_id } = req.params;
+    if(!user_id) {
+        res.status(400).json({ errors: ['ID de usuário não fornecido.'] });
+        return;
+    }
+
+    const user = await User.findById(user_id);
+    if(!user) {
+        res.status(400).json({ errors: ['Usuário não encontrado.'] });
+        return;
+    }
+
+    const chats = await Chat.find({ user: user_id }).populate('messages');
+    if(!chats) {
+        res.status(400).json({ errors: ['Usuário não possui chats.'] });
+        return;
+    }
+
+    res.status(200).json({
+        message: ['Chats exportados com sucesso.'],
+        chats
+    });
+
 }
 
 
@@ -655,5 +681,6 @@ export {
     send_message_file, 
     send_message_pdf,
     download_file,
-    update_user
+    update_user,
+    export_user_chats
 };
