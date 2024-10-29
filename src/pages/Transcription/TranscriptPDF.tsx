@@ -20,17 +20,26 @@ export const downloadTranscriptionPDF = async (file: any, segments: any[]) => {
     const marginTop = 60;    
     const marginBottom = 20; 
 
+    const titleMaxWidth = document.internal.pageSize.width - marginLeft - marginRight;
+    const splitTitle = document.splitTextToSize(`Transcrição de ${file?.name.replace(/\.[^/.]+$/, "")}`, titleMaxWidth);
+
+    const titleHeight = splitTitle.length * 7;
+
     document.setFontSize(17);
     document.setTextColor(110, 161, 247);
     document.setFont('helvetica', 'bold');
-    document.text(`Transcrição de ${file?.name.replace(/\.[^/.]+$/, "")}`, document.internal.pageSize.width / 2, marginTop - 15, { align: 'center' });
+    splitTitle.forEach((line, index) => {
+        document.text(line, document.internal.pageSize.width / 2, marginTop - 15 + (index * 7), { align: 'center' });
+    });
     document.setTextColor(0, 0, 0);
+
+    let yPos = marginTop + titleHeight;
 
     document.setDrawColor(1, 56, 13);
     document.setLineWidth(3);
     document.line(marginLeft, marginTop - 10, document.internal.pageSize.width - marginRight, marginTop - 10);
 
-    let yPos = marginTop + 10; // Adiciona uma margem extra de 10 mm abaixo da linha verde
+    yPos += 10;
     const lineHeight = 10;
     const pageHeight = document.internal.pageSize.height;
 
