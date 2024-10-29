@@ -663,7 +663,10 @@ const export_user_chats = async(req: Request, res: Response) => {
 
     res.status(200).json({
         message: ['Chats exportados com sucesso.'],
-        chats
+        chats,
+        user: {
+            name: user.name
+        }
     });
 
 }

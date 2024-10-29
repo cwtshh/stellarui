@@ -23,7 +23,8 @@ const AssistantChatBubble = ({ message }) => {
             <div className="chat-header text-white">Estella</div>
 
             {message === 'loading' ? (
-                <div className="w-5 h-5 rounded-full bg-green-500 animate-pulse"></div>
+                // <div className="w-5 h-5 rounded-full bg-green-500 animate-pulse"></div>
+                <span className="loading bg-green-300 loading-dots loading-lg"></span>
             ) : (
                 <>
                     <div

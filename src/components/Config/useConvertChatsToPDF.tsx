@@ -1,8 +1,13 @@
 import jsPDF from 'jspdf'
 import logo from '../../assets/logo.jpg';
 
-
 export const useConvertChatsToPDF = async(chats: any[]) => {
+    console.log('aaaa', chats.chats)
+    console.log('nbbbb', chats)
+
+    const username = chats.user.name
+    console.log(username)
+
     const user = localStorage.getItem('stellar@auth_user') ? JSON.parse(localStorage.getItem('user') as string) : null;
     const document = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
     const imgRight = logo;
@@ -17,7 +22,7 @@ export const useConvertChatsToPDF = async(chats: any[]) => {
     document.setFontSize(17);
     document.setTextColor(110, 161, 247);
     document.setFont('helvetica', 'bold');
-    document.text(`Chats de ${user?._id}`, document.internal.pageSize.width / 2, marginTop - 15, { align: 'center' });
+    document.text(`Chats de ${username}`, document.internal.pageSize.width / 2, marginTop - 15, { align: 'center' });
     document.setTextColor(0, 0, 0);
 
     document.setDrawColor(1, 56, 13);
@@ -28,7 +33,7 @@ export const useConvertChatsToPDF = async(chats: any[]) => {
     const lineHeight = 10;
     const pageHeight = document.internal.pageSize.height;
 
-    chats.forEach((chat: any, index: number) => {
+    chats.chats.forEach((chat: any, index: number) => {
         if (yPos + lineHeight > pageHeight - marginBottom) {
             document.addPage();
             yPos = marginTop - 30; 
@@ -69,5 +74,5 @@ export const useConvertChatsToPDF = async(chats: any[]) => {
         }
     };
     addPageNumbers();
-    document.save(`chats-${user?.name}.pdf`);
+    document.save(`Chats_${username}.pdf`);
 }

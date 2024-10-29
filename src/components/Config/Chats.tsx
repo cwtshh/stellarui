@@ -11,7 +11,8 @@ export default function Chats() {
   const handleExportChats = async () => {
     try {
       const response: any = await axios.get(`${BASE_API_URL}/user/chat/export/${user?._id}`);
-      useConvertChatsToPDF(response.data.chats);
+      console.log(response)
+      useConvertChatsToPDF(response.data);
     } catch (error) {
       console.log(error);
     }
