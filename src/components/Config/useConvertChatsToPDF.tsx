@@ -42,16 +42,23 @@ export const useConvertChatsToPDF = async (data: any[]) => {
         document.setLineWidth(3);
         document.line(marginLeft, yPos - 5, document.internal.pageSize.width - marginRight, yPos - 5);
         
-        // Adicionar o título do chat
-        const chatTitleMarginTop = 5; // Margem superior para o título do chat
+        const chatTitleMarginTop = 10; 
         yPos += chatTitleMarginTop; // Adiciona a margem antes do título do chat
-        document.setFontSize(18); // Ajusta o tamanho da fonte
-        document.setFont('helvetica', 'bold'); // Define a fonte como negrito
-        document.text(`Chat: ${firstMsg}`, marginLeft, yPos);
-        yPos += lineHeight;
-
-        // Adiciona espaçamento extra antes de desenhar as mensagens
-        yPos += 5;
+        
+        // Ajustar o tamanho da fonte e definir a fonte como negrito
+        document.setFontSize(18); 
+        document.setFont('helvetica', 'bold');
+        
+        // Calcular a largura do texto do título
+        const chatTitle = `Chat: ${firstMsg}`;
+        const chatTitleWidth = document.getTextWidth(chatTitle);
+        
+        // Calcular a posição x para centralizar
+        const xPos = (document.internal.pageSize.width - chatTitleWidth) / 2;
+        
+        // Desenhar o título centralizado
+        document.text(chatTitle, xPos, yPos);
+        yPos += 15;
 
         document.setFontSize(12);
         document.setFont('helvetica', 'normal');
@@ -59,35 +66,56 @@ export const useConvertChatsToPDF = async (data: any[]) => {
         const textMaxWidth = document.internal.pageSize.width - marginLeft - marginRight;
 
         chat.messages.forEach((message: any) => {
-            // Divide a mensagem em linhas que se ajustam à largura máxima
             const messageDate = new Date(message.created_at).toLocaleString();
             const sender = message.sent_by === 'user' ? username : 'Estela';
-            const messageText = `${sender}: ${message.content} ${messageDate.split(',')[1]}`;
-            const splitMessage = document.splitTextToSize(messageText, textMaxWidth);
-
-            splitMessage.forEach((line: string) => {
+        
+            // Mensagem em negrito para o remetente
+            document.setFont('helvetica', 'bold');
+            const senderLine = `${sender}: `; // Inclui apenas o remetente
+        
+            // Adiciona o remetente
+            document.text(senderLine, marginLeft, yPos);
+        
+            // Mensagem em itálico
+            document.setFont('helvetica', 'italic');
+            const messageText = message.content; // Texto da mensagem
+            const fullMessageLine = `${messageText} (${messageDate.split(',')[1].trim()})`; // Mensagem com hora
+        
+            // Calcula a largura total do texto (remetente + mensagem + hora)
+            const totalText = fullMessageLine; // Texto completo
+            const splitMessage = document.splitTextToSize(totalText, textMaxWidth);
+            
+            // Adiciona a mensagem e a hora na mesma linha
+            splitMessage.forEach((line: string, index: number) => {
                 if (yPos + lineHeight > pageHeight - marginBottom) {
                     document.addPage();
-                    yPos = marginTop; // Reseta a posição vertical
+                    yPos = marginTop - 30; // Reseta a posição vertical
                 }
-                document.text(line, marginLeft, yPos);
+                // Se não for a primeira linha, precisa ajustar a posição para a mensagem
+                if (index === 0) {
+                    document.text(line, marginLeft + document.getTextWidth(senderLine), yPos); // Ajusta a posição x para a mensagem
+                } else {
+                    document.text(line, marginLeft, yPos); // Continua na mesma posição
+                }
                 yPos += lineHeight; // Atualiza a posição vertical
             });
-
-            // Adiciona a data em uma linha separada
-            const dateSplit = document.splitTextToSize(messageDate.split(',')[0], textMaxWidth);
+        
+            // Adiciona a data em negrito na linha abaixo da mensagem
+            const dateLine = messageDate.split(',')[0]; // Data
+            document.setFont('helvetica', 'bold'); // Define a fonte como negrito para a data
+            const dateSplit = document.splitTextToSize(dateLine, textMaxWidth);
             dateSplit.forEach((line: string) => {
                 if (yPos + lineHeight > pageHeight - marginBottom) {
                     document.addPage();
-                    yPos = marginTop; // Reseta a posição vertical
+                    yPos = marginTop - 30; // Reseta a posição vertical
                 }
-                document.text(line, marginLeft, yPos);
+                document.text(line, marginLeft, yPos); // Adiciona a data
+                yPos += lineHeight; // Atualiza a posição vertical
             });
-
-            yPos += lineHeight * 2; // Espaço adicional após cada mensagem
+        
+            yPos += lineHeight; // Espaço adicional após cada mensagem
         });
-
-        yPos += lineHeight; 
+        
     });
 
     const addPageNumbers = () => {

@@ -26,9 +26,6 @@ export const downloadTranscriptionPDF = async (file: any, segments: any[]) => {
     // Aqui calculamos a altura total do título com base no número de linhas
     const titleHeight = splitTitle.length * 7;
     
-    // Adiciona um espaçamento extra para o caso de quebra de linha
-    const additionalSpace = titleHeight > 20 ? titleHeight : 20; // Ajuste o valor 20 conforme necessário
-    
     document.setFontSize(17);
     document.setTextColor(110, 161, 247);
     document.setFont('helvetica', 'bold');
@@ -38,7 +35,7 @@ export const downloadTranscriptionPDF = async (file: any, segments: any[]) => {
     document.setTextColor(0, 0, 0);
     
     // Atualiza yPos para incluir o espaço adicional baseado na altura do título
-    let yPos = marginTop + titleHeight + additionalSpace; // Adiciona o espaço extra
+    let yPos = marginTop + titleHeight; // Adiciona o espaço extra
     
     const lineHeight = 10;
     const pageHeight = document.internal.pageSize.height;
