@@ -103,7 +103,7 @@ const SideBar = () => {
                     <div>
                         <p className='font-bold text-white mb-4'>Configurações</p>
                         <ul className="space-y-4">
-                            <li className={`${isActivePage('/configuracoes/geral') && !isModalOpen ? 'bg-white text-[#000000] hover:bg-[#d6dbe1]' : 'text-[black]'} hover:bg-secondary h-full p-3 rounded-xl text-green-200 transition-colors duration-200`}>
+                            <li className={`${isActivePage('/configuracoes/geral') && !isModalOpen ? 'bg-secondary' : ''} hover:bg-secondary h-full p-3 rounded-xl text-green-200 transition-colors duration-200`}>
                                 <Link 
                                     to="/configuracoes/geral">
                                     <div className='flex gap-4 items-center'>
@@ -112,7 +112,7 @@ const SideBar = () => {
                                     </div>
                                 </Link>
                             </li>
-                            <li className={`${isActivePage('/configuracoes/perfil') && !isModalOpen ? 'bg-white text-[#000000] ' : ''} hover:bg-secondary h-full p-3 rounded-xl text-green-200 transition-colors duration-200`}>
+                            <li className={`${isActivePage('/configuracoes/perfil') && !isModalOpen ? 'bg-secondary' : ''} hover:bg-secondary h-full p-3 rounded-xl text-green-200 transition-colors duration-200`}>
                                 <Link 
                                     to="/configuracoes/perfil">
                                     <div className='flex gap-4 items-center'>
@@ -121,7 +121,7 @@ const SideBar = () => {
                                     </div>
                                 </Link>
                             </li>
-                            <li className={`${isActivePage('/configuracoes/Chats') && !isModalOpen ? 'bg-white text-[#000000] hover:bg-[#d6dbe1]' : ''} hover:bg-secondary  h-full p-3 rounded-xl text-green-200 transition-colors duration-200`}>
+                            <li className={`${isActivePage('/configuracoes/Chats') && !isModalOpen ? 'bg-secondary' : ''} hover:bg-secondary  h-full p-3 rounded-xl text-green-200 transition-colors duration-200`}>
                                 <Link 
                                     to="/configuracoes/Chats">
                                     <div className='flex gap-4 items-center'>
@@ -131,7 +131,7 @@ const SideBar = () => {
                                 </Link>
                             </li>
                             { user?.role === 'admin' && (
-                                <li className={`${isModalOpen ? 'bg-white text-[#000000] hover:bg-[#d6dbe1]' : ''} hover:bg-secondary  h-full p-3 rounded-xl text-green-200 transition-colors duration-200 cursor-pointer`} onClick={openModal}>
+                                <li className={`${isModalOpen ? 'bg-secondary' : ''} hover:bg-secondary  h-full p-3 rounded-xl text-green-200 transition-colors duration-200 cursor-pointer`} onClick={openModal}>
                                     <div className='flex gap-4 items-center'>
                                         <MdOutlineAdminPanelSettings />
                                         Admin Panel
