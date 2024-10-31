@@ -3,11 +3,12 @@ import { FaCirclePlay } from 'react-icons/fa6';
 
 interface TranscriptionCardProps {
   TextInfo: any;
+  speaker: any;
   onClick: (start: number) => void;
   className: string;
 }
 
-export const TranscriptionCard = forwardRef<HTMLDivElement, TranscriptionCardProps>(({ TextInfo, onClick, className }, ref) => {
+export const TranscriptionCard = forwardRef<HTMLDivElement, TranscriptionCardProps>(({ TextInfo, onClick, className, speaker }, ref) => {
   const time_span = (seconds: number) => {
     let h = Math.floor(seconds / 3600);
     let m = Math.floor((seconds % 3600) / 60);
@@ -24,8 +25,8 @@ export const TranscriptionCard = forwardRef<HTMLDivElement, TranscriptionCardPro
             <FaCirclePlay role='button' className="text-[#6ea1f7] mr-2 text-3xl text-justify" />
         </div>
         <p className='text-justify'>
-            <span className='text-[#6ea1f7] hover:underline'>{TextInfo.speaker}</span> -
-            <strong className='text-[#6ea1f7] hover:underline'>{time_info}</strong> - {TextInfo.text}
+          <span className='font-bold hover:underline'>{speaker} | </span>
+          <strong className='text-[#6ea1f7] hover:underline'>{time_info}</strong> - {TextInfo.text}
         </p>
     </div>
   );

@@ -1,12 +1,13 @@
 import { TranscriptionCard } from '../../components/TranscriptionCard/TranscriptionCard';
 import { BASE_TRANSCRIPTION_API_URL } from '../../utils/constants';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { FormEvent, useEffect, useRef, useState } from 'react';
 import { NotifyToast } from '../../components/Toast/Toast';
 import { downloadTranscriptionPDF } from './TranscriptPDF'
 import { FaPlusCircle } from "react-icons/fa";
 import chatbg from '../../assets/chatbg.jpeg';
 import { FaDownload } from 'react-icons/fa';
 import axios from 'axios';
+import { FaPencil } from 'react-icons/fa6';
 
 interface SegmentsBody {
   id: number;
@@ -37,6 +38,7 @@ const Trancription = () => {
   const [mouseOver, setMouseOver ] = useState(false)
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null);
+  const [speakerMap, setSpeakerMap] = useState([]);
   
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const transcriptionRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -84,13 +86,18 @@ const Trancription = () => {
       try {
         
         const response: any = await axios.post(`${BASE_TRANSCRIPTION_API_URL}/upload-video/`, formData);
+        console.log(response.data.result);
 
         let segment_list = [];
+        let speakers_list: any = [];
         for(let i = 0; i < response.data.result.segments.length; i++) {
           segment_list.push(response.data.result.segments[i]);
+          if(!speakers_list[response.data.result.segments[i].speaker]) {
+            speakers_list[response.data.result.segments[i].speaker] = response.data.result.segments[i].speaker;
+          }
         }
-
         setSegments(segment_list);
+        setSpeakerMap(speakers_list);
         NotifyToast({ type: 'success', message: 'Arquivo transcrito com sucesso' });
         
         setLoading(false);
@@ -138,6 +145,18 @@ const Trancription = () => {
     }
   };
 
+  const handleSpeakerChange = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const inputs = e.currentTarget.querySelectorAll('input');
+    const newSpeakerMap: any = {};
+    inputs.forEach((input: HTMLInputElement) => {
+      newSpeakerMap[input.placeholder] = input.value;
+    });
+
+    setSpeakerMap(newSpeakerMap);
+    (document.getElementById('speaker_modal') as HTMLDialogElement).close();
+  }
+
   return (
     <div className='h-full w-full overflow-hidden flex flex-col p-5' style={{
       backgroundImage: `url(${chatbg})`,
@@ -164,6 +183,7 @@ const Trancription = () => {
 
               return (
                 <TranscriptionCard
+                  speaker={speakerMap[item.speaker]}
                   ref={(el) => (transcriptionRefs.current[index] = el)}
                   key={index}
                   className={`p-5 flex rounded-xl transition-colors ${isActiveSegment || isHighlighted ? 'bg-primary hover:bg-secondary' : 'bg-[#005e15] hover:bg-secondary'}`}
@@ -174,10 +194,14 @@ const Trancription = () => {
             })}
           </div>
 
-          <div className='flex justify-center items-center w-[500px]'>
-            <button onClick={() => downloadTranscriptionPDF(file, segments)} disabled={loading || !videoUrl} className='btn btn-primary w-[300px] flex justify-center items-center text-white p-6 rounded-xl h-full'>
+          <div className='flex justify-center items-center w-[500px] gap-4'>
+            <button onClick={() => downloadTranscriptionPDF(file, segments, speakerMap)} disabled={loading || !videoUrl} className='btn btn-primary w-[300px] flex justify-center items-center text-white p-6 rounded-xl h-full'>
               Transcrição
               <FaDownload />
+            </button>
+            <button onClick={() => (document.getElementById('speaker_modal') as HTMLDialogElement).showModal()} disabled={loading || !videoUrl} className='btn btn-primary flex justify-center items-center text-white p-6 rounded-xl h-full' >
+              <FaPencil />
+              Editar Locutores
             </button>
           </div>
         </div>
@@ -228,6 +252,26 @@ const Trancription = () => {
           )}
         </div>
       </div>
+      <dialog id="speaker_modal" className="modal">
+        <div className="modal-box flex flex-col items-center justify-center ">
+          <h3 className="font-bold text-lg">Locutores</h3>
+          <p className='italic'>Altere o nome de cada locutor presente na transcrição</p>
+          <br />
+          <form onSubmit={handleSpeakerChange} className='flex flex-col w-full items-center justify-center'>
+            <p>Locutores identificados:</p>
+            <div className='flex flex-col gap-5'>
+              {Object.keys(speakerMap).map((speaker, index) => (
+                <input key={index} type='text' placeholder={speaker} className='input input-bordered w-full max-w-xs' />
+              ))}
+            </div>
+            <br />
+            <button className='btn btn-primary mt-4'>Salvar Alterações</button>
+          </form>
+        </div>
+        <form method="dialog" className="modal-backdrop">
+            <button>close</button>
+        </form>
+      </dialog>
     </div>
   );
 };

@@ -9,7 +9,7 @@ const time_span = (seconds: number) => {
     return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
 };
 
-export const downloadTranscriptionPDF = async (file: any, segments: any[]) => {
+export const downloadTranscriptionPDF = async (file: any, segments: any[], speakerMap: any) => {
     const document = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
     const imgRight = logo; 
     const imgXPosition = document.internal.pageSize.width - 60 - 110;
@@ -49,6 +49,15 @@ export const downloadTranscriptionPDF = async (file: any, segments: any[]) => {
 
     segments.forEach((item, index) => {
         const timeStamp = time_span(item.start) + ' - ' + time_span(item.end) + ':';
+        const speaker = speakerMap[item.speaker];
+
+        // Adiciona o nome do locutor
+        document.setFontSize(15);
+        document.setFont('helvetica', 'bold');
+        document.text(speaker, marginLeft, yPos);
+        yPos += lineHeight; // Move yPos down to avoid overlapping with the next text
+
+        // Calcula a largura do timestamp
         const timeStampWidth = document.getTextWidth(timeStamp);
     
         // Verifique se o espaço restante é suficiente para adicionar o timestamp
