@@ -1,4 +1,3 @@
-import React from 'react';
 import { ChatType } from '../../utils/types/ChatType';
 import { useChat } from '../../context/ChatContext';
 import { FaTrash } from 'react-icons/fa';
@@ -19,12 +18,11 @@ const ChatCard = ({ chat }: ChatCardProps) => {
   return (
     <div
       role='button'
-      disabled={lockChat}
+      className={`card h-20 shadow-xl p-0 m-0 btn ${isActive ? 'bg-neutral text-white hover:bg-secondary' : 'bg-base-100'} ${lockChat ? 'cursor-not-allowed opacity-50' : ''}`}
       onClick={() => {
         select_chat(chat._id);
         navigate('/chat');
       }}
-      className={`card h-20 shadow-xl p-0 m-0 btn ${isActive ? 'bg-neutral text-white hover:bg-secondary' : 'bg-base-100'}`}
     >
       <div>
         <div className="card-body flex items-start justify-left w-full p-0 m-0">
