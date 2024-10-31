@@ -1,6 +1,6 @@
 import { TranscriptionCard } from '../../components/TranscriptionCard/TranscriptionCard';
 import { BASE_TRANSCRIPTION_API_URL } from '../../utils/constants';
-import React, { FormEvent, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { NotifyToast } from '../../components/Toast/Toast';
 import { downloadTranscriptionPDF } from './TranscriptPDF'
 import { FaPlusCircle } from "react-icons/fa";
@@ -8,26 +8,6 @@ import chatbg from '../../assets/chatbg.jpeg';
 import { FaDownload } from 'react-icons/fa';
 import axios from 'axios';
 import { FaPencil } from 'react-icons/fa6';
-
-interface SegmentsBody {
-  id: number;
-  seek: number;
-  start: number;
-  end: number;
-  text: string;
-}
-
-interface ResultBody {
-  text: string;
-  segments: SegmentsBody[];
-}
-
-interface ResponseBody {
-  filename: string;
-  conversion_time: number;
-  transcription_time: number;
-  result: ResultBody;
-}
 
 const Trancription = () => {
   const [file, setFile] = useState<File | null>(null);

@@ -36,7 +36,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         if (lockChat) return;
     
         await axios.post(`${BASE_API_URL}/user/chat/create`, { user_id: user?._id }, { withCredentials: true })
-            .then(async (res) => {
+            .then(async (res: any) => {
                 NotifyToast({ message: res.data.message, type: 'success' });
                 setSelectedChat(res.data.chat);
                 fetch_side();
@@ -51,7 +51,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         if (!user) {
             return;
         }
-        await axios.get(`${BASE_API_URL}/user/chat/all/${user?._id}`, { withCredentials: true }).then(res => {
+        await axios.get(`${BASE_API_URL}/user/chat/all/${user?._id}`, { withCredentials: true }).then((res: any) => {
             const reversedChats = res.data.reverse();
             setChats(reversedChats);
 
@@ -67,7 +67,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         if (!user) {
             return;
         }
-        await axios.get(`${BASE_API_URL}/user/chat/all/${user?._id}`, { withCredentials: true }).then(res => {
+        await axios.get(`${BASE_API_URL}/user/chat/all/${user?._id}`, { withCredentials: true }).then((res: any) => {
             setChats(res.data.reverse());
         }).catch(err => {
             NotifyToast({ message: err.response.data.errors[0], type: 'error' });
@@ -99,7 +99,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         setLockChat(true);
 
         try {
-            const response = await axios.post(`${BASE_API_URL}/user/chat/send`, {
+            const response: any = await axios.post(`${BASE_API_URL}/user/chat/send`, {
                 chat_id: selectedChat._id,
                 user_id: user?._id,
                 message
@@ -137,7 +137,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         });
     };
 
-    const send_message_file = async(file: File, message: string) => {
+    const send_message_file = async(message: string, file: File) => {
         if(!selectedChat || !user?._id || lockChat) {
             return;
         }
@@ -164,7 +164,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         setLockChat(true);
 
         try {
-            const reponse = await axios.post(`${BASE_API_URL}/user/chat/send/pdf`, formData, { withCredentials: true });
+            const reponse: any = await axios.post(`${BASE_API_URL}/user/chat/send/pdf`, formData, { withCredentials: true });
             const aiMessage: MessageType = {
                 content: reponse.data.ai_message,
                 sent_by: 'assistant',
@@ -176,7 +176,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             setLocalMessages((prevMessages) => [...prevMessages, aiMessage]);
             await axios.get(`${BASE_API_URL}/user/chat/${selectedChat._id}`, { withCredentials: true });
             fetch_user_chats();
-        } catch (error) {
+        } catch (error: any) {
             NotifyToast({ message: error.response?.data.errors[0] || 'Erro ao enviar a mensagem.', type: 'error'});
         } finally {
             setLockChat(false);
