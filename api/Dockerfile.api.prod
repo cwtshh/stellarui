@@ -18,6 +18,8 @@ WORKDIR /app
 
 COPY --from=builder /app/dist ./dist
 
+COPY --from=builder /app/ecosystem.config.js ./dist
+
 COPY package*.json ./
 
 RUN npm install
