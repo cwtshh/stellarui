@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const login = async(login_data: LoginData ) => {
         let success = false;
-        await axios.post(`${BASE_API_URL}/user/login`, login_data, { withCredentials: true }).then( res => {
+        await axios.post(`${BASE_API_URL}/user/login`, login_data, { withCredentials: true }).then((res: any) => {
             localStorage.setItem('stellar@auth_user', JSON.stringify(res.data.user));
             setUser(res.data.user);
             success = true;
@@ -44,24 +44,24 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     };
 
     const logout = async() => {
-        await axios.post(`${BASE_API_URL}/user/logout`, { withCredentials: true }).then( res => {
+        await axios.post(`${BASE_API_URL}/user/logout`, { withCredentials: true }).then((res: any) => {
             localStorage.removeItem('stellar@auth_user');
             setUser(null);
             NotifyToast({ message: res.data.message, type: 'success' });
             window.location.href = '/login';
-        }).catch(err => {
+        }).catch(() => {
             NotifyToast({ message: 'Erro interno do servidor, verifique sua conexão tente novamente mais tarde', type: 'error' });
         })
     };
 
     const update = async (id: string, updateData: Partial<UserType>) => {
         return axios.put(`${BASE_API_URL}/user/update/${id}`, updateData, { withCredentials: true })
-            .then(res => {
+            .then((res: any) => {
                 localStorage.setItem('stellar@auth_user', JSON.stringify(res.data.user));
                 setUser(res.data.user); 
                 NotifyToast({ message: 'Usuário atualizado com sucesso.', type: 'success' });
             })
-            .catch(err => {
+            .catch(() => {
                 NotifyToast({ message: 'Erro ao atualizar usuário.', type: 'error' });
             });
     };

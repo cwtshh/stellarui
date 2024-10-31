@@ -1,10 +1,23 @@
 import jsPDF from 'jspdf';
 import logo from '../../assets/logo.jpg';
 
-export const useConvertChatsToPDF = async (data: any[]) => {
+interface ChatData {
+    user: {
+        name: string;
+    };
+    chats: {
+        messages: {
+            content: string;
+            created_at: string;
+            sent_by: string;
+        }[];
+    }[];
+}
+
+export const useConvertChatsToPDF = async (data: ChatData) => {
     const username = data.user.name;
 
-    const user = localStorage.getItem('stellar@auth_user') ? JSON.parse(localStorage.getItem('user') as string) : null;
+    // const user = localStorage.getItem('stellar@auth_user') ? JSON.parse(localStorage.getItem('user') as string) : null;
     const document = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
     const imgRight = logo;
     const imgXPosition = document.internal.pageSize.width - 60 - 110;
@@ -24,7 +37,7 @@ export const useConvertChatsToPDF = async (data: any[]) => {
     document.setFontSize(17);
     document.setTextColor(110, 161, 247);
     document.setFont('helvetica', 'bold');
-    splitTitle.forEach((line, index) => {
+    splitTitle.forEach((line: string, index: number) => {
         document.text(line, document.internal.pageSize.width / 2, marginTop - 15 + (index * 7), { align: 'center' });
     });
     document.setTextColor(0, 0, 0);

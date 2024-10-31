@@ -1,5 +1,5 @@
 import { RiExportLine } from "react-icons/ri";
-import { MdDelete, MdFileOpen } from "react-icons/md";
+import { MdDelete } from "react-icons/md";
 import { useAuth } from '../../context/AuthContext';
 import { BASE_API_URL } from '../../utils/constants';
 import axios from 'axios';
@@ -20,7 +20,7 @@ export default function Chats() {
 
   return (
     <div className="w-[600px] bg-green-900 shadow-lg rounded-lg p-8">
-      <h2 className="text-3xl text-black font-bold mb-6 text-green-50 border-b border-green-700 pb-6">Chat Actions</h2>
+      <h2 className="text-3xl font-bold mb-6 text-green-50 border-b border-green-700 pb-6">Chat Actions</h2>
       <ul className="space-y-4">
         {/* <li className="flex items-center text-green-300 hover:text-green-100 transition-colors duration-200 cursor-pointer">
           <RiExportFill className="mr-3 text-2xl" /> 
