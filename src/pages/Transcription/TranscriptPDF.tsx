@@ -29,7 +29,7 @@ export const downloadTranscriptionPDF = async (file: any, segments: any[], speak
     document.setFontSize(17);
     document.setTextColor(110, 161, 247);
     document.setFont('helvetica', 'bold');
-    splitTitle.forEach((line, index) => {
+    splitTitle.forEach((line: string, index: number) => {
         document.text(line, document.internal.pageSize.width / 2, marginTop - 15 + (index * 7), { align: 'center' });
     });
     document.setTextColor(0, 0, 0);
@@ -96,7 +96,7 @@ export const downloadTranscriptionPDF = async (file: any, segments: any[], speak
     
 
     const addPageNumbers = () => {
-        const pageCount = document.internal.getNumberOfPages();
+        const pageCount = document.getNumberOfPages();
         for (let i = 1; i <= pageCount; i++) {
             document.setPage(i);
             document.setFontSize(10);
