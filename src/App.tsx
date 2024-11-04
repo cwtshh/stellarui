@@ -11,6 +11,7 @@ import Config from './components/Config/SideConfigBar'
 import Perfil from './components/Config/Perfil'
 import Geral from './components/Config/Geral'
 import Chats  from './components/Config/Chats'
+import ModelSelector from './components/Config/ModelSelector'
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
               <Route path="geral" element={<Geral />} />
               <Route path="perfil" element={<Perfil />} />
               <Route path="Chats" element={<Chats />} />
+              <Route path="ModelSelector" element={<ModelSelector />} />
             </Route>
           </Route>
         </Routes>
