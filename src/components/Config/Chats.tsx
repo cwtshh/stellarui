@@ -20,12 +20,12 @@ export default function Chats() {
   };
 
   const handleDeleteAllChats = async () => {
-    try {
-        const response = await axios.delete(`${BASE_API_URL}/user/deletechats/all/${user?._id}`, { withCredentials: true });
-        console.log(response.data); 
-    } catch (error) {
-        console.error(error);
-    }
+    // try {
+    //     const response = await axios.delete(`${BASE_API_URL}/user/deletechats/all/${user?._id}`, { withCredentials: true });
+    //     console.log(response.data); 
+    // } catch (error) {
+    //     console.error(error);
+    // }
 }
 
 
