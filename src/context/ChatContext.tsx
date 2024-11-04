@@ -63,6 +63,21 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         });
     }
 
+    const delete_all_user_chats = async () => {
+        if (!user) {
+            return;
+        }
+        await axios.delete(`${BASE_API_URL}/user/deletechats/all/${user._id}`, { withCredentials: true })
+            .then(res => {
+                setChats([]); // Limpa os chats após exclusão
+                setSelectedChat(null); // Limpa o chat selecionado
+                NotifyToast({ message: res.data.message, type: 'success' }); // Mostra mensagem de sucesso
+            })
+            .catch(err => {
+                NotifyToast({ message: err.response.data.errors[0], type: 'error' });
+            });
+    }
+    
     const fetch_user_chats = async () => {
         if (!user) {
             return;
@@ -190,7 +205,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     }, [user]);
 
     return (
-        <ChatContext.Provider value={{ chats, selectedChat, add_chat, select_chat, send_message, delete_chat, localMessages, lockChat, clearLocalMessages, send_message_file }}>
+        <ChatContext.Provider value={{ chats, selectedChat, add_chat, select_chat, send_message, delete_chat, localMessages, lockChat, clearLocalMessages, send_message_file, delete_all_user_chats }}>
             {children}
         </ChatContext.Provider>
     );

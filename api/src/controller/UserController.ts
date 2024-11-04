@@ -632,6 +632,21 @@ const delete_chat = async(req: Request, res: Response) => {
     res.status(200).json({ message: 'Chat deletado com sucesso.' });
 };
 
+const delete_all_user_chats = async(req: Request, res: Response) => {
+    const { id: user_id } = req.params;
+
+    try {
+        const result = await Chat.deleteMany({ user: user_id });
+        if (result.deletedCount === 0) {
+            return res.status(400).json({ errors: ['Usuário não possui chats para deletar.'] });
+        }
+
+        res.status(200).json({ message: 'Todos os chats foram deletados com sucesso.' });
+    } catch (error) {
+        res.status(500).json({ errors: ['Erro ao deletar os chats.'] });
+    }
+};
+
 const download_file = (req: Request, res: Response) => {
     const { file_name } = req.params;
     const file_path = path.join(__dirname, '..', '..', 'uploads', file_name);
@@ -685,5 +700,6 @@ export {
     send_message_pdf,
     download_file,
     update_user,
-    export_user_chats
+    export_user_chats,
+    delete_all_user_chats
 };

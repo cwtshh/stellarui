@@ -176,7 +176,7 @@ const Trancription = () => {
             value={searchTerm}
           />
           <div onMouseEnter={() => setMouseOver(true)} onMouseLeave={() => setMouseOver(false)} onScroll={handleScroll}
-           className='bg-base-100 p-6 scroll-hidden h-[780px] w-[500px] rounded-xl flex flex-col gap-6 overflow-y-scroll shadow-xl'>
+           className='bg-base-100 p-6 scroll-hidden h-[700px] w-[500px] rounded-xl flex flex-col gap-6 overflow-y-scroll shadow-xl'>
             {segments.map((item: any, index: number) => {
               const isActiveSegment = currentTime >= item.start && (index === segments.length - 1 || currentTime <= item.end);
               const isHighlighted = index === highlightedIndex;
@@ -253,7 +253,7 @@ const Trancription = () => {
         </div>
       </div>
       <dialog id="speaker_modal" className="modal">
-        <div className="modal-box flex flex-col items-center justify-center ">
+        <div className="modal-box flex flex-col w-full items-center justify-center ">
           <h3 className="font-bold text-lg">Locutores</h3>
           <p className='italic'>Altere o nome de cada locutor presente na transcrição</p>
           <br />

@@ -8,6 +8,7 @@ import { useConvertChatsToPDF } from "./useConvertChatsToPDF";
 
 export default function Chats() {
   const { user } = useAuth();
+
   const handleExportChats = async () => {
     try {
       const response: any = await axios.get(`${BASE_API_URL}/user/chat/export/${user?._id}`);
@@ -17,6 +18,16 @@ export default function Chats() {
       console.log(error);
     }
   };
+
+  const handleDeleteAllChats = async () => {
+    try {
+        const response = await axios.delete(`${BASE_API_URL}/user/deletechats/all/${user?._id}`, { withCredentials: true });
+        console.log(response.data); 
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 
   return (
     <div className="w-[600px] bg-green-900 shadow-lg rounded-lg p-8">
@@ -34,7 +45,7 @@ export default function Chats() {
           <MdFileOpen className="mr-3 text-2xl" /> 
           <span className="text-lg">Archive All Charts</span>
         </li> */}
-        <li className="flex items-center text-green-300 hover:text-red-500 transition-colors duration-200 cursor-pointer">
+        <li role='button' onClick={handleDeleteAllChats} className="flex items-center text-green-300 hover:text-red-500 transition-colors duration-200 cursor-pointer">
           <MdDelete className="mr-3 text-2xl" /> 
           <span className="text-lg">Deletar todos os Chats</span>
         </li>
