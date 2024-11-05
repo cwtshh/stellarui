@@ -45,56 +45,50 @@ export const downloadTranscriptionPDF = async (file: any, segments: any[], speak
     document.line(marginLeft, yPos - 5, document.internal.pageSize.width - marginRight, yPos - 5);
     
     yPos += 10;
-    
 
-    segments.forEach((item, index) => {
-        const timeStamp = time_span(item.start) + ' - ' + time_span(item.end) + ':';
+    segments.forEach((item) => {
         const speaker = speakerMap[item.speaker];
-
-        // Adiciona o nome do locutor
+        const timeStamp = time_span(item.start) + ' - ' + time_span(item.end) + ':';
+    
         document.setFontSize(15);
         document.setFont('helvetica', 'bold');
-        document.text(speaker, marginLeft, yPos);
-        yPos += lineHeight; // Move yPos down to avoid overlapping with the next text
-
-        // Calcula a largura do timestamp
-        const timeStampWidth = document.getTextWidth(timeStamp);
     
-        // Verifique se o espaço restante é suficiente para adicionar o timestamp
-        if (yPos + lineHeight + 5 > pageHeight - marginBottom) {
+        const timeStampWidth = document.getTextWidth(timeStamp);
+        const speakerWidth = document.getTextWidth(speaker);
+        const totalWidth = speakerWidth + timeStampWidth + 10;
+    
+        const currentHeightNeeded = lineHeight * 2 + 7; // Espaço necessário para speaker, timestamp e uma linha de texto
+    
+        if (yPos + currentHeightNeeded > pageHeight - marginBottom) {
             document.addPage();
             yPos = marginTop - 30; 
         }
     
-        // Adiciona o timestamp
+        document.text(speaker, marginLeft, yPos);
         document.setFontSize(14);
         document.setFont('helvetica', 'italic');
-        document.text(timeStamp, marginLeft, yPos);
+        document.text(timeStamp, marginLeft + speakerWidth + 5, yPos);
     
-        // Calcula a largura máxima do texto
-        const textMaxWidth = document.internal.pageSize.width - marginLeft - marginRight - (timeStampWidth + 22);
+        const textMaxWidth = document.internal.pageSize.width - marginLeft - (marginRight - 50) - totalWidth - 10;
         const splitText = document.splitTextToSize(item.text, textMaxWidth);
     
-        // Adiciona o texto logo abaixo do timestamp
-        const textStartX = marginLeft + timeStampWidth + (index === 0 ? -1 : 5); // Ajusta apenas para o primeiro item
-        document.setFontSize(15);
-        document.setFont('helvetica', 'bold');
+        let textYPos = yPos + lineHeight; 
     
-        // Adiciona o texto
         splitText.forEach((line: any) => {
-            // Verifique se o espaço restante é suficiente para adicionar a linha de texto
-            if (yPos + lineHeight > pageHeight - marginBottom) {
+            if (textYPos + lineHeight > pageHeight - marginBottom) {
                 document.addPage();
-                yPos = marginTop - 30; 
+                textYPos = marginTop - 30; 
             }
-            document.text(line, textStartX, yPos);
-            yPos += lineHeight; // Move para a próxima linha
+            document.setFontSize(15);
+            document.setFont('helvetica', 'bold');
+            document.text(line, marginLeft, textYPos);
+            textYPos += lineHeight;
         });
     
-        yPos += 5; // Adiciona espaço entre os itens
+        yPos += lineHeight + 20; 
     });
     
-
+    
     const addPageNumbers = () => {
         const pageCount = document.getNumberOfPages();
         for (let i = 1; i <= pageCount; i++) {
