@@ -5,9 +5,11 @@ import { BASE_API_URL } from '../../utils/constants';
 import axios from 'axios';
 import 'jspdf-autotable';
 import { useConvertChatsToPDF } from "./useConvertChatsToPDF";
+import { useChat } from "../../context/ChatContext";
 
 export default function Chats() {
   const { user } = useAuth();
+  const { delete_all_chats } = useChat();
 
   const handleExportChats = async () => {
     try {
@@ -18,16 +20,6 @@ export default function Chats() {
       console.log(error);
     }
   };
-
-  const handleDeleteAllChats = async () => {
-    // try {
-    //     const response = await axios.delete(`${BASE_API_URL}/user/deletechats/all/${user?._id}`, { withCredentials: true });
-    //     console.log(response.data); 
-    // } catch (error) {
-    //     console.error(error);
-    // }
-}
-
 
   return (
     <div className="w-[600px] bg-green-900 shadow-lg rounded-lg p-8">
@@ -45,9 +37,9 @@ export default function Chats() {
           <MdFileOpen className="mr-3 text-2xl" /> 
           <span className="text-lg">Archive All Charts</span>
         </li> */}
-        <li role='button' onClick={handleDeleteAllChats} className="flex items-center text-green-300 hover:text-red-500 transition-colors duration-200 cursor-pointer">
-          <MdDelete className="mr-3 text-2xl" /> 
-          <span className="text-lg">Deletar todos os Chats</span>
+        <li role='button' onClick={() => delete_all_chats(user?._id)} className="flex items-center text-green-300 hover:text-red-500 transition-colors duration-200 cursor-pointer">
+            <MdDelete className="mr-3 text-2xl" /> 
+            <span className="text-lg">Deletar todos os Chats</span>
         </li>
       </ul>
     </div>

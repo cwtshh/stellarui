@@ -62,21 +62,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             NotifyToast({ message: err.response.data.errors[0], type: 'error' });
         });
     }
-
-    // const delete_all_user_chats = async () => {
-    //     if (!user) {
-    //         return;
-    //     }
-    //     await axios.delete(`${BASE_API_URL}/user/deletechats/all/${user._id}`, { withCredentials: true })
-    //         .then(res => {
-    //             setChats([]); // Limpa os chats após exclusão
-    //             setSelectedChat(null); // Limpa o chat selecionado
-    //             NotifyToast({ message: res.data.message, type: 'success' }); // Mostra mensagem de sucesso
-    //         })
-    //         .catch(err => {
-    //             NotifyToast({ message: err.response.data.errors[0], type: 'error' });
-    //         });
-    // }
     
     const fetch_user_chats = async () => {
         if (!user) {
@@ -152,6 +137,26 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         });
     };
 
+    const delete_all_chats = async (user_id: string) => {
+        try {
+            const response = await axios.delete(`${BASE_API_URL}/user/chat/delete/all/${user_id}`, { withCredentials: true });
+            
+            // Verifique se a resposta tem a propriedade 'message'
+            if (response.data && response.data.message) {
+                NotifyToast({ message: response.data.message, type: 'success' });
+              } else {
+                NotifyToast({ message: 'Chats deletados, mas não há mensagem de sucesso.', type: 'warning' });
+              }
+            fetch_user_chats();
+            setSelectedChat(null);
+            setLocalMessages([]);
+              
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || 'Erro ao deletar os chats.';
+            NotifyToast({ message: errorMessage, type: 'error' });
+        }
+    }
+
     const send_message_file = async(file: File, message: string) => {
         if(!selectedChat || !user?._id || lockChat) {
             return;
@@ -205,8 +210,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     }, [user]);
 
     return (
-        <ChatContext.Provider value={{ chats, selectedChat, add_chat, select_chat, send_message, delete_chat, localMessages, lockChat, clearLocalMessages, send_message_file, 
-        // delete_all_user_chats 
+        <ChatContext.Provider value={{ chats, selectedChat, add_chat, select_chat, send_message, delete_chat, localMessages, lockChat, clearLocalMessages, send_message_file, delete_all_chats,
         }}>
             {children}
         </ChatContext.Provider>
