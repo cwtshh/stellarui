@@ -2,14 +2,14 @@ import { useState, useRef, useEffect } from 'react';
 import { X, Settings, Users, Database } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const AdminModal = ({ isOpen, onClose }) => {
+const AdminModal = ({ isOpen, onClose }: any) => {
   const [selectedSection, setSelectedSection] = useState('Database');
   const navigate = useNavigate();
-  const modalRef = useRef(null)
+  const modalRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (modalRef.current && !modalRef.current.contains(event.target)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
         onClose();
       }
     };
@@ -89,7 +89,7 @@ const AdminModal = ({ isOpen, onClose }) => {
 };
 
 
-const NavItem = ({ icon, label, onClick }) => (
+const NavItem = ({ icon, label, onClick }: any) => (
   <button 
     onClick={onClick} 
     className="flex items-center gap-3 w-full px-3 py-2 text-green-300 hover:text-white hover:bg-green-800 rounded-lg transition-colors"
@@ -99,7 +99,7 @@ const NavItem = ({ icon, label, onClick }) => (
   </button>
 );
 
-const DatabaseItem = ({ label }) => (
+const DatabaseItem = ({ label }: any) => (
   <button className="flex items-center gap-2 w-full px-4 py-2 text-green-300 hover:text-white hover:bg-green-800 rounded-lg transition-colors">
     <Database size={18} />
     <span>{label}</span>

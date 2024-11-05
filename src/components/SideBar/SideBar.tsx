@@ -1,6 +1,6 @@
 import { MdOutlineAdminPanelSettings } from "react-icons/md";
 import { useLocation, useNavigate } from 'react-router-dom';
-import { GrConfigure, GrUserAdmin } from 'react-icons/gr';
+import { GrConfigure } from 'react-icons/gr';
 import { HiMiniPencilSquare } from 'react-icons/hi2';
 import { useAuth } from '../../context/AuthContext';
 import { useChat } from '../../context/ChatContext';

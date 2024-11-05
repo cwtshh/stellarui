@@ -13,7 +13,7 @@ export default function ProfileEdit() {
     avatar: null
   });
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: any) => {
     const { name, value } = e.target;
     setFormData(prevState => ({
       ...prevState,
@@ -21,7 +21,7 @@ export default function ProfileEdit() {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     if (formData.password !== '' && formData.confirmPassword == ''){

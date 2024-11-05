@@ -12,7 +12,7 @@ const PORT = process.env.API_PORT || 3001;
 const app = express();
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: ['http://localhost:5173', 'https://stellar.cwtsh.site'],
     credentials: true,
 }));
 app.use(cookieParser());

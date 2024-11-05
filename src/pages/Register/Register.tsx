@@ -37,7 +37,7 @@ const Register = () => {
             email,
             password,
             role: 'user'
-        }).then(res => {
+        }).then((res: any) => {
             NotifyToast({ message: res.data.message, type: 'success' });
             window.location.href = '/login';
         }).catch(err => {

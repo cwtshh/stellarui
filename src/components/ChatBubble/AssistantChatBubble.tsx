@@ -4,11 +4,16 @@ import { MdContentCopy } from "react-icons/md";
 import { NotifyToast } from "../../components/Toast/Toast";
 import { useState } from 'react';
 
-const AssistantChatBubble = ({ message }) => {
+
+interface AssistantChatBubbleProps {
+    message: any;
+}
+
+const AssistantChatBubble = ({ message }: AssistantChatBubbleProps) => {
     const date = new Date(message.created_at).toLocaleString('pt-br');
     const [isHovered, setIsHovered] = useState(false);
 
-    const copyText = (text) => {
+    const copyText = (text: any) => {
         navigator.clipboard.writeText(text);
         NotifyToast({ message: 'Mensagem copiada com sucesso!', type: 'success' });
     };
@@ -32,7 +37,7 @@ const AssistantChatBubble = ({ message }) => {
                         onMouseLeave={() => setIsHovered(false)} 
                     >
                         <button 
-                            className={`indicator-item transition badge badge w-[80px] h-[20px] btn shadow-xl transition-opacity transition-transform duration-400 ease-in-out ${isHovered ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}
+                            className={`indicator-item badge w-[80px] h-[20px] btn shadow-xl transition-opacity duration-400 ease-in-out ${isHovered ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}
                             onClick={() => copyText(message.content)}>
                             <div className='cursor-pointer flex items-center justify-center '>
                                 <div className='gap-2 flex items-center justify-center'>

@@ -3,7 +3,7 @@
 const Home = () => {
   return (
     <div className="flex h-full w-full">
-        oie penis
+        oie
     </div>
   )
 }
