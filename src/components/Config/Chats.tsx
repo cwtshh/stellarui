@@ -37,7 +37,7 @@ export default function Chats() {
           <MdFileOpen className="mr-3 text-2xl" /> 
           <span className="text-lg">Archive All Charts</span>
         </li> */}
-        <li role='button' onClick={() => delete_all_chats(user?._id)} className="flex items-center text-green-300 hover:text-red-500 transition-colors duration-200 cursor-pointer">
+        <li role='button' onClick={() => { if (user?._id) delete_all_chats(user._id); }} className="flex items-center text-green-300 hover:text-red-500 transition-colors duration-200 cursor-pointer">
             <MdDelete className="mr-3 text-2xl" /> 
             <span className="text-lg">Deletar todos os Chats</span>
         </li>
