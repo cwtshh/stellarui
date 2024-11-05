@@ -1,9 +1,13 @@
 import { useChat } from "../../context/ChatContext";
 
-const SuggestionCards = ({ locked }) => {
+interface SuggestionCardsProps {
+    locked: boolean;
+}
+
+const SuggestionCards: React.FC<SuggestionCardsProps> = ({ locked }) => {
     const { send_message } = useChat();
 
-    const handleSuggestion = (message) => {
+    const handleSuggestion = (message: any) => {
         const suggestion = message.target.textContent; 
         if (suggestion.trim()) {
             let asking = 'Fale sobre ' + suggestion

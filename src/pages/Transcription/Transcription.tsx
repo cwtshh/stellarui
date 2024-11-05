@@ -16,7 +16,7 @@ const Trancription = () => {
   
   const [segments, setSegments] = useState<any[]>([]);
   const [currentTime, setCurrentTime] = useState<number>(0);
-  const [speakerMap, setSpeakerMap] = useState([]);
+  const [speakerMap, setSpeakerMap] = useState<{ [key: string]: string }>({});
   const [filteredSegments, setFilteredSegments] = useState<any[]>([]);
   
   const [timeSearchTerm, setTimeSearchTerm] = useState<string>('');

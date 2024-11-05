@@ -15,7 +15,8 @@ interface ChatContextType {
     localMessages: MessageType[],
     lockChat: boolean,
     clearLocalMessages: () => void,
-    send_message_file: (message: string, file: File) => void
+    send_message_file: (message: string, file: File) => void,
+    delete_all_chats: (user_id: string) => void
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -142,7 +143,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
     const delete_all_chats = async (user_id: string) => {
         try {
-            const response = await axios.delete(`${BASE_API_URL}/user/chat/delete/all/${user_id}`, { withCredentials: true });
+            const response: any = await axios.delete(`${BASE_API_URL}/user/chat/delete/all/${user_id}`, { withCredentials: true });
             
             // Verifique se a resposta tem a propriedade 'message'
             if (response.data && response.data.message) {
@@ -155,12 +156,12 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             setLocalMessages([]);
               
         } catch (error) {
-            const errorMessage = error.response?.data?.message || 'Erro ao deletar os chats.';
+            const errorMessage = (error as any).response?.data?.message || 'Erro ao deletar os chats.';
             NotifyToast({ message: errorMessage, type: 'error' });
         }
     }
 
-    const send_message_file = async(file: File, message: string) => {
+    const send_message_file = async(message: string, file: File) => {
         if(!selectedChat || !user?._id || lockChat) {
             return;
         }

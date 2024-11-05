@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
-
 export default function Geral() {
-  const [language, setLanguage] = useState('');
+  // const [language, setLanguage] = useState('');
 
-  const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setLanguage(event.target.value);
-  };
+  // const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  //   setLanguage(event.target.value);
+  // };
 
   return (
     <div className="w-[600px] bg-green-900 shadow-lg rounded-lg p-6">
