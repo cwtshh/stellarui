@@ -102,34 +102,31 @@ const SideBar = () => {
                 ) : (
                     <div>
                         <p className='font-bold text-white mb-4'>Configurações</p>
-                        <ul className="space-y-4">
-                            <li className={`${isActivePage('/configuracoes/geral') && !isModalOpen ? 'bg-secondary' : ''} hover:bg-secondary h-full p-3 rounded-xl text-green-200 transition-colors duration-200`}>
-                                <Link 
-                                    to="/configuracoes/geral">
+                        <ul className="space-y-4 flex flex-col">
+                            <Link to="/configuracoes/geral">
+                                <li className={`${isActivePage('/configuracoes/geral') && !isModalOpen ? 'bg-secondary' : ''} hover:bg-secondary h-full p-3 rounded-xl text-green-200 transition-colors duration-200`}>
                                     <div className='flex gap-4 items-center'>
                                         <MdOutlineSettings />
                                         General
                                     </div>
-                                </Link>
-                            </li>
-                            <li className={`${isActivePage('/configuracoes/perfil') && !isModalOpen ? 'bg-secondary' : ''} hover:bg-secondary h-full p-3 rounded-xl text-green-200 transition-colors duration-200`}>
-                                <Link 
-                                    to="/configuracoes/perfil">
+                                </li>
+                            </Link>
+                            <Link to="/configuracoes/perfil">
+                                <li className={`${isActivePage('/configuracoes/perfil') && !isModalOpen ? 'bg-secondary' : ''} hover:bg-secondary h-full p-3 rounded-xl text-green-200 transition-colors duration-200`}>
                                     <div className='flex gap-4 items-center'>
                                         <CgProfile />
                                         Profile
                                     </div>
-                                </Link>
-                            </li>
-                            <li className={`${isActivePage('/configuracoes/Chats') && !isModalOpen ? 'bg-secondary' : ''} hover:bg-secondary  h-full p-3 rounded-xl text-green-200 transition-colors duration-200`}>
-                                <Link 
-                                    to="/configuracoes/Chats">
+                                </li>
+                            </Link>
+                            <Link to="/configuracoes/Chats">
+                                <li className={`${isActivePage('/configuracoes/Chats') && !isModalOpen ? 'bg-secondary' : ''} hover:bg-secondary  h-full p-3 rounded-xl text-green-200 transition-colors duration-200`}>
                                     <div className='flex gap-4 items-center'>
                                         <RiChatSettingsFill />
                                         Chats
                                     </div>
-                                </Link>
-                            </li>
+                                </li>
+                            </Link>
                             { user?.role === 'admin' && (
                                 <li className={`${isModalOpen ? 'bg-secondary' : ''} hover:bg-secondary  h-full p-3 rounded-xl text-green-200 transition-colors duration-200 cursor-pointer`} onClick={openModal}>
                                     <div className='flex gap-4 items-center'>
