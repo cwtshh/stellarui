@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { FaUser, FaEnvelope, FaLock } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
+import { NotifyToast } from '../Toast/Toast';
 
 export default function ProfileEdit() {
   const { user, update } = useAuth(); 
@@ -22,6 +23,16 @@ export default function ProfileEdit() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (formData.password !== '' && formData.confirmPassword == ''){
+      NotifyToast({ message: 'Por favor, repita a nova senha.', type: 'info' });
+      return
+    }
+
+    if (formData.password !== formData.confirmPassword){
+      NotifyToast({ message: 'As senhas não estão compatíveis!', type: 'error' });
+      return
+    }
     
     const updateData = {
       name: formData.name,
@@ -79,6 +90,7 @@ export default function ProfileEdit() {
             name="password"
             value={formData.password}
             onChange={handleInputChange}
+            placeholder='********'
             className="w-full p-2 bg-green-700 border border-green-600 rounded-md text-green-100 focus:ring-green-400 focus:border-green-400"
           />
         </div>
@@ -92,6 +104,7 @@ export default function ProfileEdit() {
             id="confirmPassword"
             name="confirmPassword"
             value={formData.confirmPassword}
+            placeholder='********'
             onChange={handleInputChange}
             className="w-full p-2 bg-green-700 border border-green-600 rounded-md text-green-100 focus:ring-green-400 focus:border-green-400"
           />

@@ -10,7 +10,7 @@ export default function Geral() {
   return (
     <div className="w-[600px] bg-green-900 shadow-lg rounded-lg p-6">
       <h2 className="text-2xl font-bold mb-6 text-green-50 border-b border-green-700 pb-6">General Settings</h2>
-      <div className="mb-4">
+      {/* <div className="mb-4">
         <label htmlFor="language" className="block text-sm font-medium text-green-200 mb-2">Language</label>
         <select
           id="language"
@@ -25,7 +25,7 @@ export default function Geral() {
           <option value="fr">French</option>
           <option value="de">German</option>
         </select>
-      </div>
+      </div> */}
       <div className="mb-4">
         <label htmlFor="systemPrompt" className="block text-sm font-medium text-green-200 mb-2">System Prompt</label>
         <textarea
