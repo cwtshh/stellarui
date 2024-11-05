@@ -13,13 +13,19 @@ const Trancription = () => {
   const [file, setFile] = useState<File | null>(null);
   const [videoUrl, setVideoUrl] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
+  
   const [segments, setSegments] = useState<any[]>([]);
   const [currentTime, setCurrentTime] = useState<number>(0);
-  const [mouseOver, setMouseOver ] = useState(false)
-  const [searchTerm, setSearchTerm] = useState<string>('');
-  const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null);
   const [speakerMap, setSpeakerMap] = useState([]);
+  const [filteredSegments, setFilteredSegments] = useState<any[]>([]);
   
+  const [timeSearchTerm, setTimeSearchTerm] = useState<string>('');
+  const [textSearchTerm, setTextSearchTerm] = useState<string>('');
+  const [selectedPerson, setSelectedPerson] = useState<string>('');
+  
+  const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null);
+  const [mouseOver, setMouseOver ] = useState(false)
+
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const transcriptionRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -40,21 +46,67 @@ const Trancription = () => {
     }
   }
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const term = e.target.value;
-    if (videoRef.current) {
-      videoRef.current.pause();
+  const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/[^0-9]/g, ''); // Remove tudo que não é número
+    let formattedValue = '';
+
+    // Adiciona ":" automaticamente
+    if (value.length > 0) formattedValue += value.substring(0, 2); // Horas
+    if (value.length > 2) formattedValue += ':' + value.substring(2, 4); // Minutos
+    if (value.length > 4) formattedValue += ':' + value.substring(4, 6); // Segundos
+
+    setTimeSearchTerm(formattedValue);
+
+    // Regex para validar o tempo
+    const regex = /^(?:([01]?\d|2[0-3]):([0-5]?\d):([0-5]?\d)?)$/;
+    const matches = formattedValue.match(regex);
+
+    if (matches) {
+      const hours = matches[1] ? parseInt(matches[1], 10) : 0;
+      const minutes = matches[2] ? parseInt(matches[2], 10) : 0;
+      const seconds = matches[3] ? parseInt(matches[3], 10) : 0;
+
+      const timeInSeconds = hours * 3600 + minutes * 60 + seconds;
+
+      const index = segments.findIndex((segment) => {
+        return (
+          segment.start <= timeInSeconds &&
+          (segment.end ? segment.end >= timeInSeconds : true)
+        );
+      });
+
+      if (index !== -1) {
+        setHighlightedIndex(index);
+        transcriptionRefs.current[index]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else {
+        setHighlightedIndex(null);
+      }
     }
-    setSearchTerm(term);
+  };
 
-    const index = segments.findIndex((segment) =>
-      segment.text.toLowerCase().includes(term.toLowerCase())
-    );
+  const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setTextSearchTerm(value);
+  
+    // Pesquisa por texto
+    const normalizedTerm = value.toLowerCase().replace(/[.,!?;]*/g, '').trim();
+    const searchWords = normalizedTerm.split(/\s+/); // Divide em palavras
+  
+    const index = segments.findIndex((segment) => {
+      const normalizedSegmentText = segment.text.toLowerCase().replace(/[.,!?;]*/g, '').trim();
+      return searchWords.every(word => normalizedSegmentText.includes(word));
+    });
+  
     setHighlightedIndex(index);
-
+  
     if (index !== -1 && transcriptionRefs.current[index]) {
       transcriptionRefs.current[index]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
+  };
+
+  const handlePersonChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedPerson(e.target.value);
+    // Aqui você pode adicionar lógica para filtrar segments por falante, se necessário.
   };
 
   const handleTransciption = async() => {
@@ -66,7 +118,6 @@ const Trancription = () => {
       try {
         
         const response: any = await axios.post(`${BASE_TRANSCRIPTION_API_URL}/upload-video/`, formData);
-        console.log(response.data.result);
 
         let segment_list = [];
         let speakers_list: any = [];
@@ -77,6 +128,7 @@ const Trancription = () => {
           }
         }
         setSegments(segment_list);
+        setFilteredSegments(segment_list);
         setSpeakerMap(speakers_list);
         NotifyToast({ type: 'success', message: 'Arquivo transcrito com sucesso' });
         
@@ -137,6 +189,21 @@ const Trancription = () => {
     (document.getElementById('speaker_modal') as HTMLDialogElement).close();
   }
 
+  useEffect(() => {
+    let filtered = segments;
+  
+    if (textSearchTerm) {
+      const normalizedTerm = textSearchTerm.toLowerCase().replace(/[.,!?;]*/g, '').trim();
+      filtered = filtered.filter(segment => segment.text.toLowerCase().includes(normalizedTerm));
+    }
+  
+    if (selectedPerson) {
+      filtered = filtered.filter(segment => segment.speaker === selectedPerson);
+    }
+  
+    setFilteredSegments(filtered);
+  }, [textSearchTerm, selectedPerson, segments]);
+
   return (
     <div className='h-full w-full overflow-hidden flex flex-col p-5' style={{
       backgroundImage: `url(${chatbg})`,
@@ -146,18 +213,41 @@ const Trancription = () => {
       backgroundAttachment: 'fixed',
     }}>
       <div className='flex items-start justify-center h-full gap-[95px]'>
-        <div className='text-white p-6 h-vh w-[30%] rounded-xl flex flex-col gap-7'>
-        <input 
-            type="text" 
-            placeholder="Pesquisar segmento..." 
-            className='input input-bordere text-black input-accent w-[500px]' 
-            style={{ display: loading || !videoUrl ? 'none' : 'block' }}
-            onChange={handleSearchChange}
-            value={searchTerm}
-          />
+        <div className=' flex text-white p-6 h-vh w-[30%] rounded-xl flex-col gap-7'>
+          <div className='flex gap-2'>
+            <input 
+              type="text" 
+              placeholder="00:00:00"
+              maxLength={8}
+              className='input input-bordere text-black input-accent w-[100px]' 
+              onChange={handleTimeChange}
+              value={timeSearchTerm}/>
+
+            <input 
+              type="text" 
+              placeholder="Segmento..." 
+              className='input input-bordere text-black input-accent w-[260px]' 
+
+              onChange={handleTextChange}
+              value={textSearchTerm}
+            />
+
+            <select 
+              className='text-black select select-bordered w-[130px]' 
+              onChange={handlePersonChange}
+              value={selectedPerson}>
+              <option hidden value="">Falante</option>
+              <option>Nenhum</option>
+              {Object.keys(speakerMap).map((person, index) => (
+                <>
+                  <option key={index} value={person}>{speakerMap[person]}</option>
+                </>
+              ))}
+            </select>
+          </div>
           <div onMouseEnter={() => setMouseOver(true)} onMouseLeave={() => setMouseOver(false)} onScroll={handleScroll}
            className='bg-base-100 p-6 scroll-hidden h-[700px] w-[500px] rounded-xl flex flex-col gap-6 overflow-y-scroll shadow-xl'>
-            {segments.map((item: any, index: number) => {
+            {(filteredSegments.length > 0 ? filteredSegments : segments).map((item: any, index: number) => {
               const isActiveSegment = currentTime >= item.start && (index === segments.length - 1 || currentTime <= item.end);
               const isHighlighted = index === highlightedIndex;
 
