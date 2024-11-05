@@ -40,6 +40,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                 NotifyToast({ message: res.data.message, type: 'success' });
                 setSelectedChat(res.data.chat);
                 fetch_side();
+                (true)
+
             })
             .catch(err => {
                 NotifyToast({ message: err.response.data.errors[0], type: 'error' });
@@ -97,6 +99,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
         setLocalMessages((prevMessages) => [...prevMessages, newMessage]);
         setLockChat(true);
+        (false)
 
         try {
             const response = await axios.post(`${BASE_API_URL}/user/chat/send`, {
@@ -182,6 +185,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
         setLocalMessages((prevMessages) => [...prevMessages, newMessage]);
         setLockChat(true);
+        (false)
 
         try {
             const reponse = await axios.post(`${BASE_API_URL}/user/chat/send/pdf`, formData, { withCredentials: true });
@@ -210,7 +214,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     }, [user]);
 
     return (
-        <ChatContext.Provider value={{ chats, selectedChat, add_chat, select_chat, send_message, delete_chat, localMessages, lockChat, clearLocalMessages, send_message_file, delete_all_chats,
+        <ChatContext.Provider value={{ chats, selectedChat, add_chat, select_chat, send_message, delete_chat, localMessages, lockChat, clearLocalMessages, send_message_file, delete_all_chats, 
         }}>
             {children}
         </ChatContext.Provider>

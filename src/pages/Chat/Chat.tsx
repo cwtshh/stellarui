@@ -7,6 +7,7 @@ import { GoFileSymlinkFile } from "react-icons/go";
 import chatbg from '../../assets/chatbg.jpeg';
 import { BsSendFill } from 'react-icons/bs';
 import { IoMdAttach } from 'react-icons/io';
+import SuggestionCards from '../../components/Suggestion/SuggestionCards';
 
 const Chat = () => {
   const { selectedChat, send_message, localMessages, lockChat, clearLocalMessages, send_message_file } = useChat();
@@ -129,7 +130,7 @@ const Chat = () => {
         ) : (
           <div className="flex">
             <div>
-              <h1 className="text-2xl text-white">Selecione um chat para começar a conversar</h1>
+              <h1 className="text-2xl text-white">Selecione ou crie um chat para começar a conversar</h1>
             </div>
           </div>
         )}
@@ -158,6 +159,10 @@ const Chat = () => {
 
 
       <div ref={messagesEndRef} /></div>
+      {selectedChat ? (
+        <SuggestionCards locked={lockChat}/>
+
+      ):(<></>)}
 
       <div className="w-full p-3 bg-base">
         <div className="flex items-center gap-2">
