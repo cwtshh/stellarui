@@ -60,7 +60,7 @@ export default function ProfileEdit() {
             name="name"
             value={formData.name}
             onChange={handleInputChange}
-            className="w-full p-2 bg-green-700 border border-green-600 rounded-md text-green-100 focus:ring-green-400 focus:border-green-400"
+            className="w-full p-[11px] input bg-green-700 border-green-600 text-green-100 focus:ring-green-400 focus:border-green-400"
             required
           />
         </div>
@@ -75,7 +75,7 @@ export default function ProfileEdit() {
             name="email"
             value={formData.email}
             onChange={handleInputChange}
-            className="w-full p-2 bg-green-700 border border-green-600 rounded-md text-green-100 focus:ring-green-400 focus:border-green-400"
+            className="w-full p-[11px] input bg-green-700 border-green-600 text-green-100 focus:ring-green-400 focus:border-green-400"
             required
           />
         </div>
@@ -91,7 +91,7 @@ export default function ProfileEdit() {
             value={formData.password}
             onChange={handleInputChange}
             placeholder='********'
-            className="w-full p-2 bg-green-700 border border-green-600 rounded-md text-green-100 focus:ring-green-400 focus:border-green-400"
+            className="w-full p-[11px] input bg-green-700 border-green-600 text-green-100 focus:ring-green-400 focus:border-green-400"
           />
         </div>
         <div className="mb-4">
@@ -106,7 +106,7 @@ export default function ProfileEdit() {
             value={formData.confirmPassword}
             placeholder='********'
             onChange={handleInputChange}
-            className="w-full p-2 bg-green-700 border border-green-600 rounded-md text-green-100 focus:ring-green-400 focus:border-green-400"
+            className="w-full p-[11px] input bg-green-700 border-green-600 text-green-100 focus:ring-green-400 focus:border-green-400"
           />
         </div>
         <button 

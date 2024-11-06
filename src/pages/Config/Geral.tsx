@@ -29,7 +29,7 @@ export default function Geral() {
         <textarea
           id="systemPrompt"
           rows={4} 
-          className="w-full p-2 bg-green-700 border border-green-600 rounded-md text-green-100 focus:ring-green-400 focus:border-green-400"
+          className="w-full p-[11px] textarea bg-green-700 border-green-600 text-green-100 focus:ring-green-400 focus:border-green-400"
         />
       </div>
       <button className="w-full bg-green-600 text-green-50 py-2 px-4 rounded-md hover:bg-green-700 transition-colors duration-200">

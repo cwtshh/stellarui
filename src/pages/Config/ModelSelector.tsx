@@ -38,6 +38,19 @@ export default function ModelSelector() {
             </h2>
 
             <div className="mb-4">
+                <label htmlFor="name" className="block text-sm font-medium text-green-200 mb-2">
+                    Model Name
+                </label>
+                <input
+                    id="name"
+                    type="text"
+                    placeholder="Type Modal Name"
+                    value={ModelName}
+                    onChange={(e) => setModelName(e.target.value)}
+                    className="w-full p-[11px] text-[15px] placeholder-green-100 input bg-green-700 border-green-600 text-green-100 focus:ring-green-400 focus:border-green-400"/>
+            </div>
+
+            <div className="mb-4">
                 <label htmlFor="size" className="block text-sm font-medium text-green-200 mb-2">
                     Model Size
                 </label>
@@ -56,7 +69,6 @@ export default function ModelSelector() {
                 </select>
             </div>
 
-            {/* Computer Type Selector */}
             <div className="mb-4">
                 <label htmlFor="computertype" className="block text-sm font-medium text-green-200 mb-2">
                     Computer Type
