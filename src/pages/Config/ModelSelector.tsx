@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { BASE_TRANSCRIPTION_API_URL } from '../../utils/constants';
 import axios from "axios";
 
 export default function ModelSelector() {
@@ -11,20 +12,19 @@ export default function ModelSelector() {
     // Function to call the Pulsares API
     const loadModel = async () => {
         try {
-            const response = await axios.post("http://localhost:8045/define-model/", {
+            const response = await axios.post(`${BASE_TRANSCRIPTION_API_URL}/define-model/`, {
                 model_name: ModelName,
-                model_type: ModelType,
                 model_size: ModelSize,
                 compute_type: ComputerType,
-                device: Device
+                device: Device,
+                model_type: ModelType,
             });
-            console.log(response.data.message); // Display success message or handle as needed
+            console.log(response.data.message);
         } catch (error) {
             console.error("Error loading model:", error);
         }
     };
 
-    // Trigger API call when any option is selected
     useEffect(() => {
         if (ModelName && ModelType && ModelSize && ComputerType && Device) {
             loadModel();
@@ -37,7 +37,6 @@ export default function ModelSelector() {
                 Model Settings
             </h2>
 
-            {/* Model Size Selector */}
             <div className="mb-4">
                 <label htmlFor="size" className="block text-sm font-medium text-green-200 mb-2">
                     Model Size
@@ -46,8 +45,7 @@ export default function ModelSelector() {
                     id="size"
                     value={ModelSize}
                     onChange={(e) => setModelSize(e.target.value)}
-                    className="cursor-pointer w-full p-2 bg-green-700 border border-green-600 rounded-md text-green-100 focus:ring-green-400 focus:border-green-400"
-                >
+                    className="select select-bordered cursor-pointer w-full bg-green-700 border-green-600 text-green-100 focus:ring-green-400 focus:border-green-400">
                     <option hidden value="">Select a Size</option>
                     <option value="tiny">Tiny</option>
                     <option value="base">Base</option>
@@ -67,8 +65,7 @@ export default function ModelSelector() {
                     id="computertype"
                     value={ComputerType}
                     onChange={(e) => setComputerType(e.target.value)}
-                    className="cursor-pointer w-full p-2 bg-green-700 border border-green-600 rounded-md text-green-100 focus:ring-green-400 focus:border-green-400"
-                >
+                    className="select select-bordered cursor-pointer w-full bg-green-700 border-green-600 text-green-100 focus:ring-green-400 focus:border-green-400">
                     <option hidden value="">Select a Type</option>
                     <option value="int8">Integer 8 bits</option>
                     <option value="float16">Float 16 bits</option>
@@ -85,8 +82,7 @@ export default function ModelSelector() {
                     id="device"
                     value={Device}
                     onChange={(e) => setDevice(e.target.value)}
-                    className="cursor-pointer w-full p-2 bg-green-700 border border-green-600 rounded-md text-green-100 focus:ring-green-400 focus:border-green-400"
-                >
+                    className="select select-bordered cursor-pointer w-full bg-green-700 border-green-600 text-green-100 focus:ring-green-400 focus:border-green-400">
                     <option hidden value="">Select a Device</option>
                     <option value="cpu">CPU</option>
                     <option value="gpu">GPU</option>
@@ -94,7 +90,6 @@ export default function ModelSelector() {
                 </select>
             </div>
 
-            {/* Model Type Selector */}
             <div className="mb-4">
                 <label htmlFor="modeltype" className="block text-sm font-medium text-green-200 mb-2">
                     Model Type
@@ -103,8 +98,7 @@ export default function ModelSelector() {
                     id="modeltype"
                     value={ModelType}
                     onChange={(e) => setModelType(e.target.value)}
-                    className="cursor-pointer w-full p-2 bg-green-700 border border-green-600 rounded-md text-green-100 focus:ring-green-400 focus:border-green-400"
-                >
+                    className="select select-bordered cursor-pointer w-full bg-green-700 border-green-600 text-green-100 focus:ring-green-400 focus:border-green-400">
                     <option hidden value="">Select a Model Type</option>
                     <option value="faster_whisper">Faster Whisper</option>
                     <option value="whisperx">WhisperX</option>
