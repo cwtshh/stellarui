@@ -114,7 +114,7 @@ const SideBar = () => {
                             <Link to="/configuracoes/modelselector">
                                 <li className={`${isActivePage('/configuracoes/modelselector') && !isModalOpen ? 'bg-secondary' : ''} hover:bg-secondary h-full p-3 rounded-xl text-green-200 transition-colors duration-200`}>
                                     <div className='flex gap-4 items-center'>
-                                        <MdOutlineSettings />
+                                        <BsStars />
                                         Model Settings
                                     </div>
                                 </li>
