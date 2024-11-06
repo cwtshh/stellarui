@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { FaUser, FaEnvelope, FaLock } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
-import { NotifyToast } from '../Toast/Toast';
+import { NotifyToast } from '../../components/Toast/Toast';
 
 export default function ProfileEdit() {
   const { user, update } = useAuth(); 

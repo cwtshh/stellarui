@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { BASE_API_URL } from '../../utils/constants';
 import axios from 'axios';
 import 'jspdf-autotable';
-import { useConvertChatsToPDF } from "./useConvertChatsToPDF";
+import { useConvertChatsToPDF } from "./ChatsToPDF";
 import { useChat } from "../../context/ChatContext";
 
 export default function Chats() {
