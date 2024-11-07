@@ -5,25 +5,56 @@ import { useChat } from "../../context/ChatContext";
 import { RiArchiveStackFill } from "react-icons/ri";
 import { IoMdArchive } from "react-icons/io";
 import { RiExportFill } from "react-icons/ri";
+import ArchivedChats from './ArchivedChats'
 
 export default function Chats() {
   const { user } = useAuth();
-  const { delete_all_chats, export_chats } = useChat();
+  const { delete_all_chats, export_chats, archive_chats, get_archived_chats } = useChat();
 
   return (
     <div className="w-[600px] bg-green-900 shadow-lg rounded-lg p-8">
       <h2 className="text-3xl font-bold mb-6 text-green-50 border-b border-green-700 pb-6">Chat Actions</h2>
       <ul className="space-y-4">
-        <li className="flex items-center text-green-300 hover:text-green-100 transition-colors duration-200 cursor-pointer">
+
+        <dialog id="modal_archive" className="modal modal-center w-full">
+          <div className="modal-box gap-3 w-[470px] items-center flex flex-col">
+            <h3 className="font-bold text-lg">Deseja mesmo arquivar todos os seus chats?</h3>
+            <div className="flex w-full justify-center gap-5">
+              <button className="btn w-[200px] bg-green-800 text-white hover:bg-green-700" onClick={() => { if (user?._id) archive_chats(user?._id); document.getElementById('modal_archive').close() }}>Sim</button>
+              <button className="btn w-[200px] bg-red-800 text-white hover:bg-red-600" onClick={() => document.getElementById('modal_archive').close()}>Não</button>
+            </div>
+          </div>
+          <form method="dialog" className="modal-backdrop w-full">
+            <button>close</button>
+          </form>
+        </dialog>
+
+        <li onClick={() => document.getElementById('modal_archive').showModal()} className="flex items-center text-green-300 hover:text-green-100 transition-colors duration-200 cursor-pointer">
           <IoMdArchive className="mr-3 text-2xl" /> 
           <span className="text-lg">Archive All Chats</span>
         </li>
-        <li className="flex items-center text-green-300 hover:text-green-100 transition-colors duration-200 cursor-pointer">
+
+        <dialog id="modal_archived" className="modal modal-center">
+          <div className="modal-box gap-3 items-center flex flex-col bg-green-900 shadow-lg rounded-lg p-8">
+            <h3 className="font-bold text-white text-3xl border-b border-green-700 pb-6 flex w-full items-center justify-between">
+              Arquivados
+              <div className=" w-[20px] h-[20px] cursor-pointer transform-transition easy-in-out duration-300 text-xl hover:text-gray-300" onClick={() => document.getElementById('modal_archived').close()}>X</div>
+            </h3>
+            <div className="flex w-full justify-between pb-2 pt-2 gap-5">
+              {/* <ArchivedChats/> */}
+            </div>
+          </div>
+          <form method="dialog" className="modal-backdrop w-full">
+            <button>close</button>
+          </form>
+        </dialog>
+
+        <li onClick={() => {if(user?._id)  get_archived_chats(user?._id); document.getElementById('modal_archived').showModal()}} className="flex items-center text-green-300 hover:text-green-100 transition-colors duration-200 cursor-pointer">
           <RiArchiveStackFill className="mr-3 text-2xl" /> 
           <span className="text-lg">Archived Chats</span>
         </li>
-        <li role='button' onClick={() => export_chats} className="flex items-center text-green-300 hover:text-green-100 transition-colors duration-200 cursor-pointer">
-          <RiExportFill className="mr-3 text-2xl" /> 
+        <li role='button' onClick={() => export_chats()} className="flex items-center text-green-300 hover:text-green-100 transition-colors duration-200 cursor-pointer">
+          <RiExportFill className="mr-3 text-2xl" />
           <span className="text-lg">Exportar Chats</span>
         </li>
         <li role='button' onClick={() => { if (user?._id) delete_all_chats(user._id); }} className="flex items-center text-green-300 hover:text-red-300 transition-colors duration-200 cursor-pointer">

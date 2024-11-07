@@ -136,18 +136,23 @@ const create_chat = async(req: Request, res: Response) => {
     res.status(201).json({ message: 'Chat criado com sucesso.', chat_id: chat._id });
 };
 
-const get_all_user_chats = async(req: Request, res: Response) => {
+const get_all_user_chats = async (req: Request, res: Response) => {
     const { id: user_id } = req.params;
 
-    const chats = await Chat.find({ user: user_id }).populate('messages');
+    try {
+        const chats = await Chat.find({ user: user_id, is_archived: false }).populate('messages');
 
-    if(!chats) {
-        res.status(400).json({ errors: ['Usuario não possui chats.'] });
-        return;
+        if (!chats) {
+            res.status(400).json({ errors: ['Usuário não possui chats ativos.'] });
+            return;
+        }
+
+        res.status(200).json(chats);
+    } catch (error) {
+        res.status(500).json({ errors: ['Erro ao buscar os chats do usuário.'] });
     }
+};
 
-    res.status(200).json(chats);
-}
 
 interface MessageBody {
     role: string,
@@ -179,9 +184,9 @@ const send_message_pdf = async(req: Request, res: Response) => {
     upload(req, res, async(err) => {
         const { chat_id, user_id, message } = req.body;
         const file = req.file;
-        const chat = await Chat.findById(chat_id);
+        const chat = await Chat.findOne({ _id: chat_id, is_archived: false });
         if(!chat) {
-            res.status(400).json({ errors: ['Chat não encontrado.'] });
+            res.status(400).json({ errors: ['Chat não encontrado ou está arquivado.'] });
             return;
         }
         if(!file) {
@@ -354,7 +359,6 @@ const send_message_pdf = async(req: Request, res: Response) => {
     });
 }
 
-
 const send_message_file = async(req: Request, res: Response) => {
     const file = req.file;
 
@@ -376,9 +380,9 @@ const send_message_file = async(req: Request, res: Response) => {
     upload(req, res, async(err) => {
         const { chat_id, user_id, message, sessionId } = req.body;
         const file = req.file;
-        const chat = await Chat.findById(chat_id);
+        const chat = await Chat.findOne({ _id: chat_id, is_archived: false });
         if(!chat) {
-            res.status(400).json({ errors: ['Chat não encontrado.'] });
+            res.status(400).json({ errors: ['Chat não encontrado ou está arquivado.'] });
             return;
         }
         if (!file) {
@@ -458,13 +462,13 @@ const send_message_file = async(req: Request, res: Response) => {
 
 const send_message = async(req: Request, res: Response) => {
     const { message, chat_id, user_id } = req.body;
-
-    const chat = await Chat.findById(chat_id).populate({
+ 
+    const chat = await Chat.findOne({ _id: chat_id, is_archived: false }).populate({
         path: 'messages',
         model: 'Message'
     });
     if(!chat) {
-        res.status(400).json({ errors: ['Chat não encontrado.'] });
+        res.status(400).json({ errors: ['Chat não encontrado ou está arquivado.'] });
         return;
     }
     
@@ -611,23 +615,32 @@ const send_message = async(req: Request, res: Response) => {
     // res.status(201).json({ message: 'Mensagem enviada com sucesso.', ai_message: prediction.text });
 };
 
-const get_chat = async(req: Request, res: Response) => {
+const get_chat = async (req: Request, res: Response) => {
     const { chat_id } = req.params;
-    const chat = await Chat.findById(chat_id).populate('messages');
-    if(!chat) {
-        res.status(400).json({ errors: ['Chat não encontrado.'] });
-        return;
+
+    try {
+        const chat = await Chat.findOne({ _id: chat_id, is_archived: false }).populate('messages');
+
+        if (!chat) {
+            res.status(400).json({ errors: ['Chat não encontrado ou está arquivado.'] });
+            return;
+        }
+
+        res.status(200).json(chat);
+    } catch (error) {
+        res.status(500).json({ errors: ['Erro ao buscar o chat.'] });
     }
-    res.status(200).json(chat);
 };
 
-const delete_chat = async(req: Request, res: Response) => {
+const delete_chat = async (req: Request, res: Response) => {
     const { chat_id } = req.params;
-    const chat = await Chat.findByIdAndDelete(chat_id);
-    if(!chat) {
-        res.status(400).json({ errors: ['Chat não encontrado.'] });
+
+    const chat = await Chat.findOneAndDelete({ _id: chat_id, is_archived: false });
+    if (!chat) {
+        res.status(400).json({ errors: ['Chat não encontrado ou já está arquivado.'] });
         return;
     }
+
     res.status(200).json({ message: 'Chat deletado com sucesso.' });
 };
 
@@ -635,11 +648,11 @@ const delete_all_user_chats: RequestHandler = async (req, res) => {
     const { id: user_id } = req.params;
 
     try {
-        const result = await Chat.deleteMany({ user: user_id });
+        const result = await Chat.deleteMany({ user: user_id, is_archived: false });
         if (result.deletedCount === 0) {
-            res.status(400).json({ errors: ['Usuário não possui chats para deletar.'] });
+            res.status(400).json({ errors: ['Usuário não possui chats ativos para deletar.'] });
         } else {
-            res.status(200).json({ message: 'Todos os chats foram deletados com sucesso.' });
+            res.status(200).json({ message: 'Todos os chats ativos foram deletados com sucesso.' });
         }
     } catch (error) {
         res.status(500).json({ errors: ['Erro ao deletar os chats.'] });
@@ -656,22 +669,22 @@ const download_file = (req: Request, res: Response) => {
     res.download(file_path);
 };
 
-const export_user_chats = async(req: Request, res: Response) => {
+const export_user_chats = async (req: Request, res: Response) => {
     const { user_id } = req.params;
-    if(!user_id) {
+    if (!user_id) {
         res.status(400).json({ errors: ['ID de usuário não fornecido.'] });
         return;
     }
 
     const user = await User.findById(user_id);
-    if(!user) {
+    if (!user) {
         res.status(400).json({ errors: ['Usuário não encontrado.'] });
         return;
     }
 
-    const chats = await Chat.find({ user: user_id }).populate('messages');
-    if(!chats) {
-        res.status(400).json({ errors: ['Usuário não possui chats.'] });
+    const chats = await Chat.find({ user: user_id, is_archived: false }).populate('messages');
+    if (!chats || chats.length === 0) {
+        res.status(400).json({ errors: ['Usuário não possui chats ativos.'] });
         return;
     }
 
@@ -682,23 +695,95 @@ const export_user_chats = async(req: Request, res: Response) => {
             name: user.name
         }
     });
+};
 
-}
+const archive_chats = async (req: Request, res: Response): Promise<void> => {
+    const { chats_ids } = req.body;
+    const { user_id } = req.params;
 
+    try {
+        if (!chats_ids || chats_ids.length === 0) {
+            res.status(400).json({ errors: ['Nenhum ID de chat fornecido.'] });
+            return;
+        }
+
+        if (!user_id || !Array.isArray(chats_ids)) {
+            res.status(400).json({ errors: ['ID de usuário ou lista de chats inválidos.'] });
+            return;
+        }
+
+        const result = await Chat.updateMany(
+            { _id: { $in: chats_ids }, user: user_id, is_archived: false },
+            { $set: { is_archived: true } }
+        );
+
+
+        if (result.modifiedCount === 0) {
+            res.status(400).json({ errors: ['Nenhum chat foi arquivado. Verifique se os chats já estão arquivados ou os IDs são inválidos.'] });
+            return;
+        }
+
+        res.status(200).json({ message: 'Chats arquivados com sucesso.' });
+        return;
+    } catch (error) {
+        console.error('Erro no backend:', error);
+        res.status(500).json({ errors: ['Erro ao arquivar os chats.'] });
+        return;
+    }
+};
+
+const get_archived_chats = async (req: Request, res: Response) => {
+    console.log('opa')
+    const { id: user_id } = req.params;
+  
+    try {
+      const chats = await Chat.find({ user: user_id, is_archived: true }).populate('messages');
+  
+      if (!chats) {
+        res.status(400).json({ errors: ['Usuário não possui chats arquivados.'] });
+        return;
+      }
+  
+      res.status(200).json(chats);
+    } catch (error) {
+      res.status(500).json({ errors: ['Erro ao buscar os chats do usuário.'] });
+    }
+  };
+
+  const unarchive_chat = async (req: Request, res: Response) => {
+    const { chatId } = req.params;
+  
+    try {
+      const chat = await Chat.findById(chatId);
+      if (!chat) {
+        return res.status(404).json({ errors: ['Chat não encontrado.'] });
+      }
+  
+      chat.is_archived = false; // Retira do arquivado
+      await chat.save();
+  
+      res.status(200).json({ message: 'Chat retirado do arquivado.' });
+    } catch (error) {
+      res.status(500).json({ errors: ['Erro ao retirar chat do arquivado.'] });
+    }
+  };
 
 export { 
     register_user, 
     login_user, 
     logout_user, 
+    update_user,
     create_chat, 
+    get_chat, 
     get_all_user_chats, 
     send_message, 
-    get_chat, 
-    delete_chat, 
     send_message_file, 
     send_message_pdf,
     download_file,
-    update_user,
     export_user_chats,
-    delete_all_user_chats
+    delete_chat, 
+    delete_all_user_chats,
+    archive_chats,
+    get_archived_chats,
+    unarchive_chat
 };

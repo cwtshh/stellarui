@@ -18,6 +18,10 @@ const ChatSchema = new Schema({
     chat_sessionid: {
         type: String,
         default: ''
+    },
+    is_archived: {
+        type: Boolean,
+        default: false
     }
 });
 

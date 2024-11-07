@@ -17,13 +17,16 @@ interface ChatContextType {
     lockChat: boolean,
     clearLocalMessages: () => void,
     send_message_file: (message: string, file: File) => void,
-    delete_all_chats: (user_id: string) => void
-    export_chats: any
+    delete_all_chats: (user_id: string) => void,
+    export_chats: any,
+    archive_chats: any,
+    get_archived_chats: any,
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
+    const [archivedChats, setArchivedChats] = useState<any[]>([]);
     const [chats, setChats] = useState<ChatType[]>([]);
     const [selectedChat, setSelectedChat] = useState<ChatType | null>(null);
     const [lockChat, setLockChat] = useState<boolean>(false);
@@ -147,7 +150,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         try {
             const response: any = await axios.delete(`${BASE_API_URL}/user/chat/delete/all/${user_id}`, { withCredentials: true });
             
-            // Verifique se a resposta tem a propriedade 'message'
             if (response.data && response.data.message) {
                 NotifyToast({ message: response.data.message, type: 'success' });
               } else {
@@ -220,13 +222,64 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         }
       };
 
+    const archive_chats = async (user_id: string) => {
+        const response = await axios.get(`${BASE_API_URL}/user/chat/all/${user_id}`, { withCredentials: true });
+        const chats_ids = response.data.map(chat => chat._id);
+        
+        if (!chats_ids || chats_ids.length === 0) {
+            NotifyToast({ message: 'Nenhum chat encontrado.', type: 'error' });
+            return;
+        }
+    
+        try {
+            const archiveResponse = await axios.post(
+                `${BASE_API_URL}/user/chat/archive/${user_id}`,
+                { chats_ids },
+                { withCredentials: true }
+            );
+            NotifyToast({ message: archiveResponse.data.message || 'Chats arquivados com sucesso', type: 'success' });
+            fetch_user_chats();
+
+        } catch (error) {
+            console.error('Erro ao arquivar os chats:', error.response?.data.errors || error.message);
+            NotifyToast({ message: error.response?.data.errors || error.message, type: 'error' });
+        }
+    };
+
+    const get_archived_chats = async (user_id: string) => {
+        console.log('alo')
+        try {
+            const response = await axios.get(`${BASE_API_URL}/get/archived/${user?._id}`, { withCredentials: true });
+            console.log('alo', response)
+            setArchivedChats(response.data); // Armazenando os chats no estado
+            return response.data;
+        } catch (error) {
+          console.error("Erro ao buscar chats arquivados", error);
+          return [];
+        }
+      };
+    
     useEffect(() => {
         fetch_user_chats();
         fetch_side();
     }, [user]);
 
     return (
-        <ChatContext.Provider value={{ chats, selectedChat, add_chat, select_chat, send_message, delete_chat, localMessages, lockChat, clearLocalMessages, send_message_file, delete_all_chats, export_chats,
+        <ChatContext.Provider value={{ 
+            chats, 
+            selectedChat, 
+            add_chat, 
+            select_chat, 
+            send_message, 
+            delete_chat, 
+            localMessages, 
+            lockChat, 
+            clearLocalMessages, 
+            send_message_file, 
+            delete_all_chats, 
+            export_chats,
+            archive_chats,
+            get_archived_chats,
         }}>
             {children}
         </ChatContext.Provider>
