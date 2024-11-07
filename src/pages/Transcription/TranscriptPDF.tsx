@@ -23,7 +23,6 @@ export const downloadTranscriptionPDF = async (file: any, segments: any[], speak
     const titleMaxWidth = document.internal.pageSize.width - marginLeft - marginRight;
     const splitTitle = document.splitTextToSize(`Transcrição de ${file?.name.replace(/\.[^/.]+$/, "")}`, titleMaxWidth);
     
-    // Aqui calculamos a altura total do título com base no número de linhas
     const titleHeight = splitTitle.length * 7;
     
     document.setFontSize(17);
@@ -34,8 +33,7 @@ export const downloadTranscriptionPDF = async (file: any, segments: any[], speak
     });
     document.setTextColor(0, 0, 0);
     
-    // Atualiza yPos para incluir o espaço adicional baseado na altura do título
-    let yPos = marginTop + titleHeight; // Adiciona o espaço extra
+    let yPos = marginTop + titleHeight;
     
     const lineHeight = 10;
     const pageHeight = document.internal.pageSize.height;
@@ -47,52 +45,54 @@ export const downloadTranscriptionPDF = async (file: any, segments: any[], speak
     yPos += 10;
 
     segments.forEach((item) => {
-        const speaker = speakerMap[item.speaker];
-        const timeStamp = time_span(item.start) + ' - ' + time_span(item.end) + ':';
+        const speaker = speakerMap[item.speaker] + ' - ';
+        const timeStamp = `(${time_span(item.start)} - ${time_span(item.end)}):`;
     
-        document.setFontSize(15);
+        document.setFontSize(12);
         document.setFont('helvetica', 'bold');
     
-        const timeStampWidth = document.getTextWidth(timeStamp);
         const speakerWidth = document.getTextWidth(speaker);
-        const totalWidth = speakerWidth + timeStampWidth + 10;
     
-        const currentHeightNeeded = lineHeight * 2 + 7; // Espaço necessário para speaker, timestamp e uma linha de texto
+        const currentHeightNeeded = lineHeight * 2 + 3; // Espaço necessário para speaker, timestamp e uma linha de texto
     
-        if (yPos + currentHeightNeeded > pageHeight - marginBottom) {
+        // Verificar se há espaço suficiente para o bloco completo
+        const safeMarginBottom = marginBottom + currentHeightNeeded;
+        if (yPos + currentHeightNeeded > pageHeight - safeMarginBottom) {
             document.addPage();
-            yPos = marginTop - 30; 
+            yPos = marginTop - 30;
         }
     
+        // Adicionar o nome do palestrante
         document.text(speaker, marginLeft, yPos);
-        document.setFontSize(14);
+        document.setFontSize(12);
         document.setFont('helvetica', 'italic');
-        document.text(timeStamp, marginLeft + speakerWidth + 5, yPos);
+        document.text(timeStamp, marginLeft + speakerWidth, yPos);
     
-        const textMaxWidth = document.internal.pageSize.width - marginLeft - (marginRight - 50) - totalWidth - 10;
+        const textMaxWidth = document.internal.pageSize.width - marginLeft - marginRight - 20;
         const splitText = document.splitTextToSize(item.text, textMaxWidth);
     
-        let textYPos = yPos + lineHeight; 
+        let textYPos = yPos + lineHeight;
     
+        // Adicionar o conteúdo do texto com verificação de página
         splitText.forEach((line: any) => {
             if (textYPos + lineHeight > pageHeight - marginBottom) {
                 document.addPage();
-                textYPos = marginTop - 30; 
+                textYPos = marginTop - 30;
             }
-            document.setFontSize(15);
-            document.setFont('helvetica', 'bold');
+            document.setFontSize(12);
+            document.setFont('helvetica', 'italic');
             document.text(line, marginLeft, textYPos);
             textYPos += lineHeight;
         });
     
-        yPos += lineHeight + 20; 
+        yPos += lineHeight + 30;
     });
-    
     
     const addPageNumbers = () => {
         const pageCount = document.getNumberOfPages();
         for (let i = 1; i <= pageCount; i++) {
             document.setPage(i);
+            document.setFont('helvetica', 'bold');
             document.setFontSize(10);
             document.text(`${i} de ${pageCount}`, document.internal.pageSize.width / 2, pageHeight - marginBottom, { align: 'center' });
         }

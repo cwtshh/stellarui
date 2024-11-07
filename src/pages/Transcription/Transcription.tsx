@@ -127,6 +127,7 @@ const Trancription = () => {
             speakers_list[response.data.result.segments[i].speaker] = response.data.result.segments[i].speaker;
           }
         }
+        
         setSegments(segment_list);
         setFilteredSegments(segment_list);
         setSpeakerMap(speakers_list);

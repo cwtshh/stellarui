@@ -140,8 +140,7 @@ const get_all_user_chats = async(req: Request, res: Response) => {
     const { id: user_id } = req.params;
 
     const chats = await Chat.find({ user: user_id }).populate('messages');
-    
-    // TODO POPULAR MENSAGENS
+
     if(!chats) {
         res.status(400).json({ errors: ['Usuario não possui chats.'] });
         return;

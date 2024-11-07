@@ -1,4 +1,5 @@
 import { ReactNode, createContext, useContext, useEffect, useState } from "react";
+import { useConvertChatsToPDF } from "../pages/Config/ChatsToPDF";
 import { ChatType, MessageType } from "../utils/types/ChatType";
 import { NotifyToast } from "../components/Toast/Toast";
 import { BASE_API_URL } from "../utils/constants";
@@ -17,6 +18,7 @@ interface ChatContextType {
     clearLocalMessages: () => void,
     send_message_file: (message: string, file: File) => void,
     delete_all_chats: (user_id: string) => void
+    export_chats: any
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -209,13 +211,22 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         }
     }
 
+    const export_chats = async () => {
+        try {
+          const response: any = await axios.get(`${BASE_API_URL}/user/chat/export/${user?._id}`);
+          useConvertChatsToPDF(response.data);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+
     useEffect(() => {
         fetch_user_chats();
         fetch_side();
     }, [user]);
 
     return (
-        <ChatContext.Provider value={{ chats, selectedChat, add_chat, select_chat, send_message, delete_chat, localMessages, lockChat, clearLocalMessages, send_message_file, delete_all_chats, 
+        <ChatContext.Provider value={{ chats, selectedChat, add_chat, select_chat, send_message, delete_chat, localMessages, lockChat, clearLocalMessages, send_message_file, delete_all_chats, export_chats,
         }}>
             {children}
         </ChatContext.Provider>

@@ -76,59 +76,66 @@ export const useConvertChatsToPDF = async (data: ChatData) => {
         document.setFontSize(12);
         document.setFont('helvetica', 'normal');
 
-        const textMaxWidth = document.internal.pageSize.width - marginLeft - marginRight;
+        const textMaxWidth = document.internal.pageSize.width - marginLeft - marginRight - 20;
 
         chat.messages.forEach((message: any) => {
             const messageDate = new Date(message.created_at).toLocaleString();
             const sender = message.sent_by === 'user' ? username : 'Estela';
         
-            // Mensagem em negrito para o remetente
+            // Nome do remetente com ":" e um espaço adicional no final
             document.setFont('helvetica', 'bold');
-            const senderLine = `${sender}: `; // Inclui apenas o remetente
+            const senderLine = `${sender}: `;
+            
+            // Verificar se há espaço para o bloco completo (remetente + mensagem + data)
+            const safeMarginBottom = marginBottom + (3 * lineHeight); // Ajuste a margem para considerar o bloco completo
+            if (yPos + (lineHeight * 3) > pageHeight - safeMarginBottom) {
+                document.addPage();
+                yPos = marginTop - 30;
+            }
         
-            // Adiciona o remetente
+            // Adiciona o remetente e calcula a largura do texto do remetente para o próximo texto
             document.text(senderLine, marginLeft, yPos);
+            const senderWidth = document.getTextWidth(senderLine); // Largura do remetente para calcular o início da mensagem
         
             // Mensagem em itálico
             document.setFont('helvetica', 'italic');
-            const messageText = message.content; // Texto da mensagem
-            const fullMessageLine = `${messageText} (${messageDate.split(',')[1].trim()})`; // Mensagem com hora
+            const messageText = message.content;
+            const fullMessageLine = `${messageText} (${messageDate.split(',')[1].trim()})`;
         
-            // Calcula a largura total do texto (remetente + mensagem + hora)
-            const totalText = fullMessageLine; // Texto completo
-            const splitMessage = document.splitTextToSize(totalText, textMaxWidth);
-            
-            // Adiciona a mensagem e a hora na mesma linha
+            const splitMessage = document.splitTextToSize(fullMessageLine, textMaxWidth);
+        
+            // Renderizar o texto
             splitMessage.forEach((line: string, index: number) => {
                 if (yPos + lineHeight > pageHeight - marginBottom) {
                     document.addPage();
-                    yPos = marginTop - 30; // Reseta a posição vertical
+                    yPos = marginTop - 30;
                 }
-                // Se não for a primeira linha, precisa ajustar a posição para a mensagem
                 if (index === 0) {
-                    document.text(line, marginLeft + document.getTextWidth(senderLine), yPos); // Ajusta a posição x para a mensagem
+                    // Coloca o texto da mensagem logo após o remetente com um pequeno espaço
+                    document.text(line, marginLeft + senderWidth + 1, yPos);
                 } else {
-                    document.text(line, marginLeft, yPos); // Continua na mesma posição
+                    document.text(line, marginLeft, yPos);
                 }
-                yPos += lineHeight; // Atualiza a posição vertical
+                yPos += lineHeight;
             });
         
             // Adiciona a data em negrito na linha abaixo da mensagem
-            const dateLine = messageDate.split(',')[0]; // Data
-            document.setFont('helvetica', 'bold'); // Define a fonte como negrito para a data
+            const dateLine = messageDate.split(',')[0];
+            document.setFont('helvetica', 'bold');
             const dateSplit = document.splitTextToSize(dateLine, textMaxWidth);
             dateSplit.forEach((line: string) => {
                 if (yPos + lineHeight > pageHeight - marginBottom) {
                     document.addPage();
-                    yPos = marginTop - 30; // Reseta a posição vertical
+                    yPos = marginTop - 30;
                 }
-                document.text(line, marginLeft, yPos); // Adiciona a data
-                yPos += lineHeight; // Atualiza a posição vertical
+                document.text(line, marginLeft, yPos);
+                yPos += lineHeight;
             });
         
             yPos += lineHeight; // Espaço adicional após cada mensagem
         });
         
+
     });
 
     const addPageNumbers = () => {
