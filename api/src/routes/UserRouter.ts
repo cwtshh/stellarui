@@ -14,17 +14,19 @@ UserRouter.post('/logout', logout_user);
 UserRouter.put('/update/:id', UserUpdateValidation, HandleValidations, update_user);
 
 // Chat
-UserRouter.post('/chat/create', create_chat);
-UserRouter.get('/chat/all/:id', get_all_user_chats);
-UserRouter.delete('/chat/delete/all/:id', delete_all_user_chats);
-UserRouter.post('/chat/send', send_message);
 UserRouter.get('/chat/:chat_id', get_chat);
-UserRouter.delete('/chat/:chat_id', delete_chat);
-UserRouter.post('/chat/sendfile', send_message_file);
-UserRouter.post('/chat/send/pdf', send_message_pdf);
+UserRouter.get('/chat/all/:id', get_all_user_chats);
 UserRouter.get('/chat/findfile/:file_name', download_file);
 UserRouter.get('/chat/export/:user_id', export_user_chats);
+UserRouter.get('/chat/get/archived/:id', get_archived_chats);
+
+UserRouter.post('/chat/create', create_chat);
+UserRouter.post('/chat/send', send_message);
 UserRouter.post('/chat/archive/:user_id', archive_chats);
-UserRouter.get('/chat/get/archived/:user_id', get_archived_chats);
+UserRouter.post('/chat/sendfile', send_message_file);
+UserRouter.post('/chat/send/pdf', send_message_pdf);
+
+UserRouter.delete('/chat/delete/all/:id', delete_all_user_chats);
+UserRouter.delete('/chat/:chat_id', delete_chat);
 
 export default UserRouter;

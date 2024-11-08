@@ -4,20 +4,13 @@ import { useState, useEffect } from "react";
 
 export default function ArchivedChats() {
   const { user } = useAuth();
-  const { get_archived_chats, delete_chat } = useChat(); 
-  const [archivedChats, setArchivedChats] = useState<any[]>([]);
-
+  const { setArchivedChats, get_archived_chats, delete_chat } = useChat();
+  
   useEffect(() => {
-    const fetchChats = async () => {
-      if (user?._id) {
-        const chats = await get_archived_chats(user._id);
-        console.log(chats)
-        setArchivedChats(chats); // Armazenando no estado
-      }
-    };
-
-    fetchChats();
-  }, [user, get_archived_chats]); 
+    if (user) {
+      get_archived_chats(user._id); // Ou qualquer outro valor que seja necessário para o user_id
+    }
+  }, [user, get_archived_chats]);
 
   // Função para retirar o chat do arquivado
   // const handleUnarchive = async (chatId: string) => {
@@ -33,7 +26,7 @@ export default function ArchivedChats() {
   // const handleDelete = async (chatId: string) => {
   //   try {
   //     await delete_chat(chatId);
-  //     setArchivedChats((prev) => prev.filter((chat) => chat._id !== chatId));
+  //     // Após a exclusão, o chat é removido do estado automaticamente na função `delete_chat`
   //   } catch (error) {
   //     console.error("Erro ao excluir chat", error);
   //   }
@@ -41,18 +34,22 @@ export default function ArchivedChats() {
 
   return (
     <div>
-      {archivedChats.map((chat) => (
-        <div key={chat._id} className="chat-item">
-          <div className="chat-info">
-            <p><strong>Nome:</strong> {chat.name}</p>
-            <p><strong>Data de criação:</strong> {new Date(chat.createdAt).toLocaleDateString()}</p>
+      {archivedChats.length > 0 ? (
+        archivedChats.map((chat) => (
+          <div key={chat._id} className="chat-item">
+            <div className="chat-info">
+              <p><strong>Nome:</strong> {chat.name}</p>
+              <p><strong>Data de criação:</strong> {new Date(chat.createdAt).toLocaleDateString()}</p>
+            </div>
+            <div className="chat-actions">
+              {/* <button onClick={() => handleUnarchive(chat._id)}>Retirar dos Arquivados</button> */}
+              <button onClick={() => handleDelete(chat._id)}>Excluir Chat</button>
+            </div>
           </div>
-          <div className="chat-actions">
-            {/* <button onClick={() => handleUnarchive(chat._id)}>Retirar dos Arquivados</button> */}
-            <button onClick={() => {if(chat?._id) delete_chat(chat._id)}}>Excluir Chat</button>
-          </div>
-        </div>
-      ))}
+        ))
+      ):(
+        <p>Não há chats arquivados</p>
+      )}
     </div>
   );
 }

@@ -41,7 +41,7 @@ export default function Chats() {
               <div className=" w-[20px] h-[20px] cursor-pointer transform-transition easy-in-out duration-300 text-xl hover:text-gray-300" onClick={() => document.getElementById('modal_archived').close()}>X</div>
             </h3>
             <div className="flex w-full justify-between pb-2 pt-2 gap-5">
-              {/* <ArchivedChats/> */}
+              <ArchivedChats/>
             </div>
           </div>
           <form method="dialog" className="modal-backdrop w-full">

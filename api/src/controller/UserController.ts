@@ -732,41 +732,41 @@ const archive_chats = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
-const get_archived_chats = async (req: Request, res: Response) => {
-    console.log('opa')
+const get_archived_chats = async (req: Request, res: Response): Promise<void> => {
     const { id: user_id } = req.params;
-  
+
     try {
       const chats = await Chat.find({ user: user_id, is_archived: true }).populate('messages');
   
-      if (!chats) {
+      if (!chats || chats.length === 0) {
         res.status(400).json({ errors: ['Usuário não possui chats arquivados.'] });
         return;
       }
   
       res.status(200).json(chats);
     } catch (error) {
+      console.error("Erro ao buscar chats arquivados: ", error);
       res.status(500).json({ errors: ['Erro ao buscar os chats do usuário.'] });
     }
-  };
+};
 
-  const unarchive_chat = async (req: Request, res: Response) => {
-    const { chatId } = req.params;
-  
-    try {
-      const chat = await Chat.findById(chatId);
-      if (!chat) {
-        return res.status(404).json({ errors: ['Chat não encontrado.'] });
-      }
-  
-      chat.is_archived = false; // Retira do arquivado
-      await chat.save();
-  
-      res.status(200).json({ message: 'Chat retirado do arquivado.' });
-    } catch (error) {
-      res.status(500).json({ errors: ['Erro ao retirar chat do arquivado.'] });
+const unarchive_chat = async (req: Request, res: Response) => {
+const { chatId } = req.params;
+
+try {
+    const chat = await Chat.findById(chatId);
+    if (!chat) {
+    return res.status(404).json({ errors: ['Chat não encontrado.'] });
     }
-  };
+
+    chat.is_archived = false; // Retira do arquivado
+    await chat.save();
+
+    res.status(200).json({ message: 'Chat retirado do arquivado.' });
+} catch (error) {
+    res.status(500).json({ errors: ['Erro ao retirar chat do arquivado.'] });
+}
+};
 
 export { 
     register_user, 
