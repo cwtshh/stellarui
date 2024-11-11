@@ -1,55 +1,101 @@
 import { useChat } from "../../context/ChatContext";
 import { useAuth } from '../../context/AuthContext';
 import { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom'
+import { MdUnarchive } from "react-icons/md";
+import { FaTrash } from 'react-icons/fa';
+import { GrChat } from "react-icons/gr";
+import { NotifyToast } from "../../components/Toast/Toast";
 
 export default function ArchivedChats() {
   const { user } = useAuth();
-  const { setArchivedChats, get_archived_chats, delete_chat } = useChat();
-  
+  const { select_chat, unarchive_chats, get_archived_chats, delete_chat } = useChat();
+  const [archivedChats, setArchivedChats] = useState<any[]>([]);
+  const navigate = useNavigate();
+
   useEffect(() => {
-    if (user) {
-      get_archived_chats(user._id); // Ou qualquer outro valor que seja necessário para o user_id
-    }
+    const fetchArchivedChats = async () => {
+      if (user) {
+        const chats = await get_archived_chats(user._id);
+        setArchivedChats(chats);
+      }
+    };
+    fetchArchivedChats();
   }, [user, get_archived_chats]);
 
-  // Função para retirar o chat do arquivado
-  // const handleUnarchive = async (chatId: string) => {
-  //   try {
-  //     await unarchive_chat(chatId);
-  //     setArchivedChats((prev) => prev.filter((chat) => chat._id !== chatId));
-  //   } catch (error) {
-  //     console.error("Erro ao retirar do arquivado", error);
-  //   }
-  // };
+  const handleDelete = async (chatId: string) => {
+    try {
+      await delete_chat(chatId);
+      setArchivedChats((prev) => prev.filter((chat) => chat._id !== chatId));
+    } catch (error) {
+      console.error("Erro ao excluir chat", error);
+    }
+  };
 
-  // Função para excluir o chat
-  // const handleDelete = async (chatId: string) => {
-  //   try {
-  //     await delete_chat(chatId);
-  //     // Após a exclusão, o chat é removido do estado automaticamente na função `delete_chat`
-  //   } catch (error) {
-  //     console.error("Erro ao excluir chat", error);
-  //   }
-  // };
+  const handleRedirect = (chat: any) => {
+    console.log(chat)
+    if (!chat.messages[0]?.content){
+      NotifyToast({ message: 'O chat não possui mensagens.', type: 'warning' });
+      return
+    }
+    select_chat(chat._id);
+    navigate('/chat');
+  }
 
   return (
-    <div>
-      {archivedChats.length > 0 ? (
-        archivedChats.map((chat) => (
-          <div key={chat._id} className="chat-item">
-            <div className="chat-info">
-              <p><strong>Nome:</strong> {chat.name}</p>
-              <p><strong>Data de criação:</strong> {new Date(chat.createdAt).toLocaleDateString()}</p>
-            </div>
-            <div className="chat-actions">
-              {/* <button onClick={() => handleUnarchive(chat._id)}>Retirar dos Arquivados</button> */}
-              <button onClick={() => handleDelete(chat._id)}>Excluir Chat</button>
+  <div className="w-full p-3">
+    {archivedChats.length === 0 ? (
+      <p className="text-white w-full justify-center flex text-xl">Não há chats arquivados...</p>
+    ) : (
+      <>
+        <div className="flex w-full justify-between pb-1 pt-1 border-b border-green-700">
+          <strong className="text-white w-1/2">Nome do Chat</strong>
+          <strong className="text-white w-1/4 text-center">Data de Criação</strong>
+          <div className="text-white w-1/4 text-center space-x-5">
+            <strong className="text-white w-1/4 text-center">Desarquivar</strong>
+            <strong className="text-white w-1/4 text-center">Excluir</strong>
+          </div>
+        </div>
+        {archivedChats.map((chat) => (
+          <div key={chat._id} className="chat-item w-full">
+            <div className="chat-info flex items-center pb-1 pt-1 border-b border-green-700 w-full">
+              <p className="w-1/2 text-blue-500 p-1 pl-4 cursor-pointer hover:underline"
+                onClick={() => handleRedirect(chat)}>
+                <div className="flex items-center gap-3">
+                  <div>
+                    <GrChat/>
+                  </div>
+                  <p className="truncate">
+                    {chat.messages[0]?.content || 'Chat sem mensagens.'}
+                  </p>
+                </div>
+              </p>
+              <p className="w-1/4 text-gray-300 text-center">
+                {new Date(chat.created_at).toLocaleString('pt-br').split(',')[0]}
+              </p>
+              <div className="w-1/4 flex justify-end space-x-16">
+                <div className="group relative">
+                  <button onClick={() => { 
+                    if (user?._id) 
+                      unarchive_chats(chat._id, user?._id);
+                  }} className="cursor-pointer text-gray-300 transition-colors duration-300 hover:text-green-500">
+                    <MdUnarchive className="mr-3 text-2xl" />
+                  </button>
+                </div>
+                <div className="group relative">
+                  <button onClick={() => handleDelete(chat._id)} className="cursor-pointer pr-3 text-gray-300 transition-colors duration-300 hover:text-red-500">
+                    <FaTrash className="mr-3 text-1xl"/>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-        ))
-      ):(
-        <p>Não há chats arquivados</p>
-      )}
-    </div>
+        ))}
+      </>
+    )}
+  </div>
+
+
+
   );
 }

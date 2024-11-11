@@ -17,11 +17,11 @@ export default function Chats() {
       <ul className="space-y-4">
 
         <dialog id="modal_archive" className="modal modal-center w-full">
-          <div className="modal-box gap-3 w-[470px] items-center flex flex-col">
-            <h3 className="font-bold text-lg">Deseja mesmo arquivar todos os seus chats?</h3>
+          <div className="modal-box bg-green-900 gap-3 w-[470px] items-center flex flex-col">
+            <h3 className="font-bold text-white text-lg">Deseja mesmo arquivar todos os seus chats?</h3>
             <div className="flex w-full justify-center gap-5">
-              <button className="btn w-[200px] bg-green-800 text-white hover:bg-green-700" onClick={() => { if (user?._id) archive_chats(user?._id); document.getElementById('modal_archive').close() }}>Sim</button>
-              <button className="btn w-[200px] bg-red-800 text-white hover:bg-red-600" onClick={() => document.getElementById('modal_archive').close()}>Não</button>
+              <button className="btn border-none w-[200px] bg-green-800 text-white hover:bg-green-700" onClick={() => { if (user?._id) archive_chats(user?._id); document.getElementById('modal_archive').close() }}>Sim</button>
+              <button className="btn border-none w-[200px] bg-red-800 text-white hover:bg-red-600" onClick={() => document.getElementById('modal_archive').close()}>Não</button>
             </div>
           </div>
           <form method="dialog" className="modal-backdrop w-full">
@@ -35,7 +35,7 @@ export default function Chats() {
         </li>
 
         <dialog id="modal_archived" className="modal modal-center">
-          <div className="modal-box gap-3 items-center flex flex-col bg-green-900 shadow-lg rounded-lg p-8">
+          <div className="modal-box scroll-hidden gap-3 items-center min-w-[800px] flex flex-col bg-green-900 shadow-lg rounded-lg p-8">
             <h3 className="font-bold text-white text-3xl border-b border-green-700 pb-6 flex w-full items-center justify-between">
               Arquivados
               <div className=" w-[20px] h-[20px] cursor-pointer transform-transition easy-in-out duration-300 text-xl hover:text-gray-300" onClick={() => document.getElementById('modal_archived').close()}>X</div>

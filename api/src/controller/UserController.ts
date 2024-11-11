@@ -635,14 +635,21 @@ const get_chat = async (req: Request, res: Response) => {
 const delete_chat = async (req: Request, res: Response) => {
     const { chat_id } = req.params;
 
-    const chat = await Chat.findOneAndDelete({ _id: chat_id, is_archived: false });
+    const chat = await Chat.findOneAndDelete({ _id: chat_id });
+
     if (!chat) {
-        res.status(400).json({ errors: ['Chat não encontrado ou já está arquivado.'] });
+        res.status(400).json({ errors: ['Chat não encontrado.'] });
+        return;
+    }
+
+    if (chat.is_archived) {
+        res.status(200).json({ message: 'Chat arquivado deletado com sucesso.' });
         return;
     }
 
     res.status(200).json({ message: 'Chat deletado com sucesso.' });
 };
+
 
 const delete_all_user_chats: RequestHandler = async (req, res) => {
     const { id: user_id } = req.params;
@@ -750,23 +757,38 @@ const get_archived_chats = async (req: Request, res: Response): Promise<void> =>
     }
 };
 
-const unarchive_chat = async (req: Request, res: Response) => {
-const { chatId } = req.params;
+const unarchive_chats = async (req: Request, res: Response): Promise<void> => {
+    const { chat_id, user_id } = req.body;  // O ID do chat vem do corpo da requisição
 
-try {
-    const chat = await Chat.findById(chatId);
-    if (!chat) {
-    return res.status(404).json({ errors: ['Chat não encontrado.'] });
+    console.log('User ID:', user_id);
+    console.log('Chat ID:', chat_id);
+
+    try {
+        // Verificando se o chat existe
+        const chat = await Chat.findById(chat_id);
+        if (!chat) {
+            res.status(404).json({ errors: ['Chat não encontrado.'] });
+            return 
+        }
+
+        // Verificando se o chat pertence ao usuário
+        if (chat.user.toString() !== user_id) {  // Comparando o ID do usuário com o do chat
+            res.status(403).json({ errors: ['Chat não pertence a este usuário.'] });
+            return 
+        }
+
+        // Alterando o status de arquivado
+        chat.is_archived = false;
+        await chat.save();
+
+        res.status(200).json({ message: 'Chat retirado do arquivado.' });
+    } catch (error) {
+        console.error('Erro ao retirar chat do arquivado:', error);
+        res.status(500).json({ errors: ['Erro ao retirar chat do arquivado.'] });
     }
-
-    chat.is_archived = false; // Retira do arquivado
-    await chat.save();
-
-    res.status(200).json({ message: 'Chat retirado do arquivado.' });
-} catch (error) {
-    res.status(500).json({ errors: ['Erro ao retirar chat do arquivado.'] });
-}
 };
+
+
 
 export { 
     register_user, 
@@ -785,5 +807,5 @@ export {
     delete_all_user_chats,
     archive_chats,
     get_archived_chats,
-    unarchive_chat
+    unarchive_chats
 };
