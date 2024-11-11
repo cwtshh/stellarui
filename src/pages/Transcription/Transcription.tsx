@@ -215,39 +215,10 @@ const Trancription = () => {
     }}>
       <div className='flex items-start justify-center h-full gap-[95px]'>
         <div className=' flex text-white p-6 h-vh w-[30%] rounded-xl flex-col gap-7'>
-          <div className='flex gap-2'>
-            <input 
-              type="text" 
-              placeholder="00:00:00"
-              maxLength={8}
-              className='input input-bordere text-black input-accent w-[100px]' 
-              onChange={handleTimeChange}
-              value={timeSearchTerm}/>
 
-            <input 
-              type="text" 
-              placeholder="Segmento..." 
-              className='input input-bordere text-black input-accent w-[260px]' 
 
-              onChange={handleTextChange}
-              value={textSearchTerm}
-            />
-
-            <select 
-              className='text-black select select-bordered w-[130px]' 
-              onChange={handlePersonChange}
-              value={selectedPerson}>
-              <option hidden value="">Falante</option>
-              <option>Nenhum</option>
-              {Object.keys(speakerMap).map((person, index) => (
-                <>
-                  <option key={index} value={person}>{speakerMap[person]}</option>
-                </>
-              ))}
-            </select>
-          </div>
           <div onMouseEnter={() => setMouseOver(true)} onMouseLeave={() => setMouseOver(false)} onScroll={handleScroll}
-           className='bg-base-100 p-6 scroll-hidden h-[700px] w-[500px] rounded-xl flex flex-col gap-6 overflow-y-scroll shadow-xl'>
+           className='bg-base-100 p-6 scroll-hidden h-[800px] w-[500px] rounded-xl flex flex-col gap-6 overflow-y-scroll shadow-xl'>
             {(filteredSegments.length > 0 ? filteredSegments : segments).map((item: any, index: number) => {
               const isActiveSegment = currentTime >= item.start && (index === segments.length - 1 || currentTime <= item.end);
               const isHighlighted = index === highlightedIndex;
@@ -266,11 +237,11 @@ const Trancription = () => {
           </div>
 
           <div className='flex justify-center items-center w-[500px] gap-4'>
-            <button onClick={() => downloadTranscriptionPDF(file, segments, speakerMap)} disabled={loading || !videoUrl} className='btn btn-primary w-[300px] flex justify-center items-center text-white p-6 rounded-xl h-full'>
+            <button onClick={() => downloadTranscriptionPDF(file, segments, speakerMap)} disabled={loading || !videoUrl} className='btn btn-primary w-[300px] flex justify-center items-center text-white rounded-xl h-[60px]'>
               Transcrição
               <FaDownload />
             </button>
-            <button onClick={() => (document.getElementById('speaker_modal') as HTMLDialogElement).showModal()} disabled={loading || !videoUrl} className='btn btn-primary flex justify-center items-center text-white p-6 rounded-xl h-full' >
+            <button onClick={() => (document.getElementById('speaker_modal') as HTMLDialogElement).showModal()} disabled={loading || !videoUrl} className='btn btn-primary flex justify-center items-center text-white rounded-xl h-[60px]'>
               <FaPencil />
               Editar Locutores
             </button>
@@ -313,12 +284,43 @@ const Trancription = () => {
           />
           {videoUrl && !loading && (
             <>
-              <div className='flex justify-center items-center w-[500px]'>
-              <button onClick={() => {window.location.reload()}} className='btn btn-primary w-[300px] flex justify-center items-center text-white p-6 rounded-xl h-full'>
-                Transcrever Novo
-                <FaPlusCircle />
-              </button>
-            </div>
+              <div className='flex justify-center items-center w-[500px] gap-2'>
+                <div className='flex gap-2'>
+                  <input 
+                    type="text" 
+                    placeholder="00:00:00"
+                    maxLength={8}
+                    className='input input-bordere text-black input-accent w-[100px]' 
+                    onChange={handleTimeChange}
+                    value={timeSearchTerm}/>
+
+                  <input 
+                    type="text" 
+                    placeholder="Segmento..." 
+                    className='input input-bordere text-black input-accent w-[370px]' 
+
+                    onChange={handleTextChange}
+                    value={textSearchTerm}
+                  />
+
+                  <select 
+                    className='text-black select select-bordered w-[160px]' 
+                    onChange={handlePersonChange}
+                    value={selectedPerson}>
+                    <option hidden value="">Falante</option>
+                    <option>Nenhum</option>
+                    {Object.keys(speakerMap).map((person, index) => (
+                      <>
+                        <option key={index} value={person}>{speakerMap[person]}</option>
+                      </>
+                    ))}
+                  </select>
+                </div>
+                <button onClick={() => {window.location.reload()}} className='btn btn-primary w-[200px] flex justify-center items-center text-white rounded-xl'>
+                  Transcrever Novo
+                  <FaPlusCircle />
+                </button>
+              </div>
             </>
           )}
         </div>
@@ -336,7 +338,7 @@ const Trancription = () => {
               ))}
             </div>
             <br />
-            <button className='btn btn-primary mt-4'>Salvar Alterações</button>
+            <button className='btn text-white btn-primary mt-4'>Salvar Alterações</button>
           </form>
         </div>
         <form method="dialog" className="modal-backdrop">
