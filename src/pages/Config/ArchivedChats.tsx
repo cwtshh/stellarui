@@ -77,7 +77,7 @@ export default function ArchivedChats() {
                 <div className="group relative">
                   <button onClick={() => { 
                     if (user?._id) 
-                      unarchive_chats(chat._id, user?._id);
+                      unarchive_chats(chat._id);
                   }} className="cursor-pointer text-gray-300 transition-colors duration-300 hover:text-green-500">
                     <MdUnarchive className="mr-3 text-2xl" />
                   </button>

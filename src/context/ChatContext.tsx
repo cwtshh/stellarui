@@ -21,7 +21,7 @@ interface ChatContextType {
     export_chats: any,
     archive_chats: (user_id: string) => Promise<void>,
     unarchive_chats: (user_id: string) => Promise<void>,
-    get_archived_chats: (user_id: string) => Promise<void>,
+    get_archived_chats: (user_id: string) => any,
     setArchivedChats: React.Dispatch<React.SetStateAction<any[]>>
 }
 
@@ -32,6 +32,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const [selectedChat, setSelectedChat] = useState<ChatType | null>(null);
     const [lockChat, setLockChat] = useState<boolean>(false);
     const { user } = useAuth();
+    const [archivedChats, setArchivedChats] = useState<ChatType[]>([]);
 
     const [localMessages, setLocalMessages] = useState<MessageType[]>([]);
 
@@ -219,13 +220,14 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
           const response: any = await axios.get(`${BASE_API_URL}/user/chat/export/${user?._id}`);
           useConvertChatsToPDF(response.data);
         } catch (error) {
-            NotifyToast({ message: error.response?.data.errors[0] || 'Não há chats para exportar.', type: 'error'});
+            const err = error as any;
+            NotifyToast({ message: err.response?.data.errors[0] || 'Não há chats para exportar.', type: 'error'});
 
         }
       };
 
     const archive_chats = async (user_id: string) => {
-        const response = await axios.get(`${BASE_API_URL}/user/chat/all/${user_id}`, { withCredentials: true });
+        const response = await axios.get<{ _id: string }[]>(`${BASE_API_URL}/user/chat/all/${user_id}`, { withCredentials: true });
         const chats_ids = response.data.map(chat => chat._id);
         
         if (!chats_ids || chats_ids.length === 0) {
@@ -239,41 +241,50 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
                 { chats_ids },
                 { withCredentials: true }
             );
-            NotifyToast({ message: archiveResponse.data.message || 'Chats arquivados com sucesso', type: 'success' });
+            NotifyToast({ message: (archiveResponse.data as { message: string }).message || 'Chats arquivados com sucesso', type: 'success' });
             fetch_user_chats();
 
         } catch (error) {
-            console.error('Erro ao arquivar os chats:', error.response?.data.errors || error.message);
-            NotifyToast({ message: error.response?.data.errors || error.message, type: 'error' });
+            const err = error as any;
+            console.error('Erro ao arquivar os chats:', err.response?.data.errors || err.message);
+            NotifyToast({ message: err.response?.data.errors || err.message, type: 'error' });
         }
     };
 
-    const unarchive_chats = async (chat_id: string, user_id: string) => {
+    const unarchive_chats = async (user_id: string) => {
         try {
+            const response = await axios.get<{ _id: string }[]>(`${BASE_API_URL}/user/chat/archived/${user_id}`, { withCredentials: true });
+            const chat_ids = response.data.map(chat => chat._id);
+
+            if (!chat_ids || chat_ids.length === 0) {
+                NotifyToast({ message: 'Nenhum chat arquivado encontrado.', type: 'error' });
+                return;
+            }
+
             const unarchiveResponse = await axios.post(
                 `${BASE_API_URL}/user/chat/unarchive`, 
-                { chat_id, user_id }, 
+                { chat_ids, user_id }, 
                 { withCredentials: true }
             );
     
             console.log('resposta da api', unarchiveResponse);
     
-            NotifyToast({ message: unarchiveResponse.data.message || 'Chat retirado com sucesso', type: 'success' });
+            NotifyToast({ message: (unarchiveResponse.data as { message: string }).message || 'Chats retirados com sucesso', type: 'success' });
             fetch_user_chats();
     
         } catch (error) {
-            console.error('Erro ao retirar o chat:', error.response?.data.errors || error.message);
-            NotifyToast({ message: error.response?.data.errors || error.message, type: 'error' });
+            console.error('Erro ao retirar os chats:', (error as any).response?.data.errors || (error as any).message);
+            const err = error as any;
+            NotifyToast({ message: err.response?.data.errors || err.message, type: 'error' });
         }
     };
 
-    const get_archived_chats = async (user_id: string) => {
+    const get_archived_chats = async (user_id: string): Promise<void> => {
         try {
-            const response = await axios.get(`${BASE_API_URL}/user/chat/get/archived/${user_id}`, { withCredentials: true });
-            return response.data.reverse();
+            const response = await axios.get<ChatType[]>(`${BASE_API_URL}/user/chat/get/archived/${user_id}`, { withCredentials: true });
+            setArchivedChats(response.data.reverse());
         } catch (error) {
           console.error("Erro ao buscar chats arquivados", error);
-          return []
         }
     };
     
@@ -297,8 +308,9 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             delete_all_chats, 
             export_chats,
             archive_chats,
-            get_archived_chats,
             unarchive_chats,
+            get_archived_chats,
+            setArchivedChats,
         }}>
             {children}
         </ChatContext.Provider>

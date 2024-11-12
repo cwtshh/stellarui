@@ -12,7 +12,7 @@ export default function ModelSelector() {
     // Function to call the Pulsares API
     const loadModel = async () => {
         try {
-            const response = await axios.post(`${BASE_TRANSCRIPTION_API_URL}/define-model/`, {
+            const response = await axios.post<{ message: string }>(`${BASE_TRANSCRIPTION_API_URL}/define-model/`, {
                 model_name: ModelName,
                 model_size: ModelSize,
                 compute_type: ComputerType,
