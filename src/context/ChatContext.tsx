@@ -22,7 +22,6 @@ interface ChatContextType {
     archive_chats: (user_id: string) => Promise<void>,
     unarchive_chats: (user_id: string) => Promise<void>,
     get_archived_chats: (user_id: string) => any,
-    setArchivedChats: React.Dispatch<React.SetStateAction<any[]>>
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -32,7 +31,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const [selectedChat, setSelectedChat] = useState<ChatType | null>(null);
     const [lockChat, setLockChat] = useState<boolean>(false);
     const { user } = useAuth();
-    const [archivedChats, setArchivedChats] = useState<ChatType[]>([]);
 
     const [localMessages, setLocalMessages] = useState<MessageType[]>([]);
 
@@ -279,10 +277,10 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    const get_archived_chats = async (user_id: string): Promise<void> => {
+    const get_archived_chats = async (user_id: string) => {
         try {
             const response = await axios.get<ChatType[]>(`${BASE_API_URL}/user/chat/get/archived/${user_id}`, { withCredentials: true });
-            setArchivedChats(response.data.reverse());
+            return response.data.reverse();
         } catch (error) {
           console.error("Erro ao buscar chats arquivados", error);
         }
@@ -310,7 +308,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             archive_chats,
             unarchive_chats,
             get_archived_chats,
-            setArchivedChats,
         }}>
             {children}
         </ChatContext.Provider>
