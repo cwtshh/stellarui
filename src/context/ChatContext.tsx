@@ -225,8 +225,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       };
 
     const archive_chats = async (user_id: string) => {
-        const response = await axios.get<{ _id: string }[]>(`${BASE_API_URL}/user/chat/all/${user_id}`, { withCredentials: true });
-        const chats_ids = response.data.map(chat => chat._id);
+        const response: any = await axios.get(`${BASE_API_URL}/user/chat/all/${user_id}`, { withCredentials: true });
+        const chats_ids = response.data.map((chat: ChatType) => chat._id);
         
         if (!chats_ids || chats_ids.length === 0) {
             NotifyToast({ message: 'Nenhum chat encontrado.', type: 'error' });
@@ -234,12 +234,12 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         }
     
         try {
-            const archiveResponse = await axios.post(
+            const archiveResponse: any = await axios.post(
                 `${BASE_API_URL}/user/chat/archive/${user_id}`,
                 { chats_ids },
                 { withCredentials: true }
             );
-            NotifyToast({ message: (archiveResponse.data as { message: string }).message || 'Chats arquivados com sucesso', type: 'success' });
+            NotifyToast({ message: archiveResponse.data.message || 'Chats arquivados com sucesso', type: 'success' });
             fetch_user_chats();
 
         } catch (error) {
