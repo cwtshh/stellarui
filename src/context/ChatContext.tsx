@@ -20,8 +20,8 @@ interface ChatContextType {
     delete_all_chats: (user_id: string) => void,
     export_chats: any,
     archive_chats: (user_id: string) => Promise<void>,
-    unarchive_chats: (user_id: string) => Promise<void>,
-    get_archived_chats: (user_id: string) => any,
+    unarchive_chats: (user_id: string, chat_id: string) => Promise<void>,
+    get_archived_chats: (user_id: string) => Promise<ChatType[]>,
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -249,40 +249,41 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    const unarchive_chats = async (user_id: string) => {
+    const unarchive_chats = async (user_id: string, chat_id: string) => {
+        
+        if (!user_id) {
+            NotifyToast({ message: 'User ID not found.', type: 'error' });
+            return;
+        }
         try {
-            const response = await axios.get<{ _id: string }[]>(`${BASE_API_URL}/user/chat/archived/${user_id}`, { withCredentials: true });
-            const chat_ids = response.data.map(chat => chat._id);
-
-            if (!chat_ids || chat_ids.length === 0) {
-                NotifyToast({ message: 'Nenhum chat arquivado encontrado.', type: 'error' });
-                return;
-            }
-
-            const unarchiveResponse = await axios.post(
+            const unarchiveResponse: any = await axios.post(
                 `${BASE_API_URL}/user/chat/unarchive`, 
-                { chat_ids, user_id }, 
+                { chat_id, user_id }, 
                 { withCredentials: true }
             );
     
             console.log('resposta da api', unarchiveResponse);
     
-            NotifyToast({ message: (unarchiveResponse.data as { message: string }).message || 'Chats retirados com sucesso', type: 'success' });
+            NotifyToast({ message: unarchiveResponse.data.message || 'Chat retirado com sucesso', type: 'success' });
             fetch_user_chats();
     
         } catch (error) {
-            console.error('Erro ao retirar os chats:', (error as any).response?.data.errors || (error as any).message);
-            const err = error as any;
-            NotifyToast({ message: err.response?.data.errors || err.message, type: 'error' });
+            console.error('Erro ao retirar o chat:', (error as any).response?.data.errors || (error as any).message);
+            NotifyToast({ message: (error as any).response?.data.errors || (error as any).message, type: 'error' });
         }
     };
 
     const get_archived_chats = async (user_id: string) => {
         try {
             const response = await axios.get<ChatType[]>(`${BASE_API_URL}/user/chat/get/archived/${user_id}`, { withCredentials: true });
-            return response.data.reverse();
+            console.log('chats arquivados:', response.data);
+            if(response.data && response.data.length > 0) {
+                return response.data;
+            }
+            return [];
         } catch (error) {
-          console.error("Erro ao buscar chats arquivados", error);
+            console.error("Erro ao buscar chats arquivados", error);
+            return [];
         }
     };
     

@@ -16,7 +16,9 @@ export default function ArchivedChats() {
   useEffect(() => {
     const fetchArchivedChats = async () => {
       if (user) {
+        console.log(user._id)
         const chats = await get_archived_chats(user._id);
+        console.log(chats)
         setArchivedChats(chats);
       }
     };
@@ -40,7 +42,7 @@ export default function ArchivedChats() {
     }
     select_chat(chat._id);
     navigate('/chat');
-  }
+  };
 
   return (
   <div className="w-full p-3">
@@ -77,7 +79,7 @@ export default function ArchivedChats() {
                 <div className="group relative">
                   <button onClick={() => { 
                     if (user?._id) 
-                      unarchive_chats(chat._id);
+                      unarchive_chats(user._id, chat._id);
                   }} className="cursor-pointer text-gray-300 transition-colors duration-300 hover:text-green-500">
                     <MdUnarchive className="mr-3 text-2xl" />
                   </button>
