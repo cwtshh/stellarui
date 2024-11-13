@@ -1,28 +1,25 @@
 import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { BASE_API_URL } from '../../utils/constants';
-import axios from 'axios';
+import { useAuth } from '../../context/AuthContext';
 
 const AutoAuthSolar = () => {
     const { nome, email } = useParams();
+    const { auto_login_solar } = useAuth();
     console.log(nome, email);
 
     const HandleAutoRegister = async() => {
-        console.log('Cadastrando....')
-        try {
-            const response = await axios.post(`${BASE_API_URL}/user/login/solar`, {
-                nome: nome,
-                email: email
-            });
-            console.log(response.data);
-        } catch (error) {
-            console.log(error)
+        if (nome && email) {
+            auto_login_solar(nome, email);
+            
         }
     }
 
     useEffect(() => {
+        if(nome === undefined || email === undefined) {
+            window.location.href = '/login';
+        }
         HandleAutoRegister()
-    });
+    }, []);
 
     return (
         <div className='bg-primary h-full w-full text-white flex flex-col items-center justify-center'>

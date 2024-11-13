@@ -12,6 +12,7 @@ interface AuthContextType {
     login: (login_data: LoginData) => Promise<boolean>;
     logout: () => void;
     update: (id: string, updateData: Partial<UserType>) => Promise<void>;
+    auto_login_solar: (nome: string, email: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,6 +29,7 @@ interface LoginData {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [ user, setUser ] = useState<UserType | null>(null);
     const [ ready, setReady] = useState(false);
+    const [ error_count, setErrorCount ] = useState(0);
 
     const login = async(login_data: LoginData ) => {
         let success = false;
@@ -51,6 +53,26 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             window.location.href = '/login';
         }).catch(() => {
             NotifyToast({ message: 'Erro interno do servidor, verifique sua conexão tente novamente mais tarde', type: 'error' });
+        })
+    };
+
+    const auto_login_solar = async(nome: string, email: string) => {
+        await axios.post(`${BASE_API_URL}/user/login/solar`, {
+            nome: nome,
+            email: email
+        }).then((res: any) => {
+            localStorage.setItem('stellar@auth_user', JSON.stringify(res.data.user));
+            setUser(res.data.user);
+            NotifyToast({ message: res.data.message, type: 'success' });
+            window.location.href = '/chat';
+        }).catch((error) => {
+            if(error_count === 0) {
+                NotifyToast({ message: error.response.data.message, type: 'error' });
+                setErrorCount(1);
+            }
+            setTimeout(() => {
+                window.location.href = '/login';
+            }, 4000); // Redireciona após 3 segundos
         })
     };
 
@@ -78,7 +100,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             user,
             login,
             update, 
-            logout
+            logout,
+            auto_login_solar
         }}>
             { ready ? children : null }
         </AuthContext.Provider>
