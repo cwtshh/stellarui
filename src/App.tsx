@@ -13,6 +13,7 @@ import Geral from './pages/Config/Geral'
 import Chats  from './pages/Config/Chats'
 import ModelSelector from './pages/Config/ModelSelector'
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'
+import AutoAuthSolar from './pages/AutoAuthSolar/AutoAuthSolar'
 
 function App() {
   const { user } = useAuth();
@@ -34,6 +35,7 @@ function App() {
               <Route path="ModelSelector" element={<ModelSelector />} />
             </Route>
           </Route>
+          <Route path='/solar/:nome/:email' element={<AutoAuthSolar />} />
         </Routes>
         <ToastContainer />
       </BrowserRouter>

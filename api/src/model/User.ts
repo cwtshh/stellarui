@@ -18,7 +18,7 @@ const UserSchema = new Schema(
         },
         role: {
             type: String,
-            enum: ['admin', 'user'],
+            enum: ['admin', 'user', 'solar'],
             default: 'user'
         },
         chats: [

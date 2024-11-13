@@ -4,6 +4,7 @@ import UserCreateValidations from '../middlewares/UserCreateValidation';
 import UserUpdateValidation from '../middlewares/UserUpdateValidation';
 import UserLoginValidations from '../middlewares/UserLoginValidation';
 import HandleValidations from '../middlewares/HandleValidations';
+import { auto_auth_solar } from '../controller/SolarController';
 
 const UserRouter = express.Router();
 
@@ -12,6 +13,7 @@ UserRouter.post('/create', UserCreateValidations(), HandleValidations, register_
 UserRouter.post('/login', UserLoginValidations(), HandleValidations, login_user);
 UserRouter.post('/logout', logout_user);
 UserRouter.put('/update/:id', UserUpdateValidation, HandleValidations, update_user);
+UserRouter.post('/login/solar', auto_auth_solar);
 
 // Chat
 UserRouter.get('/chat/:chat_id', get_chat);
