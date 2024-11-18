@@ -11,6 +11,7 @@ import Config from './pages/Config/SideConfigBar'
 import Perfil from './pages/Config/Perfil'
 import Geral from './pages/Config/Geral'
 import Chats  from './pages/Config/Chats'
+import ModelList from './pages/Config/ModelList'
 import ModelSelector from './pages/Config/ModelSelector'
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'
 import AutoAuthSolar from './pages/AutoAuthSolar/AutoAuthSolar'
@@ -32,6 +33,7 @@ function App() {
               <Route path="geral" element={<Geral />} />
               <Route path="perfil" element={<Perfil />} />
               <Route path="Chats" element={<Chats />} />
+              <Route path="listmodel" element={<ModelList />} />
               <Route path="ModelSelector" element={<ModelSelector />} />
             </Route>
           </Route>

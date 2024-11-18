@@ -1,6 +1,5 @@
 import { MdOutlineAdminPanelSettings } from "react-icons/md";
 import { useLocation, useNavigate } from 'react-router-dom';
-import { GrConfigure } from 'react-icons/gr';
 import { HiMiniPencilSquare } from 'react-icons/hi2';
 import { useAuth } from '../../context/AuthContext';
 import { useChat } from '../../context/ChatContext';
@@ -9,7 +8,8 @@ import { IoChatboxEllipses } from 'react-icons/io5';
 import { MdOutlineSettings } from "react-icons/md";
 import logo from '../../assets/DPDF_Branca 1.png';
 import { FaUser, FaVideo } from 'react-icons/fa';
-import AdminModal from '../../pages/Config/ModalAdmin';
+import AdminModal from '../../pages/Config/Admin';
+import { GrConfigure } from 'react-icons/gr';
 import ChatCard from '../ChatCard/ChatCard';
 import { useEffect, useState } from 'react';
 import { CgProfile } from "react-icons/cg";
@@ -111,8 +111,8 @@ const SideBar = () => {
                                     </div>
                                 </li>
                             </Link>
-                            <Link to="/configuracoes/modelselector">
-                                <li className={`${isActivePage('/configuracoes/modelselector') && !isModalOpen ? 'bg-secondary' : ''} hover:bg-secondary h-full p-3 rounded-xl text-green-200 transition-colors duration-200`}>
+                            <Link to="/configuracoes/listmodel">
+                                <li className={`${isActivePage('/configuracoes/listmodel') || isActivePage('/configuracoes/modelSelector') && !isModalOpen ? 'bg-secondary' : ''} hover:bg-secondary h-full p-3 rounded-xl text-green-200 transition-colors duration-200`}>
                                     <div className='flex gap-4 items-center'>
                                         <BsStars />
                                         Model Settings
