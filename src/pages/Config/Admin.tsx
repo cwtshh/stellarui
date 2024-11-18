@@ -1,11 +1,24 @@
 import { useState, useRef, useEffect } from 'react';
-import { X, Settings, Users, Database } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { X, Users, Database } from 'lucide-react';
+import { FaUserAstronaut } from "react-icons/fa6";
+import { useChat } from '../../context/ChatContext';
+import { UserType } from '../../utils/types/UserType';
+
 
 const AdminModal = ({ isOpen, onClose }: any) => {
   const [selectedSection, setSelectedSection] = useState('Database');
-  const navigate = useNavigate();
   const modalRef = useRef<HTMLDivElement>(null)
+
+  const { get_all_users } = useChat();
+  const [allUser, setAllUser] = useState<UserType[]>([]);
+
+  useEffect (() => {
+    const fetchAllUser = async () => {
+      const users = await get_all_users();
+      setAllUser(users);
+    }
+    fetchAllUser()
+  }, [get_all_users])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -27,12 +40,6 @@ const AdminModal = ({ isOpen, onClose }: any) => {
 
   if (!isOpen) return null;
 
-  const handleConfiguracoesClick = () => {
-    setSelectedSection('Configuracoes');
-    navigate('/configuracoes/geral');
-    onClose();
-  };
-
   return (
     <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div ref={modalRef} className="relative w-full max-w-5xl bg-green-900 rounded-lg shadow-xl">
@@ -50,9 +57,18 @@ const AdminModal = ({ isOpen, onClose }: any) => {
         <div className="flex h-[calc(90vh-120px)]">
           <div className="w-64 border-r border-green-700 p-4">
             <nav className="space-y-2">
-              <NavItem icon={<Settings size={20} />} label="Configuracoes" onClick={handleConfiguracoesClick} />
-              <NavItem icon={<Users size={20} />} label="Usuarios" onClick={() => setSelectedSection('Usuarios')} />
-              <NavItem icon={<Database size={20} />} label="Database" onClick={() => setSelectedSection('Database')} />
+              <NavItem 
+                selected={selectedSection === 'Usuarios'} 
+                onClick={() => setSelectedSection('Usuarios')} 
+                icon={<Users size={20} />} 
+                label="Users" 
+              />
+              <NavItem 
+                selected={selectedSection === 'Database'} 
+                onClick={() => setSelectedSection('Database')} 
+                icon={<Database size={20} />} 
+                label="Database" 
+              />
             </nav>
           </div>
 
@@ -61,24 +77,25 @@ const AdminModal = ({ isOpen, onClose }: any) => {
               <div className="mb-6">
                 <h3 className="text-xl font-semibold text-white mb-4">Database</h3>
                 <div className="space-y-3">
-                  <DatabaseItem label="Import Config from JSON File" />
-                  <DatabaseItem label="Export Config to JSON File" />
+                  {/* <DatabaseItem label="Import Config from JSON File" />
+                  <DatabaseItem label="Export Config to JSON File" /> */}
+                  {/* <DatabaseItem label="Export LiteLLM config.yaml" /> */}
                   <DatabaseItem label="Download Database" />
                   <DatabaseItem label="Export All Chats (All Users)" />
-                  <DatabaseItem label="Export LiteLLM config.yaml" />
                 </div>
               </div>
             )}
             {selectedSection === 'Usuarios' && (
               <div className="mb-6">
-                <h3 className="text-xl font-semibold text-white mb-4">Usuarios</h3>
+                <h3 className="text-xl font-semibold text-white mb-4">Users</h3>
                 <div className="space-y-3">
-                  <p className="text-green-500"></p>
+                {allUser.map((users) => (
+                  <div key={users._id} className='flex gap-4 items-center'>
+                    <FaUserAstronaut className="text-green-300 text-2xl"/>
+                    <p className="text-green-500 text-xl">{users.name}</p>
+                  </div>
+                ))}
                 </div>
-              </div>
-            )}
-            {selectedSection === 'Configuracoes' && (
-              <div className="mb-6">
               </div>
             )}
           </div>
@@ -88,11 +105,10 @@ const AdminModal = ({ isOpen, onClose }: any) => {
   );
 };
 
-
-const NavItem = ({ icon, label, onClick }: any) => (
+const NavItem = ({ icon, label, onClick, selected }: any) => (
   <button 
     onClick={onClick} 
-    className="flex items-center gap-3 w-full px-3 py-2 text-green-300 hover:text-white hover:bg-green-800 rounded-lg transition-colors"
+    className={`flex items-center gap-3 w-full px-3 py-2 ${selected ? 'bg-green-800 text-white' : 'text-green-300'} hover:text-white hover:bg-green-800 rounded-lg transition-colors`}
   >
     {icon}
     <span>{label}</span>

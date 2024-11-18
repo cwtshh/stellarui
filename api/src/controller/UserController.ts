@@ -758,26 +758,20 @@ const get_archived_chats = async (req: Request, res: Response): Promise<void> =>
 };
 
 const unarchive_chats = async (req: Request, res: Response): Promise<void> => {
-    const { chat_id, user_id } = req.body;  // O ID do chat vem do corpo da requisição
-
-    console.log('User ID:', user_id);
-    console.log('Chat ID:', chat_id);
+    const { chat_id, user_id } = req.body; 
 
     try {
-        // Verificando se o chat existe
         const chat = await Chat.findById(chat_id);
         if (!chat) {
             res.status(404).json({ errors: ['Chat não encontrado.'] });
             return 
         }
 
-        // Verificando se o chat pertence ao usuário
-        if (chat.user.toString() !== user_id) {  // Comparando o ID do usuário com o do chat
+        if (chat.user.toString() !== user_id) {
             res.status(403).json({ errors: ['Chat não pertence a este usuário.'] });
             return 
         }
 
-        // Alterando o status de arquivado
         chat.is_archived = false;
         await chat.save();
 
@@ -788,8 +782,28 @@ const unarchive_chats = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
+const get_all_users = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const users = await User.find()
+            .populate({
+                path: 'chats', 
+                populate: { path: 'messages' }
+            });
+
+        if (!users || users.length === 0) {
+            res.status(400).json({ errors: ['Nenhum usuário encontrado.'] });
+            return;
+        }
+
+        res.status(200).json(users);
+    } catch (error) {
+        console.error("Erro ao buscar usuários: ", error);
+        res.status(500).json({ errors: ['Erro ao buscar os usuários.'] });
+    }
+};
 
 
+  
 export { 
     register_user, 
     login_user, 
@@ -807,5 +821,6 @@ export {
     delete_all_user_chats,
     archive_chats,
     get_archived_chats,
-    unarchive_chats
+    unarchive_chats,
+    get_all_users,
 };

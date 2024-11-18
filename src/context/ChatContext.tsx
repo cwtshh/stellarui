@@ -5,6 +5,7 @@ import { NotifyToast } from "../components/Toast/Toast";
 import { BASE_API_URL } from "../utils/constants";
 import { useAuth } from "./AuthContext";
 import axios from "axios";
+import { UserType } from "../utils/types/UserType";
 
 interface ChatContextType {
     chats: ChatType[],
@@ -13,6 +14,7 @@ interface ChatContextType {
     select_chat: (chat_id: string) => void,
     send_message: (message: string) => void,
     delete_chat: (chat_id: string) => void,
+    get_all_users: () => any,
     localMessages: MessageType[],
     lockChat: boolean,
     clearLocalMessages: () => void,
@@ -286,6 +288,16 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             return [];
         }
     };
+
+    const get_all_users = async () => {
+        try {
+            const response = await axios.get<UserType[]>(`${BASE_API_URL}/user/get/all`, { withCredentials: true });
+            return response.data || []
+        } catch (error) {
+            console.error("Erro ao obter usuarios", error);
+            return [];
+        }
+    };
     
     useEffect(() => {
         fetch_user_chats();
@@ -309,6 +321,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             archive_chats,
             unarchive_chats,
             get_archived_chats,
+            get_all_users,
         }}>
             {children}
         </ChatContext.Provider>

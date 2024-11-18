@@ -16,9 +16,7 @@ export default function ArchivedChats() {
   useEffect(() => {
     const fetchArchivedChats = async () => {
       if (user) {
-        console.log(user._id)
         const chats = await get_archived_chats(user._id);
-        console.log(chats)
         setArchivedChats(chats);
       }
     };
