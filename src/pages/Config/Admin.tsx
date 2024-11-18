@@ -90,9 +90,12 @@ const AdminModal = ({ isOpen, onClose }: any) => {
                 <h3 className="text-xl font-semibold text-white mb-4">Users</h3>
                 <div className="space-y-3">
                 {allUser.map((users) => (
-                  <div key={users._id} className='flex gap-4 items-center'>
+                  <div key={users._id} className='flex gap-4 items-center pr-3 pl-4'>
                     <FaUserAstronaut className="text-green-300 text-2xl"/>
-                    <p className="text-green-500 text-xl">{users.name}</p>
+                    <div className='flex justify-between w-full '>
+                      <p className="text-green-500 text-xl">{users.name}</p>
+                      <p className="text-green-100 text-xl">{users.role}</p>
+                    </div>
                   </div>
                 ))}
                 </div>

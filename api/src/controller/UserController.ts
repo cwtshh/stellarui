@@ -795,12 +795,19 @@ const get_all_users = async (req: Request, res: Response): Promise<void> => {
             return;
         }
 
-        res.status(200).json(users);
+        const filter_users = users.map(user => ({
+            _id: user._id,
+            name: user.name,
+            role: user.role
+        }));
+
+        res.status(200).json(filter_users);
     } catch (error) {
         console.error("Erro ao buscar usuários: ", error);
         res.status(500).json({ errors: ['Erro ao buscar os usuários.'] });
     }
 };
+
 
 
   
