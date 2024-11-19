@@ -9,7 +9,7 @@ import { NotifyToast } from "../../components/Toast/Toast";
 
 export default function ArchivedChats() {
   const { user } = useAuth();
-  const { select_chat, unarchive_chats, get_archived_chats, delete_chat } = useChat();
+  const { unarchive_chats, get_archived_chats, delete_chat } = useChat();
   const [archivedChats, setArchivedChats] = useState<any[]>([]);
   const navigate = useNavigate();
 
@@ -38,14 +38,13 @@ export default function ArchivedChats() {
       NotifyToast({ message: 'O chat não possui mensagens.', type: 'warning' });
       return
     }
-    select_chat(chat._id);
-    navigate('/chat');
+    navigate(`/Archived/${chat._id}`);
   };
 
   return (
   <div className="w-full p-3">
     {archivedChats.length === 0 ? (
-      <p className="text-white w-full justify-center flex text-xl">Não há chats arquivados...</p>
+      <p className="text-white w-full justify-center flex text-xl">Não há chats arquivados.</p>
     ) : (
       <>
         <div className="flex w-full justify-between pb-1 pt-1 border-b border-green-700">

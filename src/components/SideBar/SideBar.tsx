@@ -11,6 +11,7 @@ import { FaUser, FaVideo } from 'react-icons/fa';
 import AdminModal from '../../pages/Config/Admin';
 import { GrConfigure } from 'react-icons/gr';
 import ChatCard from '../ChatCard/ChatCard';
+import ArchivedCard from '../ChatCard/ArchivedCard';
 import { useEffect, useState } from 'react';
 import { CgProfile } from "react-icons/cg";
 import { BiLogOut } from 'react-icons/bi';
@@ -18,7 +19,9 @@ import { BsStars } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 
 const SideBar = () => {
-    const { chats, add_chat, lockChat } = useChat();
+    const { chats, add_chat, lockChat, get_archived_chats} = useChat();
+    const [archivedChats, setArchivedChats] = useState<any[]>([]);
+    
     const { logout, user } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
@@ -36,6 +39,10 @@ const SideBar = () => {
         return location.pathname === path;
     };
 
+    const isActiveAchived = (path: string) => {
+        return location.pathname.startsWith(path);
+    };
+
     const isActiveConfPage = (path: string) => {
         return location.pathname.startsWith(path);
     };
@@ -45,6 +52,16 @@ const SideBar = () => {
             navigate('configuracoes/geral');
         }
     }, [location, navigate])
+
+    useEffect(() => {
+        const fetchArchivedChats = async () => {
+          if (user) {
+            const chats = await get_archived_chats(user._id);
+            setArchivedChats(chats);
+          }
+        };
+        fetchArchivedChats();
+      }, [user, get_archived_chats]);
 
     return (
         <div className='bg-primary min-w-[350px] p-5 flex flex-col justify-between shadow-[4px_0_5px_rgba(0,0,0,0.50)] z-50'>
@@ -57,25 +74,54 @@ const SideBar = () => {
                     <img className='w-12' src={logo} alt="" />
                 </div>
 
+                {isActiveAchived('/Archived') && (
+                    <button className='btn' onClick={() => navigate('/configuracoes/Chats')}>
+                        <p>Voltar às Configurações</p>
+                        <MdOutlineSettings className="text-xl"/>
+                    </button>
+                )}
+
                 {isActivePage('/chat') ? (
                     <button className='btn' onClick={() => navigate('/transcription')}>
                         Transcrição de Vídeo
                         <FaVideo />    
                     </button>
-                ) : (
-                    <button className='btn' onClick={() => navigate('/chat')}>
-                        {chats.length > 1 ? (
-                            <p> Voltar aos Chats</p>
-                        ) : (
-                            <p>
-                                Voltar ao Chat
-                            </p>
-                        )}
-                        <IoChatboxEllipses />
-                    </button>
-                )}
+                ):(
+                    !isActiveAchived('/Archived') && (
+                            <>
+                                <button className='btn' onClick={() => navigate('/chat')}>
+                                    {chats.length > 1 ? (
+                                        <p > Voltar aos Chats</p>
+                                    ) : (
+                                        <p>
+                                            Voltar ao Chat
+                                        </p>
+                                        )
+                                    }
+                                <IoChatboxEllipses />
+                                </button>
+                                
+                            </>
+                        )
+                    )}
 
                 {!isActiveConfPage('/configuracoes') ? (
+                    isActiveAchived('/Archived') ? (
+                        <div>
+                            {archivedChats && archivedChats.length > 0 ? (
+                                <>
+                                    <p className='font-bold text-white'>Chats Arquivados</p>
+                                    <div className='scroll-hidden flex flex-col gap-6 mt-2 overflow-y-scroll h-full max-h-[40rem]'>
+                                        {archivedChats.map((chat, index) => (
+                                            <ArchivedCard chat={chat} key={index} />
+                                        ))} 
+                                    </div>
+                                </>
+                            ) : (
+                                <></> 
+                            )}
+                        </div>
+                    ):(
                     <>
                         <button disabled={lockChat} className='btn' onClick={() => {
                             add_chat(); 
@@ -99,6 +145,7 @@ const SideBar = () => {
                             )}
                         </div>
                     </>
+                    )
                 ) : (
                     <div>
                         <p className='font-bold text-white mb-4'>Configurações</p>
@@ -147,6 +194,7 @@ const SideBar = () => {
                     </div>
                
                 )}
+
             </div>
             <div className="dropdown dropdown-top flex flex-col">
                 <div tabIndex={0} role="button" className="btn m-1">

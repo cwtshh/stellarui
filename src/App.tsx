@@ -10,7 +10,8 @@ import { useAuth } from './context/AuthContext'
 import Config from './pages/Config/SideConfigBar'
 import Perfil from './pages/Config/Perfil'
 import Geral from './pages/Config/Geral'
-import Chats  from './pages/Config/Chats'
+import Chats from './pages/Config/Chats'
+import Archived from './pages/Chat/Archived'
 import ModelList from './pages/Config/ModelList'
 import ModelSelector from './pages/Config/ModelSelector'
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'
@@ -28,6 +29,7 @@ function App() {
           <Route path='/register' element={<Register />} />
           <Route path='/' element={<ProtectedRoute />}>
             <Route path='/chat' element={<Chat />} />
+            <Route path='/Archived/:chatId' element={<Archived />} />
             <Route path='/transcription' element={<Transcription />} />
             <Route path='/configuracoes' element={<Config />}>
               <Route path="geral" element={<Geral />} />
@@ -37,6 +39,8 @@ function App() {
               <Route path="ModelSelector" element={<ModelSelector />} />
             </Route>
           </Route>
+
+          {/* Rota para auto-auth com parâmetros */}
           <Route path='/solar/:nome/:email' element={<AutoAuthSolar />} />
         </Routes>
         <ToastContainer />
