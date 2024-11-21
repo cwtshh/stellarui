@@ -29,7 +29,11 @@ export default function ModelSelector() {
             });
             if (response.status === 200) {
                 NotifyToast({ message: 'Modelo carregado com sucesso!', type: 'success' });
-                window.location.href='/configuracoes/listmodel'
+            
+                setTimeout(() => {
+                    window.location.href = '/configuracoes/listmodel';
+                }, 4000); // Redireciona após 2 segundos
+            
             } else {
                 NotifyToast({ message: 'Erro ao carregar o modelo. Tente novamente.', type: 'error' });
             }

@@ -31,6 +31,8 @@ export default function ModelList() {
     useEffect(() => {
         fetchModels();
     }, []);
+    console.log(models)
+
 
     return (
         <div className="w-[600px] bg-green-900 shadow-lg rounded-lg p-6">
@@ -45,7 +47,7 @@ export default function ModelList() {
                 {models && Array.isArray(models) && models.length > 0 ? (
                     models.map((model) => (
                         <li key={model.id} className="flex justify-between items-center mb-4 bg-green-800 p-3 rounded">
-                            <span className="text-green-100">{model.name}</span>
+                            <span className="text-green-100">{model}</span>
 
                             <button
                                 onClick={() => deleteModel(model)}
