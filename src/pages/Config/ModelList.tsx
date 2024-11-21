@@ -36,9 +36,9 @@ export default function ModelList() {
     return (
         <div className="w-[600px] bg-green-900 shadow-lg rounded-lg p-6">
             <h2 className="text-2xl font-bold mb-6 text-green-50 border-b flex justify-between items-center border-green-700 pb-6">
-                Modelos Carregados
+                Model Loader
                 <Link to='/configuracoes/modelSelector' className='flex items-center gap-3 text-green-300 hover:text-green-100 transition-colors duration-300 ease-in-out'>
-                    <p className='text-lg'>Adicionar</p>
+                    <p className='text-lg'>New</p>
                     <LuPlusSquare />
                 </Link>
             </h2>

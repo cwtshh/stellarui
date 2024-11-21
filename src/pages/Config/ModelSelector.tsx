@@ -46,7 +46,7 @@ export default function ModelSelector() {
         <>
             <div className="w-[600px] bg-green-900 shadow-lg rounded-lg p-6">
                 <h2 className="text-2xl font-bold mb-6 text-green-50 border-b border-green-700 pb-6 flex justify-between items-center">
-                    Configurações do Modelo
+                    Model Settings
                     <Link to='/configuracoes/listmodel'>
                         <IoMdClose className='text-green-300 hover:text-green-100 transition-colors duration-300 ease-in-out'/>
                     </Link>
