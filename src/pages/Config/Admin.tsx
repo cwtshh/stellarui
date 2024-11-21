@@ -94,7 +94,7 @@ const AdminModal = ({ isOpen, onClose }: any) => {
                     <FaUserAstronaut className="text-green-300 text-2xl"/>
                     <div className='flex justify-between w-full '>
                       <p className="text-green-500 text-xl">{users.name}</p>
-                      <p className="text-green-100 text-xl">{users.role}</p>
+                      <p className="text-green-100 text-xl">({users.role})</p>
                     </div>
                   </div>
                 ))}
