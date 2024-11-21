@@ -1,7 +1,7 @@
 import { BASE_TRANSCRIPTION_API_URL } from '../../utils/constants';
 import { NotifyToast } from "../../components/Toast/Toast";
 import { LuPlusSquare } from "react-icons/lu";
-import { MdUnarchive } from "react-icons/md";
+import { FaTrash } from 'react-icons/fa';
 import { useState, useEffect } from "react";
 import { Link } from 'react-router-dom';
 import axios from "axios";
@@ -49,8 +49,8 @@ export default function ModelList() {
                             <span className="text-green-100">{model}</span>
                             <button
                                 onClick={() => deleteModel(model)}
-                                className="bg-red-600 text-green-50 py-1 px-3 rounded-md hover:bg-red-700">
-                                <MdUnarchive className="text-2xl" />
+                                className="bg-red-600 text-green-50 py-1 px-3 rounded-md hover:bg-red-700 btn">
+                                <FaTrash className="text-2xl" />
                             </button>
                         </li>
                     ))
