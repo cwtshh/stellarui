@@ -11,6 +11,8 @@ interface ChatContextType {
     chats: ChatType[],
     add_chat: () => void,
     selectedChat: ChatType | null,
+    selectedArchivedChat: ChatType | null,
+    setSelectedArchivedChat: (chat: ChatType | null) => void,
     select_chat: (chat_id: string) => void,
     send_message: (message: string) => void,
     delete_chat: (chat_id: string) => void,
@@ -31,6 +33,7 @@ const ChatContext = createContext<ChatContextType | undefined>(undefined);
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const [chats, setChats] = useState<ChatType[]>([]);
     const [selectedChat, setSelectedChat] = useState<ChatType | null>(null);
+    const [selectedArchivedChat, setSelectedArchivedChat] = useState<ChatType | null>(null);
     const [lockChat, setLockChat] = useState<boolean>(false);
     const { user } = useAuth();
 
@@ -226,59 +229,59 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         }
       };
 
-    const archive_chats = async (user_id: string) => {
+      const archive_chats = async (user_id: string) => {
         const response: any = await axios.get(`${BASE_API_URL}/user/chat/all/${user_id}`, { withCredentials: true });
         const chats_ids = response.data.map((chat: ChatType) => chat._id);
-        
+    
         if (!chats_ids || chats_ids.length === 0) {
             NotifyToast({ message: 'Nenhum chat encontrado.', type: 'error' });
             return;
         }
     
         try {
-            const archiveResponse: any = await axios.post(
+            await axios.post(
                 `${BASE_API_URL}/user/chat/archive/${user_id}`,
                 { chats_ids },
                 { withCredentials: true }
             );
-            NotifyToast({ message: archiveResponse.data.message || 'Chats arquivados com sucesso', type: 'success' });
+            NotifyToast({ message: 'Chats arquivados com sucesso', type: 'success' });
+            await get_archived_chats(user_id); 
             fetch_user_chats();
-
+            setSelectedArchivedChat(response.data);
         } catch (error) {
             const err = error as any;
             console.error('Erro ao arquivar os chats:', err.response?.data.errors || err.message);
             NotifyToast({ message: err.response?.data.errors || err.message, type: 'error' });
         }
     };
-
+    
     const unarchive_chats = async (user_id: string, chat_id: string) => {
-        
         if (!user_id) {
             NotifyToast({ message: 'User ID not found.', type: 'error' });
             return;
         }
+    
         try {
-            const unarchiveResponse: any = await axios.post(
-                `${BASE_API_URL}/user/chat/unarchive`, 
-                { chat_id, user_id }, 
+            await axios.post(
+                `${BASE_API_URL}/user/chat/unarchive`,
+                { chat_id, user_id },
                 { withCredentials: true }
             );
+            NotifyToast({ message: 'Chat retirado com sucesso', type: 'success' });
     
-            console.log('resposta da api', unarchiveResponse);
+            setSelectedArchivedChat(null);
     
-            NotifyToast({ message: unarchiveResponse.data.message || 'Chat retirado com sucesso', type: 'success' });
-            fetch_user_chats();
-    
+            fetch_user_chats(); // Atualiza os chats ativos
         } catch (error) {
             console.error('Erro ao retirar o chat:', (error as any).response?.data.errors || (error as any).message);
             NotifyToast({ message: (error as any).response?.data.errors || (error as any).message, type: 'error' });
         }
     };
+    
 
     const get_archived_chats = async (user_id: string) => {
         try {
             const response = await axios.get<ChatType[]>(`${BASE_API_URL}/user/chat/get/archived/${user_id}`, { withCredentials: true });
-            console.log('chats arquivados:', response.data);
             if(response.data && response.data.length > 0) {
                 return response.data;
             }
@@ -308,6 +311,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         <ChatContext.Provider value={{ 
             chats, 
             selectedChat, 
+            selectedArchivedChat,
+            setSelectedArchivedChat,
             add_chat, 
             select_chat, 
             send_message, 

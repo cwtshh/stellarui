@@ -10,13 +10,13 @@ interface ChatCardProps {
 
 const ArchivedCard = ({ chat }: ChatCardProps) => {
   const created_at = new Date(chat.created_at);
-  const { select_chat, unarchive_chats, lockChat, selectedChat } = useChat();
+  const { select_chat, unarchive_chats, lockChat, selectedArchivedChat } = useChat();
   const { user } = useAuth();
 
   const first_user_message = chat.messages[0]?.content;
   const navigate = useNavigate();
 
-  const isActive = selectedChat?._id === chat._id;
+  const isActive = selectedArchivedChat?._id === chat._id;
 
   return (
     <div
