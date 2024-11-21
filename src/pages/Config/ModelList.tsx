@@ -49,8 +49,8 @@ export default function ModelList() {
                             <span className="text-green-100">{model}</span>
                             <button
                                 onClick={() => deleteModel(model)}
-                                className="bg-red-600 text-green-50 py-1 px-3 rounded-md hover:bg-red-700 btn">
-                                <FaTrash className="text-2xl" />
+                                className="bg-red-600 text-green-50 py-3 px-4 rounded-md hover:bg-red-700 transition-colors duration-300 ease-in-out">
+                                <FaTrash/>
                             </button>
                         </li>
                     ))
