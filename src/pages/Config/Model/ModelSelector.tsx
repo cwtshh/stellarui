@@ -1,5 +1,5 @@
-import { BASE_TRANSCRIPTION_API_URL } from '../../utils/constants';
-import { NotifyToast } from "../../components/Toast/Toast";
+import { BASE_TRANSCRIPTION_API_URL } from '../../../utils/constants';
+import { NotifyToast } from "../../../components/Toast/Toast";
 import { IoMdClose } from "react-icons/io";
 import { Link } from 'react-router-dom';
 import { useState } from "react";

@@ -1,5 +1,5 @@
 import jsPDF from 'jspdf';
-import logo from '../../assets/logo.jpg';
+import logo from '../../../assets/logo.jpg';
 
 interface ChatData {
     user: {

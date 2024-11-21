@@ -1,11 +1,11 @@
-import { useChat } from "../../context/ChatContext";
-import { useAuth } from '../../context/AuthContext';
+import { useChat } from "../../../context/ChatContext";
+import { useAuth } from '../../../context/AuthContext';
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom'
 import { MdUnarchive } from "react-icons/md";
 import { FaTrash } from 'react-icons/fa';
 import { GrChat } from "react-icons/gr";
-import { NotifyToast } from "../../components/Toast/Toast";
+import { NotifyToast } from "../../../components/Toast/Toast";
 
 export default function ArchivedChats() {
   const { user } = useAuth();

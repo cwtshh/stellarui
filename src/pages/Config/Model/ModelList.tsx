@@ -1,5 +1,5 @@
-import { BASE_TRANSCRIPTION_API_URL } from '../../utils/constants';
-import { NotifyToast } from "../../components/Toast/Toast";
+import { BASE_TRANSCRIPTION_API_URL } from '../../../utils/constants';
+import { NotifyToast } from "../../../components/Toast/Toast";
 import { LuPlusSquare } from "react-icons/lu";
 import { FaTrash } from 'react-icons/fa';
 import { useState, useEffect } from "react";

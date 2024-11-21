@@ -1,5 +1,5 @@
 import { ReactNode, createContext, useContext, useEffect, useState } from "react";
-import { useConvertChatsToPDF } from "../pages/Config/ChatsToPDF";
+import { useConvertChatsToPDF } from "../pages/Config/Chats/ChatsToPDF";
 import { ChatType, MessageType } from "../utils/types/ChatType";
 import { NotifyToast } from "../components/Toast/Toast";
 import { BASE_API_URL } from "../utils/constants";

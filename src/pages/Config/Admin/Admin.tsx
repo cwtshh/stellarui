@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { X, Users, Database } from 'lucide-react';
 import { FaUserAstronaut } from "react-icons/fa6";
-import { useChat } from '../../context/ChatContext';
-import { UserType } from '../../utils/types/UserType';
+import { useChat } from '../../../context/ChatContext';
+import { UserType } from '../../../utils/types/UserType';
 
 
 const AdminModal = ({ isOpen, onClose }: any) => {

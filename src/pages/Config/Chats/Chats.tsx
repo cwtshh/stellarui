@@ -1,7 +1,7 @@
 import { MdDelete } from "react-icons/md";
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../../context/AuthContext';
 import 'jspdf-autotable';
-import { useChat } from "../../context/ChatContext";
+import { useChat } from "../../../context/ChatContext";
 import { RiArchiveStackFill } from "react-icons/ri";
 import { IoMdArchive } from "react-icons/io";
 import { RiExportFill } from "react-icons/ri";
