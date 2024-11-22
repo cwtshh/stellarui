@@ -26,6 +26,8 @@ interface ChatContextType {
     archive_chats: (user_id: string) => Promise<void>,
     unarchive_chats: (user_id: string, chat_id: string) => Promise<void>,
     get_archived_chats: (user_id: string) => Promise<ChatType[]>,
+    get_all_chats: (user_id: string) => Promise<ChatType[]>,
+
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -229,7 +231,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         }
       };
 
-      const archive_chats = async (user_id: string) => {
+    const archive_chats = async (user_id: string) => {
         const response: any = await axios.get(`${BASE_API_URL}/user/chat/all/${user_id}`, { withCredentials: true });
         const chats_ids = response.data.map((chat: ChatType) => chat._id);
     
@@ -278,7 +280,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         }
     };
     
-
     const get_archived_chats = async (user_id: string) => {
         try {
             const response = await axios.get<ChatType[]>(`${BASE_API_URL}/user/chat/get/archived/${user_id}`, { withCredentials: true });
@@ -301,6 +302,23 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             return [];
         }
     };
+
+    const get_all_chats = async (user_id: string): Promise<any[]> => {
+        try {
+            const response = await axios.get(`${BASE_API_URL}/user/chat/all/${user_id}`, { withCredentials: true });
+            
+            if (response && Array.isArray(response.data)) {
+                return response.data;
+            } else {
+                console.error('Resposta inválida recebida:', response);
+                return [];
+            }
+        } catch (error: any) {
+            console.error("Erro ao obter os chats do usuário:", error?.response?.data || error.message || error);
+            return [];
+        }
+    };
+    
     
     useEffect(() => {
         fetch_user_chats();
@@ -326,6 +344,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             archive_chats,
             unarchive_chats,
             get_archived_chats,
+            get_all_chats,
             get_all_users,
         }}>
             {children}

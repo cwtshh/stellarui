@@ -8,7 +8,7 @@ import { IoChatboxEllipses } from 'react-icons/io5';
 import { MdOutlineSettings } from "react-icons/md";
 import logo from '../../assets/DPDF_Branca 1.png';
 import { FaUser, FaVideo } from 'react-icons/fa';
-import AdminModal from '../../pages/Config/Admin/Admin';
+import AdminModal from '../../pages/Config/Admin';
 import { GrConfigure } from 'react-icons/gr';
 import ChatCard from '../ChatCard/ChatCard';
 import ArchivedCard from '../ChatCard/ArchivedCard';

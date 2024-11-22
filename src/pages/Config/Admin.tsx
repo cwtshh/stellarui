@@ -1,24 +1,42 @@
 import { useState, useRef, useEffect } from 'react';
 import { X, Users, Database } from 'lucide-react';
 import { FaUserAstronaut } from "react-icons/fa6";
-import { useChat } from '../../../context/ChatContext';
-import { UserType } from '../../../utils/types/UserType';
-
+import { useChat } from '../../context/ChatContext';
+import { UserType } from '../../utils/types/UserType';
 
 const AdminModal = ({ isOpen, onClose }: any) => {
   const [selectedSection, setSelectedSection] = useState('Database');
   const modalRef = useRef<HTMLDivElement>(null)
 
-  const { get_all_users } = useChat();
+  const { get_all_users, get_all_chats, export_chats } = useChat();
   const [allUser, setAllUser] = useState<UserType[]>([]);
 
-  useEffect (() => {
+  const handleExportAllChatsUser = async () => {
+      const users = await get_all_users();
+      console.log("Usuários:", users);
+
+      const allChats: { [key: string]: any[] } = {};
+
+      for (const user of users) {
+        const chats = await get_all_chats(user._id);
+        allChats[user._id] = chats;
+      }
+
+      console.log("Chats de todos os usuários:", allChats);
+      export_chats(allChats);
+  };
+
+  const handleDownloadDataBase = () => {
+    // Implementação para download do banco de dados
+  };
+
+  useEffect(() => {
     const fetchAllUser = async () => {
       const users = await get_all_users();
       setAllUser(users);
     }
-    fetchAllUser()
-  }, [get_all_users])
+    fetchAllUser();
+  }, [get_all_users]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -76,12 +94,13 @@ const AdminModal = ({ isOpen, onClose }: any) => {
             {selectedSection === 'Database' && (
               <div className="mb-6">
                 <h3 className="text-xl font-semibold text-white mb-4">Database</h3>
-                <div className="space-y-3">
-                  {/* <DatabaseItem label="Import Config from JSON File" />
-                  <DatabaseItem label="Export Config to JSON File" /> */}
-                  {/* <DatabaseItem label="Export LiteLLM config.yaml" /> */}
-                  <DatabaseItem label="Download Database" />
-                  <DatabaseItem label="Export All Chats (All Users)" />
+                <div className="space-y-3 flex flex-col">
+                  <button onClick={() => handleDownloadDataBase()}>
+                    <DatabaseItem label="Download Database" />
+                  </button>
+                  <button onClick={() => handleExportAllChatsUser()}>
+                    <DatabaseItem label="Export All Chats (All Users)" />
+                  </button>
                 </div>
               </div>
             )}
@@ -89,15 +108,15 @@ const AdminModal = ({ isOpen, onClose }: any) => {
               <div className="mb-6">
                 <h3 className="text-xl font-semibold text-white mb-4">Users</h3>
                 <div className="space-y-3">
-                {allUser.map((users) => (
-                  <div key={users._id} className='flex gap-4 items-center pr-3 pl-4'>
-                    <FaUserAstronaut className="text-green-300 text-2xl"/>
-                    <div className='flex justify-between w-full '>
-                      <p className="text-green-500 text-xl">{users.name}</p>
-                      <p className="text-green-100 text-xl">({users.role})</p>
+                  {allUser.map((user) => (
+                    <div key={user._id} className='flex gap-4 items-center pr-3 pl-4'>
+                      <FaUserAstronaut className="text-green-300 text-2xl"/>
+                      <div className='flex justify-between w-full'>
+                        <p className="text-green-500 text-xl">{user.name}</p>
+                        <p className="text-green-100 text-xl">({user.role})</p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
                 </div>
               </div>
             )}
