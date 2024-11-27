@@ -22,6 +22,9 @@ const Register = () => {
     const passwordInput = useRef<HTMLInputElement>(null);
     const confirmPasswordInput = useRef<HTMLInputElement>(null);
 
+    const [debouncedPassword, setDebouncedPassword] = useState('');
+    const [debouncedConfirmPassword, setDebouncedConfirmPassword] = useState('');
+
     // Efeito para focar no campo de Nome ao carregar o componente
     useEffect(() => {
         nameInput.current?.focus();
@@ -58,25 +61,43 @@ const Register = () => {
         }
     };
 
-    useEffect(() => {
-        if(confirmPassword !== ''){
-            if (password !== confirmPassword) {
-                setError(true);
-                setErrorText('As senhas não coicidem!');
-                return;
-            }
-            setError(false);
+    const debounce = (callback: () => void, delay: number) => {
+        let timer: NodeJS.Timeout;
+        return (...args: any) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => callback(...args), delay);
+        };
+    };
+    
+
+    const validatePassword = () => {
+        if (debouncedPassword.length < 6) {
+            setError(true);
+            setErrorText('A senha deve ter no mínimo 6 caracteres.');
+            return;
         }
-    }, [password, confirmPassword]);
-
-    // Manter o foco no campo apropriado
-    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPassword(e.target.value);
+        if (debouncedConfirmPassword !== '' && debouncedPassword !== debouncedConfirmPassword) {
+            setError(true);
+            setErrorText('As senhas não coincidem!');
+            return;
+        }
+        setError(false);
+        setErrorText('');
     };
-
-    const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setConfirmPassword(e.target.value);
-    };
+    
+    useEffect(() => {
+        validatePassword();
+    }, [debouncedPassword, debouncedConfirmPassword]);
+    
+    const handlePasswordChange = debounce((value: string) => {
+        setPassword(value);
+        setDebouncedPassword(value);
+    }, 500);
+    
+    const handleConfirmPasswordChange = debounce((value: string) => {
+        setConfirmPassword(value);
+        setDebouncedConfirmPassword(value);
+    }, 500);
 
     return (
         <div className='flex flex-col gap-5 justify-center items-center h-screen w-full bg-primary'>
@@ -117,17 +138,26 @@ const Register = () => {
 
                         <label className="form-control w-full max-w-xs">
                             <div className="label">
-                                <span className="label-text">Senha:</span>
+                            {error && confirmPassword.length > 0 ? ( 
+                                    <span className="label-text text-red-500">* Senha:</span>
+                                ) :(
+                                    <span className="label-text">Senha:</span>
+                                )
+                            }
                             </div>
-                            <label className="input input-bordered flex items-center gap-2">
+                            <label
+                                className={`input input-bordered flex items-center gap-2 ${
+                                    error && password.length > 0 ? 'border-red-500 border-2' : ''
+                                }`}
+                            >
                                 <input
                                     ref={passwordInput}
                                     onKeyDown={handleKeyDown}
-                                    onChange={handlePasswordChange}
+                                    onChange={(e) => handlePasswordChange(e.target.value)}
                                     type={showPass ? 'text' : 'password'}
                                     className="grow"
                                 />
-                                <button onClick={handleShowPass} className='text-lg'>
+                                <button onClick={handleShowPass} className="text-lg">
                                     {showPass ? <IoMdEye /> : <IoMdEyeOff />}
                                 </button>
                             </label>
@@ -135,17 +165,26 @@ const Register = () => {
 
                         <label className="form-control w-full max-w-xs">
                             <div className="label">
-                                <span className="label-text">Confirmar Senha:</span>
+                                {error && confirmPassword.length > 0 ? ( 
+                                    <span className="label-text text-red-500">* Confirmar Senha:</span>
+                                ) :(
+                                    <span className="label-text">Confirmar Senha:</span>
+                                )
+                            }
                             </div>
-                            <label className="input input-bordered flex items-center gap-2">
+                            <label
+                                className={`input input-bordered flex items-center gap-2 ${
+                                    error && confirmPassword.length > 0 ? 'border-red-500 border-2' : ''
+                                }`}
+                            >
                                 <input
                                     ref={confirmPasswordInput}
                                     onKeyDown={handleKeyDown}
-                                    onChange={handleConfirmPasswordChange}
+                                    onChange={(e) => handleConfirmPasswordChange(e.target.value)}
                                     type={showPass ? 'text' : 'password'}
                                     className="grow"
                                 />
-                                <button onClick={handleShowPass} className='text-lg'>
+                                <button onClick={handleShowPass} className="text-lg">
                                     {showPass ? <IoMdEye /> : <IoMdEyeOff />}
                                 </button>
                             </label>
