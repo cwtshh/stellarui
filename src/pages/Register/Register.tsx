@@ -201,7 +201,7 @@ const Register = () => {
                 </div>
             </div>
 
-            <p className='text-white'>Já tem conta? <Link className='font-bold text-[#1384e3]' to={'/login'}>Entrar!</Link></p>
+            <Link to={'/login'} className='text-white flex gap-1 hover:underline'>Já tem conta? <p className='font-bold text-[#1384e3]'> Entrar!</p></Link>
         </div>
     );
 }

@@ -98,7 +98,7 @@ const Login = () => {
                 </div>
             </div>
 
-            <p className='text-white'>Não tem conta? <Link className='font-bold text-[#1384e3]' to={'/register'}>Crie uma!</Link></p>
+            <Link className='text-white hover:underline flex gap-1' to={'/register'}>Não tem conta? <p className='font-bold text-[#1384e3]' >Crie uma!</p></Link>
         </div>
     )
 }
