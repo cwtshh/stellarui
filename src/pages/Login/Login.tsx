@@ -55,7 +55,7 @@ const Login = () => {
 
     return (
         <div className='flex flex-col gap-5 justify-center items-center h-screen w-full bg-primary'>
-            <img className='w-56' src={logo} alt="" />
+            <img className='w-[120px] lg:w-56' src={logo} alt="" />
             <div className="card bg-base-100 w-96 shadow-xl">
                 <div className="card-body">
                     <div className='flex flex-col gap-6'>

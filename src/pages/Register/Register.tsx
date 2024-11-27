@@ -100,13 +100,13 @@ const Register = () => {
     }, 500);
 
     return (
-        <div className='flex flex-col gap-5 justify-center items-center h-screen w-full bg-primary'>
-            <img className='w-56' src={logo} alt="" />
+        <div className='flex flex-col gap-5 justify-center items-center w-full bg-primary'>
+            <img className='w-0 lg:w-56' src={logo} alt="" />
             <div className="card bg-base-100 w-96 shadow-xl">
                 <div className="card-body">
-                    <div className='flex flex-col gap-5'>
+                    <div className='flex flex-col gap-2 lg:gap-5'>
                         <div className='flex items-center gap-2'>
-                            <h1 className='font-bold text-2xl'>Stellar</h1>
+                            <h1 className='font-bold text-xl lg:text-2xl'>Stellar</h1>
                             <BsStars className='text-3xl' />
                         </div>
 
