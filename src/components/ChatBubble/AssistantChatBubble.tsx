@@ -32,12 +32,12 @@ const AssistantChatBubble = ({ message }: AssistantChatBubbleProps) => {
             ) : (
                 <>
                     <div
-                        className="chat-bubble indicator max-w-[90rem]"
+                        className="chat-bubble indicator max-w-[20rem] lg:max-w-[90rem]"
                         onMouseEnter={() => setIsHovered(true)}
                         onMouseLeave={() => setIsHovered(false)} 
                     >
                         <button 
-                            className={`indicator-item badge w-[80px] h-[20px] btn shadow-xl transition-opacity duration-400 ease-in-out ${isHovered ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}
+                            className={`indicator-item badge hidden lg:flex lg:w-[80px] h-[20px] btn shadow-xl transition-opacity duration-400 ease-in-out ${isHovered ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}
                             onClick={() => copyText(message.content)}>
                             <div className='cursor-pointer flex items-center justify-center '>
                                 <div className='gap-2 flex items-center justify-center'>
@@ -66,7 +66,7 @@ const AssistantChatBubble = ({ message }: AssistantChatBubbleProps) => {
             <div className="chat-footer text-white opacity-50 flex justify-between w-full">
                 {message === 'loading' ? 
                     <></> : 
-                    <>{date.replaceAll(',', ' | ')}</>}            
+                    <>{date.split(',')[1].split(':')[0] +':'+ date.split(',')[1].split(':')[1]}</>}     
             </div>
         </div>
     );

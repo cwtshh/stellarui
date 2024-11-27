@@ -32,7 +32,7 @@ const UserChatBubble = ({ message }: any) => {
 
   return (
     <div className="chat chat-end">
-      <div className="chat-bubble gap-2 flex flex-col bg-secondary max-w-[90rem] break-words whitespace-pre-wrap">
+      <div className="chat-bubble gap-2 flex flex-col bg-secondary max-w-[20rem] lg:max-w-[90rem] break-words whitespace-pre-wrap">
         {file_name && file_path ? (
           <div role='button' onClick={handleDownload} className='bg-[#1b794d] mt-2 h-[50px] p-2 gap-2 rounded-xl flex items-center justify-center shadow-[inset_0px_2px_3px_rgba(0,0,0,0.6)]'>
             <GoFileSymlinkFile className='text-3xl text-white' />
@@ -44,7 +44,8 @@ const UserChatBubble = ({ message }: any) => {
         ) : null}
         <HighlightText text={message.content} />
       </div>
-      <div className="chat-footer text-white opacity-50">{date.replaceAll(',', ' | ')}</div>
+      <div className="chat-footer text-white opacity-50">{date.split(',')[1].split(':')[0] +':'+ date.split(',')[1].split(':')[1]}     
+      </div>
     </div>
   );
 };

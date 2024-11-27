@@ -8,6 +8,10 @@ import chatbg from '../../assets/chatbg.jpeg';
 import { FaDownload } from 'react-icons/fa';
 import axios from 'axios';
 import { FaPencil } from 'react-icons/fa6';
+import { useAuth } from '../../context/AuthContext';
+import { IoIosArrowDropleftCircle } from "react-icons/io";
+import { IoIosArrowDropright } from "react-icons/io";
+
 
 const Trancription = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -30,6 +34,8 @@ const Trancription = () => {
   const transcriptionRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const [showMessage, setShowMessage] = useState(false);
+
+  const { handleShowSideBar, showSideBar } = useAuth();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -206,19 +212,29 @@ const Trancription = () => {
   }, [textSearchTerm, selectedPerson, segments]);
 
   return (
-    <div className='h-full w-full overflow-hidden flex flex-col p-5' style={{
+    <div className='h-full w-full lg:overflow-hidden flex flex-col' style={{
       backgroundImage: `url(${chatbg})`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
       backgroundAttachment: 'fixed',
     }}>
-      <div className='flex items-start justify-center h-full gap-[95px]'>
-        <div className=' flex text-white p-6 h-vh w-[30%] rounded-xl flex-col gap-7'>
+      <div className='lg:hidden flex absolute h-full items-center z-50'>
+        <div className='bg-gray-600 rounded-tr-xl rounded-br-xl p-1 h-[40px] flex items-center' onClick={() => handleShowSideBar()}>
+          {!showSideBar ? (
+            <IoIosArrowDropright className='text-green-500 text-[30px]'/>
+          ):(
+            <IoIosArrowDropleftCircle className='text-green-500 text-[30px]'/>
 
+          )}
 
+        </div>
+      </div>
+
+      <div className='lg:flex flex-col lg:items-start lg:justify-center h-full lg:gap-[95px] lg:p-5'>
+        <div className=' flex text-white p-6 h-vh w-[100%] rounded-xl flex-col gap-7 items-center justify-center'>
           <div onMouseEnter={() => setMouseOver(true)} onMouseLeave={() => setMouseOver(false)} onScroll={handleScroll}
-           className='bg-base-100 p-6 scroll-hidden h-[800px] w-[500px] rounded-xl flex flex-col gap-6 overflow-y-scroll shadow-xl'>
+           className='bg-base-100 lg:block lg:p-6 scroll-hidden h-[250px] w-[380px] lg:h-[800px] lg:w-[500px] rounded-xl flex flex-col gap-6 overflow-y-scroll shadow-xl'>
             {(filteredSegments.length > 0 ? filteredSegments : segments).map((item: any, index: number) => {
               const isActiveSegment = currentTime >= item.start && (index === segments.length - 1 || currentTime <= item.end);
               const isHighlighted = index === highlightedIndex;
@@ -236,19 +252,19 @@ const Trancription = () => {
             })}
           </div>
 
-          <div className='flex justify-center items-center w-[500px] gap-4'>
-            <button onClick={() => downloadTranscriptionPDF(file, segments, speakerMap)} disabled={loading || !videoUrl} className='btn btn-primary w-[300px] flex justify-center items-center text-white rounded-xl h-[60px]'>
+          <div className='lg:flex lg:justify-center items-center lg:w-[500px] lg:gap-4'>
+            <button onClick={() => downloadTranscriptionPDF(file, segments, speakerMap)} disabled={loading || !videoUrl} className='btn btn-primary w-[300px] flex justify-center items-center text-white rounded-xl h-[40px] w-[100%] lg:h-[60px]'>
               Transcrição
               <FaDownload />
             </button>
-            <button onClick={() => (document.getElementById('speaker_modal') as HTMLDialogElement).showModal()} disabled={loading || !videoUrl} className='btn btn-primary flex justify-center items-center text-white rounded-xl h-[60px]'>
+            <button onClick={() => (document.getElementById('speaker_modal') as HTMLDialogElement).showModal()} disabled={loading || !videoUrl} className='btn btn-primary flex justify-center items-center text-white rounded-xl w-[100%] h-[40px] lg:h-[60px]'>
               <FaPencil />
               Editar Locutores
             </button>
           </div>
         </div>
 
-        <div className='flex flex-col gap-5 w-[900px] h-[800px] items-center justify-center p-6'>
+        <div className='flex flex-col gap-5 w-[100%] h-[120px] lg:w-[900px] lg:h-[800px] items-center justify-center lg:p-6'>
           {!file && (
             <div className='bg-transparent border-[2px] w-[335px] h-[60px] flex justify-center items-center rounded-xl'>
               <input
@@ -277,34 +293,33 @@ const Trancription = () => {
             ref={videoRef}
             src={videoUrl}
             className={`${loading || !videoUrl ? 'hidden' : ''} rounded-xl shadow-xl`}
-            style={{ width: '100%', height: 'auto', maxHeight: '100%' }}
+            style={{ width: '300px', height: '300px', maxHeight: '100%' }}
             controls
             preload="false"
             onTimeUpdate={handleTimeUpdate}
           />
           {videoUrl && !loading && (
             <>
-              <div className='flex justify-center items-center w-[500px] gap-2'>
-                <div className='flex gap-2'>
+              <div className=' gap-2 flex flex-col lg:flex justify-center items-center lg:w-[500px] lg:gap-2'>
+                <div className='lg:flex lg:gap-2 gap-2 flex flex-col'>
                   <input 
                     type="text" 
                     placeholder="00:00:00"
                     maxLength={8}
-                    className='input input-bordere text-black input-accent w-[100px]' 
+                    className='input input-bordere text-black input-accent w-[100%] lg:w-[100px]' 
                     onChange={handleTimeChange}
                     value={timeSearchTerm}/>
 
                   <input 
                     type="text" 
                     placeholder="Segmento..." 
-                    className='input input-bordere text-black input-accent w-[370px]' 
-
+                    className='input input-bordere text-black input-accent w-[100%] lg:w-[370px]' 
                     onChange={handleTextChange}
                     value={textSearchTerm}
                   />
 
                   <select 
-                    className='text-black select select-bordered w-[160px]' 
+                    className='text-black select select-bordered lg:w-[160px]' 
                     onChange={handlePersonChange}
                     value={selectedPerson}>
                     <option hidden value="">Falante</option>
@@ -316,7 +331,8 @@ const Trancription = () => {
                     ))}
                   </select>
                 </div>
-                <button onClick={() => {window.location.reload()}} className='btn btn-primary w-[200px] flex justify-center items-center text-white rounded-xl'>
+
+                <button onClick={() => {window.location.reload()}} className='btn btn-primary w-[100%] lg:w-[200px] flex justify-center items-center text-white rounded-xl'>
                   Transcrever Novo
                   <FaPlusCircle />
                 </button>

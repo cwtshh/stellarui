@@ -21,8 +21,8 @@ import { Link } from 'react-router-dom';
 const SideBar = () => {
     const { chats, add_chat, lockChat, get_archived_chats} = useChat();
     const [archivedChats, setArchivedChats] = useState<any[]>([]);
-    
-    const { logout, user } = useAuth();
+
+    const { logout, user, showSideBar, handleShowSideBar } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -64,7 +64,7 @@ const SideBar = () => {
       }, [user, get_archived_chats]);
 
     return (
-        <div className='bg-primary min-w-[350px] p-5 flex flex-col justify-between shadow-[4px_0_5px_rgba(0,0,0,0.50)] z-50'>
+        <div className={`bg-primary ${!showSideBar ? 'hidden' : 'block'} min-w-[350px] overflow-hidden sm:flex sm:min-w-[350px] p-5 flex flex-col justify-between shadow-[4px_0_5px_rgba(0,0,0,0.50)] z-50`}>
             <div className='flex flex-col gap-5'>
                 <div className='flex justify-between'>
                     <div className='flex items-center gap-2'>
@@ -82,14 +82,14 @@ const SideBar = () => {
                 )}
 
                 {isActivePage('/chat') ? (
-                    <button className='btn' onClick={() => navigate('/transcription')}>
+                    <button className='btn' onClick={() => {navigate('/transcription'); handleShowSideBar()}}>
                         Transcrição de Vídeo
                         <FaVideo />    
                     </button>
                 ):(
                     !isActiveAchived('/Archived') && (
                             <>
-                                <button className='btn' onClick={() => navigate('/chat')}>
+                                <button className='btn' onClick={() => {navigate('/chat'); handleShowSideBar()}}>
                                     {chats.length > 1 ? (
                                         <p > Voltar aos Chats</p>
                                     ) : (
@@ -126,6 +126,7 @@ const SideBar = () => {
                         <button disabled={lockChat} className='btn' onClick={() => {
                             add_chat(); 
                             navigate('/chat');
+                            handleShowSideBar()
                         }}>
                             Criar novo chat
                             <HiMiniPencilSquare className='text-xl' />
@@ -150,7 +151,7 @@ const SideBar = () => {
                     <div>
                         <p className='font-bold text-white mb-4'>Configurações</p>
                         <ul className="space-y-4 flex flex-col">
-                            <Link to="/configuracoes/geral">
+                            <Link to="/configuracoes/geral" onClick={() => handleShowSideBar()}>
                                 <li className={`${isActivePage('/configuracoes/geral') && !isModalOpen ? 'bg-secondary' : ''} hover:bg-secondary h-full p-3 rounded-xl text-green-200 transition-colors duration-200`}>
                                     <div className='flex gap-4 items-center'>
                                         <MdOutlineSettings />
@@ -158,7 +159,7 @@ const SideBar = () => {
                                     </div>
                                 </li>
                             </Link>
-                            <Link to="/configuracoes/listmodel">
+                            <Link to="/configuracoes/listmodel" onClick={() => handleShowSideBar()}>
                                 <li className={`${isActivePage('/configuracoes/listmodel') || isActivePage('/configuracoes/modelSelector') && !isModalOpen ? 'bg-secondary' : ''} hover:bg-secondary h-full p-3 rounded-xl text-green-200 transition-colors duration-200`}>
                                     <div className='flex gap-4 items-center'>
                                         <BsStars />
@@ -166,7 +167,7 @@ const SideBar = () => {
                                     </div>
                                 </li>
                             </Link>
-                            <Link to="/configuracoes/perfil">
+                            <Link to="/configuracoes/perfil" onClick={() => handleShowSideBar()}>
                                 <li className={`${isActivePage('/configuracoes/perfil') && !isModalOpen ? 'bg-secondary' : ''} hover:bg-secondary h-full p-3 rounded-xl text-green-200 transition-colors duration-200`}>
                                     <div className='flex gap-4 items-center'>
                                         <CgProfile />
@@ -174,7 +175,7 @@ const SideBar = () => {
                                     </div>
                                 </li>
                             </Link>
-                            <Link to="/configuracoes/Chats">
+                            <Link to="/configuracoes/Chats" onClick={() => handleShowSideBar()}>
                                 <li className={`${isActivePage('/configuracoes/Chats') && !isModalOpen ? 'bg-secondary' : ''} hover:bg-secondary  h-full p-3 rounded-xl text-green-200 transition-colors duration-200`}>
                                     <div className='flex gap-4 items-center'>
                                         <RiChatSettingsFill />

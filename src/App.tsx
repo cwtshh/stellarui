@@ -20,7 +20,7 @@ import AutoAuthSolar from './pages/AutoAuthSolar/AutoAuthSolar'
 function App() {
   const { user } = useAuth();
   return (
-    <div className='flex h-full w-full'>
+    <div className='flex h-full overflow-hidden w-full'>
       <BrowserRouter>
         { user ? <SideBar /> : null }
         <Routes>
@@ -40,7 +40,6 @@ function App() {
             </Route>
           </Route>
 
-          {/* Rota para auto-auth com parâmetros */}
           <Route path='/solar/:nome/:email' element={<AutoAuthSolar />} />
         </Routes>
         <ToastContainer />

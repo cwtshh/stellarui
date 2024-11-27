@@ -11,6 +11,6 @@ export default function Config() {
         backgroundAttachment: 'fixed',
       }}>
         <Outlet />
-      </div>
+        </div>
   );
 }

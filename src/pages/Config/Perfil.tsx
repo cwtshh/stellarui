@@ -47,7 +47,7 @@ export default function ProfileEdit() {
   };
 
   return (
-    <div className="w-[600px] bg-green-900 shadow-lg rounded-lg p-6">
+    <div className="w-[350px] lg:w-[600px] bg-green-900 shadow-lg rounded-lg p-6">
       <h2 className="text-2xl font-bold mb-6 text-green-50 border-b border-green-700 pb-6">Edit Profile</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">

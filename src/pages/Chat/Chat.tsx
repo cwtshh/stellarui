@@ -8,12 +8,18 @@ import chatbg from '../../assets/chatbg.jpeg';
 import { BsSendFill } from 'react-icons/bs';
 import { IoMdAttach } from 'react-icons/io';
 import SuggestionCards from '../../components/Suggestion/SuggestionCards';
+import { useAuth } from '../../context/AuthContext';
+import { IoIosArrowDropleftCircle } from "react-icons/io";
+import { IoIosArrowDropright } from "react-icons/io";
+
 
 const Chat = () => {
   const { selectedChat, send_message, localMessages, lockChat, clearLocalMessages, send_message_file } = useChat();
   const chat_date = new Date(selectedChat?.created_at ?? '').toLocaleString('pt-br');
   const [message, setMessage] = useState('');
   const [previewFile, setPreviewFile] = useState<File | null>(null);
+
+  const { handleShowSideBar, showSideBar } = useAuth();
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -100,7 +106,7 @@ const Chat = () => {
                 <img src={Estela} alt="Estela" className='rounded-full'/>
             </div>
             <div>
-            <div className="chat-header text-white text-2xl">Estella</div>
+            <div className="chat-header text-white text-xl lg:text-2xl">Estella</div>
             {!lockChat ? (
               <div className="chat-header text-[gray]">Sou Estella, ao seu dispor!</div>
 
@@ -109,11 +115,28 @@ const Chat = () => {
             )}
             </div>
         </div>
-        {selectedChat && <p className="text-white">{chat_date.replaceAll(',','')}</p>}
+        {selectedChat &&
+        <div className='flex flex-col gap-2 lg:flex-row'>
+          <p className="text-lg text-white lg:text-xl">{chat_date.split(',')[0]}</p>
+          <p className="lg:block hidden text-lg lg:text-xl text-white">{chat_date.split(',')[1]}</p>
+        </div> 
+          }
       </div>
 
+      <div className='lg:hidden flex absolute h-full items-center z-50'>
+        <div className='bg-gray-600 rounded-tr-xl rounded-br-xl p-1 h-[40px] flex items-center' onClick={() => handleShowSideBar()}>
+          {!showSideBar ? (
+            <IoIosArrowDropright className='text-green-500 text-[30px]'/>
+          ):(
+            <IoIosArrowDropleftCircle className='text-green-500 text-[30px]'/>
+
+          )}
+
+        </div>
+      </div>
       <div
         className="scroll-hidden overflow-y-scroll flex flex-col w-full h-full p-6">
+
         {selectedChat ? (
           [...selectedChat.messages, ...localMessages].map((message, index, array) => (
             <React.Fragment key={index}>

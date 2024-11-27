@@ -13,6 +13,8 @@ interface AuthContextType {
     logout: () => void;
     update: (id: string, updateData: Partial<UserType>) => Promise<void>;
     auto_login_solar: (nome: string, email: string) => Promise<void>;
+    showSideBar: boolean;
+    handleShowSideBar: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -30,6 +32,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [ user, setUser ] = useState<UserType | null>(null);
     const [ ready, setReady] = useState(false);
     const [ error_count, setErrorCount ] = useState(0);
+    const [showSideBar, setShowSideBar] = useState(false)
+
+    const handleShowSideBar = () =>{
+        if(showSideBar){
+            setShowSideBar(false)
+        }else{
+            setShowSideBar(true)
+        }
+        console.log(showSideBar)
+    }
 
     const login = async(login_data: LoginData ) => {
         let success = false;
@@ -101,7 +113,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             login,
             update, 
             logout,
-            auto_login_solar
+            auto_login_solar,
+            showSideBar,
+            handleShowSideBar,
         }}>
             { ready ? children : null }
         </AuthContext.Provider>

@@ -2,6 +2,7 @@ import { ChatType } from '../../utils/types/ChatType';
 import { useChat } from '../../context/ChatContext';
 import { FaTrash } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext';
 
 interface ChatCardProps {
   chat: ChatType;
@@ -12,6 +13,7 @@ const ChatCard = ({ chat }: ChatCardProps) => {
   const { select_chat, delete_chat, lockChat, selectedChat } = useChat();
   const first_user_message = chat.messages[0]?.content;
   const navigate = useNavigate();
+  const { handleShowSideBar } = useAuth()
 
   const isActive = selectedChat?._id === chat._id;
 
@@ -22,6 +24,7 @@ const ChatCard = ({ chat }: ChatCardProps) => {
       onClick={() => {
         select_chat(chat._id);
         navigate('/chat');
+        handleShowSideBar();
       }}
     >
       <div>
@@ -35,7 +38,9 @@ const ChatCard = ({ chat }: ChatCardProps) => {
       <div>
         <button
           disabled={lockChat}
-          onClick={() => delete_chat(chat._id)}
+          onClick={() => {
+            delete_chat(chat._id); 
+          }}
           className='btn hover:bg-[#bd0012] hover:text-white border-none'
         >
           <FaTrash />
