@@ -108,7 +108,7 @@ const Chat = () => {
             <div>
             <div className="chat-header text-white text-xl lg:text-2xl">Estella</div>
             {!lockChat ? (
-              <div className={`chat-header text-[gray] ${showSideBar ? 'hidden' : ''}`}>Sou Estella, ao seu dispor!</div>
+              <div className={`chat-header text-[gray]`}>Sou Estella, ao seu dispor!</div>
 
             ):(
               <div className="chat-header text-[gray] animate-pulse">Digitando...</div>
@@ -190,7 +190,7 @@ const Chat = () => {
       <div className="w-full p-3 bg-base">
         <div className="flex items-center gap-2">
           <div>
-            <button disabled={showSideBar} onClick={handleIconClick} className='btn cursor-pointer bg-base-100 w-full p-3 flex items-center rounded-lg'>
+            <button onClick={handleIconClick} className='btn cursor-pointer bg-base-100 w-full p-3 flex items-center rounded-lg'>
               <IoMdAttach className="text-2xl"/>
             </button>
             <input

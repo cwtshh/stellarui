@@ -54,7 +54,7 @@ const Archived = () => {
             <div className="w-[40px] h-[40px] rounded-full bg-black">
                 <img src={Estela} alt="Estela" className='rounded-full'/>
             </div>
-              <div className={`text-xl lg:text-2xl chat-header text-white ${showSideBar ? 'hidden' : ''}`}>  {selectedArchivedChat?.messages && selectedArchivedChat.messages.length > 0 ? selectedArchivedChat.messages[0].content : "Sem mensagens."}</div>
+              <div className={`text-xl lg:text-2xl chat-header text-white`}>  {selectedArchivedChat?.messages && selectedArchivedChat.messages.length > 0 ? selectedArchivedChat.messages[0].content : "Sem mensagens."}</div>
         </div>
         {selectedArchivedChat &&         
         <div className='flex flex-col gap-2 lg:flex-row'>
