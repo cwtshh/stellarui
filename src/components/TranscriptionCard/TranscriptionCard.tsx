@@ -22,7 +22,7 @@ export const TranscriptionCard = forwardRef<HTMLDivElement, TranscriptionCardPro
   return (
     <div role='button' onClick={() => onClick(TextInfo.start)} className={className} ref={ref}>
         <div>
-            <FaCirclePlay role='button' className="text-[#6ea1f7] mr-2 text-3xl text-justify" />
+            <FaCirclePlay role='button' className="text-[#6ea1f7] mr-2 lg:text-3xl text-justify" />
         </div>
         <p className='text-justify'>
           <span className='font-bold hover:underline'>{speaker} | </span>

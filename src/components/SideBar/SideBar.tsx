@@ -112,7 +112,7 @@ const SideBar = () => {
                             {archivedChats && archivedChats.length > 0 ? (
                                 <>
                                     <p className='font-bold text-white'>Chats Arquivados</p>
-                                    <div className='scroll-hidden flex flex-col gap-6 mt-2 overflow-y-scroll h-full max-h-[40rem]'>
+                                    <div className='scroll-hidden flex flex-col gap-6 mt-2 overflow-y-scroll h-full max-h-[24rem] lg:max-h-[40rem]'>
                                         {archivedChats.map((chat, index) => (
                                             <ArchivedCard chat={chat} key={index} />
                                         ))} 
@@ -136,7 +136,7 @@ const SideBar = () => {
                             {chats && chats.length > 0 ? (
                                 <>
                                     <p className='font-bold text-white'>Chats Ativos</p>
-                                    <div className='scroll-hidden flex flex-col gap-6 mt-2 overflow-y-scroll h-full max-h-[40rem]'>
+                                    <div className='scroll-hidden flex flex-col gap-6 mt-2 overflow-y-scroll h-full max-h-[20rem] lg:max-h-[40rem]'>
                                         {chats.map((chat, index) => (
                                             <ChatCard chat={chat} key={index} />
                                         ))} 

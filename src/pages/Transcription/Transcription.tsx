@@ -231,10 +231,11 @@ const Trancription = () => {
         </div>
       </div>
 
-      <div className='lg:flex flex-col lg:items-start lg:justify-center h-full lg:gap-[95px] lg:p-5'>
-        <div className=' flex text-white p-6 h-vh w-[100%] rounded-xl flex-col gap-7 items-center justify-center'>
+      <div className='lg:flex lg:w-full lg:flex-row lg:h-full lg:items-center lg:justify-center lg:gap-[50px] lg:p-5 flex-col h-full p-5 '>
+        <div className='lg:flex lg:h-[800px] lg:gap-3 lg:w-[600px] lg:ml-[20px] lg:items-center lg:justify-center text-white h-[390px] rounded-xl flex-col flex items-center'>
+
           <div onMouseEnter={() => setMouseOver(true)} onMouseLeave={() => setMouseOver(false)} onScroll={handleScroll}
-           className='bg-base-100 lg:block lg:p-6 scroll-hidden h-[250px] w-[380px] lg:h-[800px] lg:w-[500px] rounded-xl flex flex-col gap-6 overflow-y-scroll shadow-xl'>
+           className='bg-base-100 lg:p-6 p-3 scroll-hidden h-[250px] w-[380px] lg:h-full lg:w-full rounded-xl lg:flex flex flex-col gap-6 overflow-y-scroll shadow-xl'>
             {(filteredSegments.length > 0 ? filteredSegments : segments).map((item: any, index: number) => {
               const isActiveSegment = currentTime >= item.start && (index === segments.length - 1 || currentTime <= item.end);
               const isHighlighted = index === highlightedIndex;
@@ -244,7 +245,7 @@ const Trancription = () => {
                   speaker={speakerMap[item.speaker]}
                   ref={(el) => (transcriptionRefs.current[index] = el)}
                   key={index}
-                  className={`p-5 flex rounded-xl transition-colors ${isActiveSegment || isHighlighted ? 'bg-primary hover:bg-secondary' : 'bg-[#005e15] hover:bg-secondary'}`}
+                  className={`p-5 flex rounded-xl items-center transition-colors ${isActiveSegment || isHighlighted ? 'bg-primary hover:bg-secondary' : 'bg-[#005e15] hover:bg-secondary'}`}
                   TextInfo={item}
                   onClick={seekToTime}
                 />
@@ -252,12 +253,12 @@ const Trancription = () => {
             })}
           </div>
 
-          <div className='lg:flex lg:justify-center items-center lg:w-[500px] lg:gap-4'>
-            <button onClick={() => downloadTranscriptionPDF(file, segments, speakerMap)} disabled={loading || !videoUrl} className='btn btn-primary w-[300px] flex justify-center items-center text-white rounded-xl h-[40px] w-[100%] lg:h-[60px]'>
-              Transcrição
+          <div className='lg:flex hidden lg:justify-center items-center lg:w-[500px] lg:gap-4'>
+            <button onClick={() => downloadTranscriptionPDF(file, segments, speakerMap)} disabled={loading || !videoUrl} className='btn btn-primary w-[300px] flex justify-center items-center text-white rounded-xl lg:h-[60px] lg:w-[285px]'>
               <FaDownload />
+              Transcrição
             </button>
-            <button onClick={() => (document.getElementById('speaker_modal') as HTMLDialogElement).showModal()} disabled={loading || !videoUrl} className='btn btn-primary flex justify-center items-center text-white rounded-xl w-[100%] h-[40px] lg:h-[60px]'>
+            <button onClick={() => (document.getElementById('speaker_modal') as HTMLDialogElement).showModal()} disabled={loading || !videoUrl} className='btn btn-primary flex justify-center items-center text-white rounded-xl lg:h-[60px] lg:w-[285px]'>
               <FaPencil />
               Editar Locutores
             </button>
@@ -293,7 +294,7 @@ const Trancription = () => {
             ref={videoRef}
             src={videoUrl}
             className={`${loading || !videoUrl ? 'hidden' : ''} rounded-xl shadow-xl`}
-            style={{ width: '300px', height: '300px', maxHeight: '100%' }}
+            style={{ minWidth:'80%', width: 'auto', height: 'auto', maxHeight: '100%' }}
             controls
             preload="false"
             onTimeUpdate={handleTimeUpdate}
@@ -301,19 +302,19 @@ const Trancription = () => {
           {videoUrl && !loading && (
             <>
               <div className=' gap-2 flex flex-col lg:flex justify-center items-center lg:w-[500px] lg:gap-2'>
-                <div className='lg:flex lg:gap-2 gap-2 flex flex-col'>
+                <div className='lg:flex lg:flex-row lg:gap-2 gap-2 flex flex-col'>
                   <input 
                     type="text" 
                     placeholder="00:00:00"
                     maxLength={8}
-                    className='input input-bordere text-black input-accent w-[100%] lg:w-[100px]' 
+                    className='input input-bordere text-black input-accent w-[386px] lg:w-[100px]' 
                     onChange={handleTimeChange}
                     value={timeSearchTerm}/>
 
                   <input 
                     type="text" 
                     placeholder="Segmento..." 
-                    className='input input-bordere text-black input-accent w-[100%] lg:w-[370px]' 
+                    className='input input-bordere text-black input-accent w-[386px] lg:w-[370px]' 
                     onChange={handleTextChange}
                     value={textSearchTerm}
                   />
@@ -332,10 +333,25 @@ const Trancription = () => {
                   </select>
                 </div>
 
-                <button onClick={() => {window.location.reload()}} className='btn btn-primary w-[100%] lg:w-[200px] flex justify-center items-center text-white rounded-xl'>
-                  Transcrever Novo
+                <button onClick={() => {window.location.reload()}} className='btn hidden lg:flex btn-primary w-[100%] lg:w-[200px] flex justify-center items-center text-white rounded-xl'>
                   <FaPlusCircle />
+                  Transcrever Novo
                 </button>
+
+                <div className='flex lg:hidden items-center gap-2'>
+                  <button onClick={() => {window.location.reload()}} className='btn btn-primary w-[100px] h-[40px]'>
+                    <FaPlusCircle />
+                    Novo
+                  </button>
+                  <button onClick={() => downloadTranscriptionPDF(file, segments, speakerMap)} disabled={loading || !videoUrl} className='btn btn-primary flex justify-center items-center text-white rounded-xl w-[140px] h-[40px]'>
+                    <FaDownload />
+                    Transcrição
+                  </button>
+                  <button onClick={() => (document.getElementById('speaker_modal') as HTMLDialogElement).showModal()} disabled={loading || !videoUrl} className='btn btn-primary flex justify-center items-center text-white rounded-xl w-[130px] h-[40px]'>
+                    <FaPencil />
+                    Locutores
+                  </button>
+                </div>
               </div>
             </>
           )}
