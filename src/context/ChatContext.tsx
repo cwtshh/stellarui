@@ -27,7 +27,8 @@ interface ChatContextType {
     unarchive_chats: (user_id: string, chat_id: string) => Promise<void>,
     get_archived_chats: (user_id: string) => Promise<ChatType[]>,
     get_all_chats: (user_id: string) => Promise<ChatType[]>,
-
+    handleAdminOpened: () => void;
+    adminOpened: boolean;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -40,10 +41,19 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const { user } = useAuth();
 
     const [localMessages, setLocalMessages] = useState<MessageType[]>([]);
+    const [adminOpened, setAdminOpened] = useState(true);
 
     const clearLocalMessages = () => {
         setLocalMessages([]);
     };
+
+    const handleAdminOpened = () => {
+        if(!adminOpened){
+            setAdminOpened(true)
+        }else{
+            setAdminOpened(false)
+        }
+    }
 
     const add_chat = async () => {
         if (lockChat) return;
@@ -346,6 +356,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             get_archived_chats,
             get_all_chats,
             get_all_users,
+            handleAdminOpened,
+            adminOpened,
         }}>
             {children}
         </ChatContext.Provider>

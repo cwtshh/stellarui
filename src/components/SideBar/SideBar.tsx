@@ -18,8 +18,9 @@ import { BiLogOut } from 'react-icons/bi';
 import { BsStars } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 
+
 const SideBar = () => {
-    const { chats, add_chat, lockChat, get_archived_chats} = useChat();
+    const { chats, add_chat, lockChat, get_archived_chats, handleAdminOpened} = useChat();
     const [archivedChats, setArchivedChats] = useState<any[]>([]);
 
     const { logout, user, showSideBar, handleShowSideBar } = useAuth();
@@ -75,7 +76,7 @@ const SideBar = () => {
                 </div>
 
                 {isActiveAchived('/Archived') && (
-                    <button className='btn' onClick={() => navigate('/configuracoes/Chats')}>
+                    <button className='btn' onClick={() => {navigate('/configuracoes/Chats'); handleShowSideBar()}}>
                         <p>Voltar às Configurações</p>
                         <MdOutlineSettings className="text-xl"/>
                     </button>
@@ -184,7 +185,7 @@ const SideBar = () => {
                                 </li>
                             </Link>
                             { user?.role === 'admin' && (
-                                <li className={`${isModalOpen ? 'bg-secondary' : ''} hover:bg-secondary  h-full p-3 rounded-xl text-green-200 transition-colors duration-200 cursor-pointer`} onClick={openModal}>
+                                <li className={`${isModalOpen ? 'bg-secondary' : ''} hover:bg-secondary  h-full p-3 rounded-xl text-green-200 transition-colors duration-200 cursor-pointer`} onClick={() => {openModal(); handleAdminOpened()}}>
                                     <div className='flex gap-4 items-center'>
                                         <MdOutlineAdminPanelSettings />
                                         Admin Panel

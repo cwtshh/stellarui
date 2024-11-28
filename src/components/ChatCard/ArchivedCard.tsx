@@ -11,7 +11,7 @@ interface ChatCardProps {
 const ArchivedCard = ({ chat }: ChatCardProps) => {
   const created_at = new Date(chat.created_at);
   const { select_chat, unarchive_chats, lockChat, selectedArchivedChat } = useChat();
-  const { user } = useAuth();
+  const { user, handleShowSideBar } = useAuth();
 
   const first_user_message = chat.messages[0]?.content;
   const navigate = useNavigate();
@@ -25,6 +25,7 @@ const ArchivedCard = ({ chat }: ChatCardProps) => {
       onClick={() => {
         select_chat(chat._id);
         navigate(`/Archived/${chat._id}`);
+        handleShowSideBar();
       }}
     >
       <div>

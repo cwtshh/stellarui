@@ -42,25 +42,25 @@ export default function ArchivedChats() {
   };
 
   return (
-  <div className="w-full p-3">
+  <div className="w-full lg:p-3">
     {archivedChats.length === 0 ? (
       <p className="text-white w-full justify-center flex text-xl">Não há chats arquivados.</p>
     ) : (
       <>
         <div className="flex w-full justify-between pb-1 pt-1 border-b border-green-700">
           <strong className="text-white w-1/2">Nome do Chat</strong>
-          <strong className="text-white w-1/4 text-center">Data de Criação</strong>
-          <div className="text-white w-1/4 text-center space-x-5">
+          <strong className="text-white hidden lg:flex lg:w-1/2 text-center">Data de Criação</strong>
+          <div className="hidden lg:block text-white w-1/4 lg:w-1/4 text-center space-x-5">
             <strong className="text-white w-1/4 text-center">Desarquivar</strong>
             <strong className="text-white w-1/4 text-center">Excluir</strong>
           </div>
         </div>
         {archivedChats.map((chat) => (
           <div key={chat._id} className="chat-item w-full">
-            <div className="chat-info flex items-center pb-1 pt-1 border-b border-green-700 w-full">
-              <p className="w-1/2 text-blue-500 p-1 pl-4 cursor-pointer hover:underline"
+            <div className="chat-info flex justify-between items-center pb-1 pt-1 border-b border-green-700 w-full">
+              <p className="max-w-[200px] lg:w-1/2 text-blue-500 p-1 pl-4 cursor-pointer hover:underline"
                 onClick={() => handleRedirect(chat)}>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1 lg:gap-3">
                   <div>
                     <GrChat/>
                   </div>
@@ -69,10 +69,10 @@ export default function ArchivedChats() {
                   </p>
                 </div>
               </p>
-              <p className="w-1/4 text-gray-300 text-center">
+              <p className="w-1/4 lg:flex hidden text-gray-300 text-center">
                 {new Date(chat.created_at).toLocaleString('pt-br').split(',')[0]}
               </p>
-              <div className="w-1/4 flex justify-end space-x-16">
+              <div className="w-1/4 flex justify-end items-center lg:space-x-16">
                 <div className="group relative">
                   <button onClick={() => { 
                     if (user?._id) 
@@ -83,7 +83,7 @@ export default function ArchivedChats() {
                 </div>
                 <div className="group relative">
                   <button onClick={() => handleDelete(chat._id)} className="cursor-pointer pr-3 text-gray-300 transition-colors duration-300 hover:text-red-500">
-                    <FaTrash className="mr-3 text-1xl"/>
+                    <FaTrash className="lg:mr-3 text-1xl"/>
                   </button>
                 </div>
               </div>

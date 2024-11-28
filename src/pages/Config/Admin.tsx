@@ -8,7 +8,7 @@ const AdminModal = ({ isOpen, onClose }: any) => {
   const [selectedSection, setSelectedSection] = useState('Database');
   const modalRef = useRef<HTMLDivElement>(null)
 
-  const { get_all_users, get_all_chats, export_chats } = useChat();
+  const { get_all_users, get_all_chats, export_chats, handleAdminOpened } = useChat();
   const [allUser, setAllUser] = useState<UserType[]>([]);
 
   const handleExportAllChatsUser = async () => {
@@ -42,6 +42,7 @@ const AdminModal = ({ isOpen, onClose }: any) => {
     const handleClickOutside = (event: MouseEvent) => {
       if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
         onClose();
+        handleAdminOpened()
       }
     };
 
@@ -50,7 +51,7 @@ const AdminModal = ({ isOpen, onClose }: any) => {
     } else {
       document.removeEventListener("mousedown", handleClickOutside);
     }
-
+    
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -60,9 +61,9 @@ const AdminModal = ({ isOpen, onClose }: any) => {
 
   return (
     <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div ref={modalRef} className="relative w-full max-w-5xl bg-green-900 rounded-lg shadow-xl">
+      <div ref={modalRef} className="relative w-[400px] lg:w-full lg:max-w-5xl bg-green-900 rounded-lg shadow-xl">
         <button 
-          onClick={onClose}
+          onClick={() => {onClose(); handleAdminOpened()}}
           className="absolute top-6 right-4 text-green-400 hover:text-white"
         >
           <X size={24} />
@@ -73,7 +74,7 @@ const AdminModal = ({ isOpen, onClose }: any) => {
         </div>
 
         <div className="flex h-[calc(90vh-120px)]">
-          <div className="w-64 border-r border-green-700 p-4">
+          <div className="w-[160px] lg:w-64 border-r border-green-700 p-4">
             <nav className="space-y-2">
               <NavItem 
                 selected={selectedSection === 'Usuarios'} 
@@ -90,13 +91,13 @@ const AdminModal = ({ isOpen, onClose }: any) => {
             </nav>
           </div>
 
-          <div className="flex-1 p-6">
+          <div className="flex-1 p-3 lg:p-6">
             {selectedSection === 'Database' && (
               <div className="mb-6">
-                <h3 className="text-xl font-semibold text-white mb-4">Database</h3>
+                <h3 className="text-xl lg:text-2xl font-semibold text-white mb-4">Database</h3>
                 <div className="space-y-3 flex flex-col">
                   <button onClick={() => handleDownloadDataBase()}>
-                    <DatabaseItem label="Download Database" />
+                    <DatabaseItem label="Download Database"/>
                   </button>
                   <button onClick={() => handleExportAllChatsUser()}>
                     <DatabaseItem label="Export All Chats (All Users)" />
@@ -106,14 +107,14 @@ const AdminModal = ({ isOpen, onClose }: any) => {
             )}
             {selectedSection === 'Usuarios' && (
               <div className="mb-6">
-                <h3 className="text-xl font-semibold text-white mb-4">Users</h3>
+                <h3 className="text-xl lg:text-2xl font-semibold text-white mb-4">Users</h3>
                 <div className="space-y-3">
                   {allUser.map((user) => (
-                    <div key={user._id} className='flex gap-4 items-center pr-3 pl-4'>
-                      <FaUserAstronaut className="text-green-300 text-2xl"/>
+                    <div key={user._id} className='flex gap-2 lg:gap-4 items-center lg:pr-3 lg:pl-4'>
+                      <FaUserAstronaut className="text-green-300 text-xl lg:text-2xl"/>
                       <div className='flex justify-between w-full'>
-                        <p className="text-green-500 text-xl">{user.name}</p>
-                        <p className="text-green-100 text-xl">({user.role})</p>
+                        <p className="text-green-300 lg:text-xl">{user.name}</p>
+                        <p className="text-green-100 lg:text-xl">({user.role})</p>
                       </div>
                     </div>
                   ))}
@@ -138,7 +139,7 @@ const NavItem = ({ icon, label, onClick, selected }: any) => (
 );
 
 const DatabaseItem = ({ label }: any) => (
-  <button className="flex items-center gap-2 w-full px-4 py-2 text-green-300 hover:text-white hover:bg-green-800 rounded-lg transition-colors">
+  <button className="flex items-center text-[14px] lg:text-xl gap-1 lg:gap-2 w-full px-2 lg:px-4 py-1 lg:py-2 text-green-300 hover:text-white hover:bg-green-800 rounded-lg transition-colors">
     <Database size={18} />
     <span>{label}</span>
   </button>

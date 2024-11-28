@@ -40,7 +40,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         }else{
             setShowSideBar(true)
         }
-        console.log(showSideBar)
     }
 
     const login = async(login_data: LoginData ) => {
