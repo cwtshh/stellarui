@@ -15,7 +15,7 @@ import Archived from './pages/Chat/Archived'
 import ModelList from './pages/Config/Model/ModelList'
 import ModelSelector from './pages/Config/Model/ModelSelector'
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'
-import AutoAuthSolar from './pages/AutoAuthSolar/AutoAuthSolar'
+// import AutoAuthSolar from './pages/AutoAuthSolar/AutoAuthSolar'
 
 function App() {
   const { user } = useAuth();
@@ -40,7 +40,7 @@ function App() {
             </Route>
           </Route>
 
-          <Route path='/solar/:nome/:email' element={<AutoAuthSolar />} />
+          {/* <Route path='/solar/:nome/:email' element={<AutoAuthSolar />} /> */}
         </Routes>
         <ToastContainer />
       </BrowserRouter>

@@ -61,9 +61,9 @@ const Register = () => {
         }
     };
 
-    const debounce = (callback: () => void, delay: number) => {
+    const debounce = (callback: (...args: any[]) => void, delay: number) => {
         let timer: NodeJS.Timeout;
-        return (...args: any) => {
+        return (...args: any[]) => {
             clearTimeout(timer);
             timer = setTimeout(() => callback(...args), delay);
         };
