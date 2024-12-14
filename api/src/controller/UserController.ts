@@ -522,7 +522,7 @@ const send_message = async(req: Request, res: Response) => {
         }
         if(chat.chat_sessionid !== '') {
             const prediction = await client.createPrediction({
-                chatflowId: "70873bc0-fd4d-4d77-9781-18178d0d38a6",
+                chatflowId: FLOWISE_CHATFLOWID_ || '',
                 question: message,
                 overrideConfig: {
                     sessionId: chat.chat_sessionid
@@ -559,6 +559,8 @@ const send_message = async(req: Request, res: Response) => {
             }
             chat.messages.push(new_message._id);
             chat.messages.push(new_ai_message._id);
+
+            console.log(prediction)
             await chat.save();
             res.status(201).json({ message: 'Mensagem enviada com sucesso.', ai_message: prediction.text || 'Erro ao enviar mensagem.' });
             return;
